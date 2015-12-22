@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Shane O Donovan">
+  <meta name="keywords" content="coderdojo,club,cit,software,web,development,programming,coding,register,sign-up">
+  <meta name="description" content="Become a member of the CIT CoderDojo Club today right here. It doesn&apos;t even take five minutes.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="imgs/icons/favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/png" href="imgs/icons/favicon.png" sizes="96x96">
+  <link rel="apple-touch-icon" sizes="152x152" href="imgs/icons/favicon-apple.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/registration.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:400,500,700,400italic">
+  <title>Registration - CoderDojo Club</title>
+</head>
+<body>
+  <header role="banner">
+    <input type="checkbox" id="main-menu-check" class="hidden">
+    <label id="main-menu-btn" aria-hidden="true" class="menu-heading-section" for="main-menu-check" onclick></label>
+    <span id="main-menu-title" class="menu-heading-section">CIT - CoderDojo Club</span>
+    <div id="main-menu-navigation" class="force-repaint">
+      <nav role="navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="midterm-camp.html">Midterm Camp</a></li>
+          <li class="menu-item-selected">Registration</li>
+          <li><a href="find-us.html">Find Us</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main role="main">
+    <h1>Registration</h1>
+    <div class="padded-block">
+      <p>
+        Looking to register? Great!
+      </p>
+      <p>
+        Just fill out the information below and become initiated :)
+      </p>
+      <form method="POST" action="http://atlantis.cit.ie/displayvalues.php" id="registration-form">
+        <fieldset>
+          <legend>Parent&apos;s Information</legend>
+          <ol class="form-items">
+            <li>
+              <label for="parent-name">Parent&apos;s full name:</label>
+              <input type="text" id="parent-name" name="parent-name" required>
+            </li>
+            <li>
+              <label for="parent-email">Parent&apos;s email:</label>
+              <input type="email" id="parent-email" name="parent-email" required>
+            </li>
+          </ol>
+        </fieldset>
+        <fieldset>
+          <legend>Child&apos;s Information</legend>
+          <ol class="form-items">
+            <li>
+              <label for="child-name">Child&apos;s full name:</label>
+              <input type="text" id="child-name" name="child-name" required>
+            </li>
+            <li>
+              <label for="child-age">Child&apos;s age:</label>
+              <select id="child-age" name="child-age" required>
+                <option value>Please select age</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+              </select>
+            </li>
+            <li>
+              <span id="child-volunteer-desc">Are you willing to volunteer?:</span>
+              <div>
+                <div>
+                  <input type="radio" id="child-volunteer-yes" name="child-volunteer" value="yes" aria-describedby="child-volunteer-desc" required>
+                  <label for="child-volunteer-yes">Yes</label>
+                </div>
+                <div>
+                  <input type="radio" id="child-volunteer-no" name="child-volunteer" value="no" aria-describedby="child-volunteer-desc" required>
+                  <label for="child-volunteer-no">No</label>
+                </div>
+              </div>
+            </li>
+            <li>
+              <span id="child-pi-desc">Do you own a Raspberry PI?:</span>
+              <div>
+                <div>
+                  <input type="radio" id="child-pi-yes" name="child-pi" value="yes" aria-describedby="child-pi-desc" required>
+                  <label for="child-pi-yes">Yes</label>
+                </div>
+                <div>
+                  <input type="radio" id="child-pi-no" name="child-pi" value="no" aria-describedby="child-pi-desc" required>
+                  <label for="child-pi-no">No</label>
+                </div>
+              </div>
+            </li>
+            <li>
+              <span id="child-pc-desc">Do you own a computer?:</span>
+              <div>
+                <div>
+                  <input type="radio" id="child-pc-yes" name="child-pc" value="yes" aria-describedby="child-pc-desc" required>
+                  <label for="child-pc-yes">Yes</label>
+                </div>
+                <div>
+                  <input type="radio" id="child-pc-no" name="child-pc" value="no" aria-describedby="child-pc-desc" required>
+                  <label for="child-pc-no">No</label>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </fieldset>
+        <fieldset>
+          <legend>Beep boop - Robot detection</legend>
+          <ol class="form-items">
+            <li>
+              <label for="favourite-color">What is your favourite colour?:</label>
+              <input type="color" id="favourite-color" name="favourite-color">
+            </li>
+          </ol>
+        </fieldset>
+        <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
+      </form>
+    </div>
+  </main>
+  <footer role="contentinfo">
+    <span>
+      &copy; 2015 - Shane&nbsp;O&nbsp;Donovan - <a href="mailto:kenshii.sod@gmail.com">kenshii.sod@gmail.com</a> - All&nbsp;rights&nbsp;reserved.
+    </span>
+  </footer>
+</body>
+</html>

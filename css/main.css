@@ -1,0 +1,131 @@
+@import "menu.css";
+@import "responsive.css";
+@import "print.css" print;
+
+body {
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0.05rem;
+  min-height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+main {
+  padding-left: 2.5%;
+  padding-right: 2.5%;
+  padding-bottom: 1rem;
+  overflow: auto;
+  flex: 1;
+}
+
+h1 {
+  font-size: 1.75em;
+  color: #1565C0;
+}
+
+h2,h3 {
+  color: #1565C0;
+}
+
+* {
+  font-family: "RobotoDraft","Roboto",sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.padded-block {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #1565C0;
+  color: #FFF;
+  padding: 1rem;
+  font-size: 0.7rem;
+}
+
+footer a {
+  color: #FFF;
+  text-decoration: underline;
+}
+
+.hidden {
+  display: none;
+}
+
+.italicised {
+  font-style: italic;
+}
+
+/* This hack is necessary because the version of webkit used in the
+  default android browser prior to android 4.1.2 has a bug where it doesn't
+  support using pseudoclass followed by sibling selectors */
+
+.force-repaint {
+  -webkit-animation: bugfix infinite 1s;
+}
+
+@-webkit-keyframes bugfix {
+  from {
+    fill: 0;
+  }
+  to {
+    fill: 0;
+  }
+}
+
+hr {
+  border-color: #EEE;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.heart {
+  font-family: "Material Icons";
+  color: #E0115F;
+}
+
+fieldset {
+  border: 1px solid #DDD;
+  padding: 0;
+}
+
+legend {
+  margin-left: 0.75rem;
+}
+
+.noscript {
+  display: none;
+}
+
+address {
+  padding-bottom: 1rem;
+}
+
+dd,dt {
+  padding-bottom: 1rem;
+}
+
+figure {
+  display: inline-block;
+  border: 2px solid #CCC;
+}
+
+figure > img {
+  vertical-align: middle;
+}
+
+figcaption {
+  text-align: center;
+  border-top: 2px solid #CCC;
+}

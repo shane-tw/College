@@ -1,0 +1,39 @@
+.smart-table {
+  display: flex;
+  flex-flow: row wrap;
+  width: 52rem;
+  max-width: 100%;
+}
+
+.smart-table-col {
+  border: 1px solid #CCC;
+  margin: 0.3rem;
+  flex: 1;
+  min-width: 8rem;
+}
+
+.smart-table-row {
+  min-height: 8rem;
+  position: relative;
+  background-color: #FCFCFC;
+}
+
+.smart-table-row:not(:last-child) {
+  border-bottom: 1px solid #CCC;
+}
+
+.smart-table-head {
+  font-weight: bold;
+  padding: 0.5rem;
+  border-bottom: 1px solid #CCC;
+  background-color: #1976D2;
+  color: #FFF;
+  text-align: center;
+}
+
+.smart-table-row-contents {
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+  padding: 1rem;
+}

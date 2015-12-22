@@ -1,0 +1,31 @@
+.dual-panel-flex {
+  flex-direction: row;
+  flex-flow: wrap;
+  display: flex;
+}
+
+.dual-panel-flex:not(:last-of-type) {
+  padding-bottom: 1rem;
+}
+
+.dual-panel-flex p {
+  margin-top: 0;
+}
+
+.dual-panel-left {
+  margin-right: 5vw;
+  width: 22rem;
+  max-width: 100%;
+}
+
+.dual-panel-right, #twitter-widget-0 {
+  width: 32rem !important; /* Twitter forces me to use !important */
+  height: 25vmax !important;
+  min-height: 12.5rem !important;
+  max-height: 22rem !important;
+  max-width: 100% !important;
+}
+
+#google-maps-embed {
+  border: 2px solid #E8E8E8
+}
