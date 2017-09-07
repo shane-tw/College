@@ -24,8 +24,9 @@
   min-height: 12.5rem !important;
   max-height: 22rem !important;
   max-width: 100% !important;
+  border: 1px solid #dcdcdc;
 }
 
 #google-maps-embed {
-  border: 2px solid #E8E8E8
+  border: 2px solid #E8E8E8;
 }
