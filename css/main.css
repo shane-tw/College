@@ -116,6 +116,10 @@ dd,dt {
   padding-bottom: 1rem;
 }
 
+dd, dd > ul {
+  margin: 0;
+}
+
 figure {
   display: inline-block;
   border: 2px solid #CCC;
