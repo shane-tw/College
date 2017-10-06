@@ -9,7 +9,7 @@ const pug = require('pug')
 const bcrypt = require('bcrypt')
 const salt_rounds = 10
 mongoose.plugin(require('mongoose-hidden')({
-    hidden: { _id: true, password_hash: true, __v: true }
+    hidden: { _id: true, __v: true }
 }))
 
 mongoose.Promise = global.Promise
@@ -169,28 +169,32 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
         res.status(status_code).send({ errors: errors })
         return
     }
-    bcrypt.hash(req.body.password, salt_rounds, function(hash_error, password_hash) {
-        console.log(password_hash)
-        if (hash_error) {
-            errors.push({ type: "failure", key: "hash", message: hash_error.message })
-            status_code = 500
+    login_model.findOne({
+        email: req.body.email
+    },
+    function (db_error, person) {
+        if (db_error) {
+            errors.push({ type: "communication", key: "database", message: "Failed to communicate with database." })
+            status_code = 503
+        }
+        if (db_error == null && person == null) {
+            errors.push({ type: "invalid", key: "login-details", message: "Invalid email or password." })
+            status_code = 401
+        }
+        if (errors.length > 0) {
             res.status(status_code).send({ errors: errors })
             return
         }
-        login_model.findOne({
-            email: req.body.email,
-            password_hash: password_hash
-        },
-        function (db_error, person) {
-            if (db_error) {
-                errors.push({ type: "communication", key: "database", message: "Failed to communicate with database." })
-                status_code = 503
+        bcrypt.compare(password, person.password_hash, function(hash_error, match) {
+            if (hash_error) {
+                errors.push({ type: "failure", key: "hash", message: hash_error.message })
+                status_code = 500
+                res.status(status_code).send({ errors: errors })
+                return
             }
-            if (db_error == null && person == null) {
+            if (!match) {
                 errors.push({ type: "invalid", key: "login-details", message: "Invalid email or password." })
                 status_code = 401
-            }
-            if (errors.length > 0) {
                 res.status(status_code).send({ errors: errors })
                 return
             }
