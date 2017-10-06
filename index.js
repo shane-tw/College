@@ -8,9 +8,7 @@ const Schema = mongoose.Schema
 const pug = require('pug')
 const bcrypt = require('bcrypt')
 const salt_rounds = 10
-mongoose.plugin(require('mongoose-hidden')({
-    hidden: { _id: true, __v: true }
-}))
+mongoose.plugin(require('mongoose-hidden')())
 
 mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/care_assistant?authSource=admin', {
@@ -21,7 +19,7 @@ mongoose.connect('mongodb://localhost/care_assistant?authSource=admin', {
 })
 const CareCompany = mongoose.model('CareCompany', {
     email: { type: String, required: true },
-    password_hash: { type: String, required: true },
+    password_hash: { type: String, required: true, hide: true },
     name: { type: String, required: true },
     county: { type: String, required: true },
     country: { type: String, required: true },
@@ -30,14 +28,14 @@ const CareCompany = mongoose.model('CareCompany', {
 
 const Carer = mongoose.model('Carer', {
     email: { type: String, required: true },
-    password_hash: { type: String, required: true },
+    password_hash: { type: String, required: true, hide: true },
     patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
     companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }]
 })
 
 const Patient = mongoose.model('Patient', {
     email: { type: String, required: true, unique: true },
-    password_hash: { type: String, required: true },
+    password_hash: { type: String, required: true, hide: true },
     allow_location_tracking: { type: Boolean, default: true },
     facebook_token: String,
     twitter_token: String,
@@ -95,12 +93,22 @@ app.all('/api/*', function (req, res, next) { // This route mitigates CSRF attac
 })
 
 app.get('/api/me', function (req, res) { // This returns information about the current logged in user.
-    if (req.session.user_id == null) {
+    let errors = []
+    if (!req.session.logged_in) {
         res.status(401).send({errors: [{ type: "flow", key: "login", message: "You need to be logged in before you can get your details." }]})
         return
     }
-    res.send('TODO: Fill this out.')
-    console.log(req.session.user_id)
+    const user_model = get_model_from_account_type(req.body.account_type)
+    user_model.findOne({
+        _id: req.session.user_id
+    },
+    function (db_error, person) {
+        if (db_error) {
+            errors.push({ type: "communication", key: "database", message: "Failed to communicate with database." })
+            res.status(503).send({ errors: errors })
+        }
+        res.send(person)
+    })
 })
 
 app.post('/api/register', function (req, res) {
@@ -121,15 +129,15 @@ app.post('/api/register', function (req, res) {
             return
         }
         req.body.password_hash = password_hash
-        const register_model = get_model_from_account_type(req.body.account_type)
-        if (register_model == null) {
+        const user_model = get_model_from_account_type(req.body.account_type)
+        if (user_model == null) {
             errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
         }
         if (errors.length > 0) {
             res.status(status_code).send({ errors: errors })
             return
         }
-        new register_model(req.body).save(function (insert_error) {
+        new user_model(req.body).save(function (insert_error) {
             if (insert_error == null) {
                 res.send({})
                 return
@@ -142,8 +150,9 @@ app.post('/api/register', function (req, res) {
                 if (!('kind' in error)) {
                     error.kind = error.name
                 }
-                if (!('path' in error)) {
-                    error.path = error.code
+                error.path = null
+                if (!('path' in error) && !isNaN(parseInt(error.code))) {
+                    error.path = parseInt(error.code)
                 }
                 errors.push({ type: error.kind, key: error.path, message: error.message })
             }
@@ -161,15 +170,15 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
     if (typeof req.body.password != 'string') {
         errors.push({ type: "required", key: "password", message: "Path `password` is required." })
     }
-    const login_model = get_model_from_account_type(req.body.account_type)
-    if (login_model == null) {
+    const user_model = get_model_from_account_type(req.body.account_type)
+    if (user_model == null) {
         errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
     }
     if (errors.length > 0) {
         res.status(status_code).send({ errors: errors })
         return
     }
-    login_model.findOne({
+    user_model.findOne({
         email: req.body.email
     },
     function (db_error, person) {
@@ -185,7 +194,7 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
             res.status(status_code).send({ errors: errors })
             return
         }
-        bcrypt.compare(password, person.password_hash, function(hash_error, match) {
+        bcrypt.compare(req.body.password, person.password_hash, function(hash_error, match) {
             if (hash_error) {
                 errors.push({ type: "failure", key: "hash", message: hash_error.message })
                 status_code = 500
@@ -198,7 +207,9 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
                 res.status(status_code).send({ errors: errors })
                 return
             }
+            req.session.logged_in = true
             req.session.user_id = person._id
+            req.session.account_type = req.body.account_type
             res.send(person)
         })
     })
