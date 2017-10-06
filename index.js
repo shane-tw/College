@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const pug = require('pug')
 const bcrypt = require('bcrypt')
-const saltRounds = 10
+const salt_rounds = 10
 mongoose.plugin(require('mongoose-hidden')({
     hidden: { _id: true, password_hash: true, __v: true }
 }))
@@ -113,7 +113,7 @@ app.post('/api/register', function (req, res) {
     if (typeof req.body.password != 'string') {
         errors.push({ type: "required", key: "password", message: "Path `password` is required." })
     }
-    bcrypt.hash(req.body.password, saltRounds, function(hash_error, password_hash) {
+    bcrypt.hash(req.body.password, salt_rounds, function(hash_error, password_hash) {
         if (hash_error) {
             errors.push({ type: "failure", key: "hash", message: hash_error.message })
             status_code = 500
@@ -169,7 +169,7 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
         res.status(status_code).send({ errors: errors })
         return
     }
-    bcrypt.hash(req.body.password, saltRounds, function(hash_error, password_hash) {
+    bcrypt.hash(req.body.password, salt_rounds, function(hash_error, password_hash) {
         console.log(password_hash)
         if (hash_error) {
             errors.push({ type: "failure", key: "hash", message: hash_error.message })
