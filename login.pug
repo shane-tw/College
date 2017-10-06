@@ -1,0 +1,75 @@
+extends node_modules/pug-bootstrap/_bootstrap.pug
+block vars
+  - var title='Virtual Care - Log In'
+  - var description='This is a test'
+append styles
+  link(href='styles/pnotify.custom.min.css', rel='stylesheet')
+append scripts
+  script(src='scripts/pnotify.custom.min.js')
+  script(src='scripts/jquery.form.min.js')
+  script.
+    PNotify.prototype.options.styling = "bootstrap3";
+    $(function() {
+      $('#login-form').ajaxForm({
+        url: '/api/login',
+        type: 'post',
+        dataType: 'json',
+        timeout: 5000,
+        beforeSubmit: function(arr, form, options) { 
+          $('#login-btn').prop('disabled', true)
+        },
+        success: function(response, textStatus, xhr, form) {
+          new PNotify({
+            title: 'Login successful',
+            text: 'You will be redirected soon.',
+            type: 'success'
+          })
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          var response = { errors: [] }
+          var message = ''
+          if (xhr.readyState == 0) {
+            message = 'Request timed out.'
+          } else {
+            try {
+              response = JSON.parse(xhr.responseText)
+            } catch (e) {
+              message = 'Endpoint gave non-JSON response.'
+            }
+          }
+          for (var i = 0; i < response.errors.length; i++) {
+            var error = response.errors[i]
+            message += error.message
+            if (i != response.errors.length - 1) {
+              message += '<br/>'
+            }
+          }
+          new PNotify({
+            title: 'Login failed',
+            text: message,
+            type: 'error'
+          })
+        },
+        complete: function() {
+          $('#login-btn').prop('disabled', false)
+        }
+      })
+    })
+append body
+  .container
+    form#login-form
+      h2 Please sign in
+      .form-group
+        label.sr-only(for='login-email') Email address
+        input.form-control#login-email(name='email', type='email', placeholder='Email address', required='', autofocus='')
+      .form-group
+        label.sr-only(for='login-password') Password
+        input.form-control#login-password(name='password', type='password', placeholder='Password', required='')
+      .form-group
+        label.sr-only(for='login-account-type') Account type
+        select.form-control#login-account-type(name='account_type', required='')
+          option(value='', selected='', disabled='') Account type
+          option(value='Patient') Patient
+          option(value='Carer') Carer
+          option(value='CareCompany') Care company
+      button.btn.btn-lg.btn-primary.btn-block#login-btn(type='submit') Sign in

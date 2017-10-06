@@ -1,17 +1,23 @@
 const express = require('express')
 const app = express()
 const url = require('url')
-const bodyParser = require('body-parser')
+const body_parser = require('body-parser')
 const session = require('express-session')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const pug = require('pug')
+const bcrypt = require('bcrypt')
+const saltRounds = 10
+mongoose.plugin(require('mongoose-hidden')({
+    hidden: { _id: true, password_hash: true, __v: true }
+}))
 
 mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/care_assistant?authSource=admin', {
     user: 'shane',
     pass: 'mongodb',
-    useMongoClient: true
+    useMongoClient: true,
+    bufferMaxEntries: 0
 })
 const CareCompany = mongoose.model('CareCompany', {
     email: { type: String, required: true },
@@ -44,13 +50,22 @@ const Patient = mongoose.model('Patient', {
     carer: { type: Schema.Types.ObjectId, ref: 'Carer' }
 })
 
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
+const account_models = ['Patient', 'Carer', 'CareCompany']
+
+function get_model_from_account_type(account_type) {
+    if (account_models.indexOf(account_type) == -1) {
+        return null
+    }
+    return mongoose.model(account_type)
+}
+
+app.use(body_parser.urlencoded({extended: true}))
+app.use(body_parser.json())
 app.use(session({
-  secret: 'Z"\'l!|FiIL<7ty(^',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 60 * 60 * 24 * 7 }
+    secret: 'Z"\'l!|FiIL<7ty(^',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 60 * 60 * 24 * 7 }
 }))
 app.use(express.static('public'))
 
@@ -90,33 +105,99 @@ app.get('/api/me', function (req, res) { // This returns information about the c
 
 app.post('/api/register', function (req, res) {
     delete req.body._id
-    new Patient(req.body).save(function (err) {
-        if (!err) {
-            res.send({})
+    let errors = []
+    let status_code = 400
+    if (typeof req.body.email != 'string') {
+        errors.push({ type: "required", key: "email", message: "Path `email` is required." })
+    }
+    if (typeof req.body.password != 'string') {
+        errors.push({ type: "required", key: "password", message: "Path `password` is required." })
+    }
+    bcrypt.hash(req.body.password, saltRounds, function(hash_error, password_hash) {
+        if (hash_error) {
+            errors.push({ type: "failure", key: "hash", message: hash_error.message })
+            status_code = 500
+            res.status(status_code).send({ errors: errors })
             return
         }
-        let errors = []
-        for (const key in err.errors) {
-            var error = err.errors[key]
-            errors.push({ type: error.kind, key: error.path, message: error.message })
+        req.body.password_hash = password_hash
+        const register_model = get_model_from_account_type(req.body.account_type)
+        if (register_model == null) {
+            errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
         }
-        res.status(400).send({errors: errors})
+        if (errors.length > 0) {
+            res.status(status_code).send({ errors: errors })
+            return
+        }
+        new register_model(req.body).save(function (insert_error) {
+            if (insert_error == null) {
+                res.send({})
+                return
+            }
+            if (!('errors' in insert_error)) { // Highly likely a MongoError, but perhaps not guaranteed.
+                insert_error = { errors: [ insert_error ] }
+            }
+            for (const key in insert_error.errors) {
+                let error = insert_error.errors[key]
+                if (!('kind' in error)) {
+                    error.kind = error.name
+                }
+                if (!('path' in error)) {
+                    error.path = error.code
+                }
+                errors.push({ type: error.kind, key: error.path, message: error.message })
+            }
+            res.status(status_code).send({errors: errors})
+        })
     })
 })
 
 app.post('/api/login', function (req, res) { // This allows a user to log in.
     let errors = []
-    if (req.body.email == null) {
+    let status_code = 400
+    if (typeof req.body.email != 'string') {
         errors.push({ type: "required", key: "email", message: "Path `email` is required." })
     }
-    if (req.body.password == null) {
+    if (typeof req.body.password != 'string') {
         errors.push({ type: "required", key: "password", message: "Path `password` is required." })
     }
+    const login_model = get_model_from_account_type(req.body.account_type)
+    if (login_model == null) {
+        errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
+    }
     if (errors.length > 0) {
-        res.status(400).send({errors: errors})
+        res.status(status_code).send({ errors: errors })
         return
     }
-    res.send({})
+    bcrypt.hash(req.body.password, saltRounds, function(hash_error, password_hash) {
+        console.log(password_hash)
+        if (hash_error) {
+            errors.push({ type: "failure", key: "hash", message: hash_error.message })
+            status_code = 500
+            res.status(status_code).send({ errors: errors })
+            return
+        }
+        login_model.findOne({
+            email: req.body.email,
+            password_hash: password_hash
+        },
+        function (db_error, person) {
+            if (db_error) {
+                errors.push({ type: "communication", key: "database", message: "Failed to communicate with database." })
+                status_code = 503
+            }
+            if (db_error == null && person == null) {
+                errors.push({ type: "invalid", key: "login-details", message: "Invalid email or password." })
+                status_code = 401
+            }
+            if (errors.length > 0) {
+                res.status(status_code).send({ errors: errors })
+                return
+            }
+            req.session.user_id = person._id
+            res.send(person)
+        })
+    })
 })
 
 app.post('/api/logout', function (req, res) {
@@ -124,16 +205,12 @@ app.post('/api/logout', function (req, res) {
     res.send({})
 })
 
-app.get('/api/*', function (req, res) { // In the event that a route is not handled, 404.
-    res.status(404).send({'errors': [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist."}]})
+app.all('/api/*', function (req, res) { // In the event that a route is not handled, 404.
+    res.status(404).send({errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }]})
 })
 
 app.get('/login', function (req, res) {
-    res.send(pug.renderFile("test.pug", {
-        cache: true,
-        name: "Timmy",
-        title: "This is a test"
-    }))
+    res.send(pug.renderFile("login.pug"))
 })
 
 const server = app.listen(80, function() {
