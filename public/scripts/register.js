@@ -1,15 +1,15 @@
 $(function() {
-	$('#login-form').ajaxForm({
-		url: '/api/login',
+	$('#register-form').ajaxForm({
+		url: '/api/register',
 		type: 'post',
 		dataType: 'json',
 		timeout: 5000,
 		beforeSubmit: function(arr, form, options) { 
-			$('#login-btn').prop('disabled', true)
+			$('#register-btn').prop('disabled', true)
 		},
 		success: function(response, textStatus, xhr, form) {
 			new PNotify({
-				title: 'Login successful',
+				title: 'Registration successful',
 				text: 'You will be redirected soon.',
 				type: 'success'
 			})
@@ -34,13 +34,13 @@ $(function() {
 				}
 			}
 			new PNotify({
-				title: 'Login failed',
+				title: 'Registration failed',
 				text: message,
 				type: 'error'
 			})
 		},
 		complete: function() {
-			$('#login-btn').prop('disabled', false)
+			$('#register-btn').prop('disabled', false)
 		}
 	})
 })

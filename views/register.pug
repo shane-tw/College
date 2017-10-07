@@ -1,0 +1,30 @@
+extends common.pug
+block vars
+	- var title='Virtual Care - Sign Up'
+	- var description='This is a test'
+append scripts
+	script(src='scripts/register.js')
+append body
+	.container
+		form#register-form
+			h2 Please sign up
+			.form-group
+				label.sr-only(for='register-email') Email address
+				input.form-control#register-email(name='email', type='email', placeholder='Email address', required='', autofocus='')
+			.form-group
+				label.sr-only(for='register-password') Password
+				input.form-control#register-password(name='password', type='password', placeholder='Password', required='')
+			.form-group
+				label.sr-only(for='register-account-type') Account type
+				select.form-control#register-account-type(name='account_type', required='')
+					option(value='', selected='', disabled='') Account type
+					option(value='Patient') Patient
+					option(value='Carer') Carer
+					option(value='CareCompany') Care company
+			.form-group
+				label.sr-only(for='register-name') Company name
+				input.form-control#register-name(name='name', type='text', placeholder='Company name', required='')
+			.form-group
+				label.sr-only(for='register-country') Country
+				input.form-control#register-country(name='country', type='text', placeholder='Country', required='')
+			button.btn.btn-lg.btn-primary.btn-block#register-btn(type='submit') Sign in
