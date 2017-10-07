@@ -97,12 +97,8 @@ app.all('/api/*', function (req, res, next) { // This route mitigates CSRF attac
 app.post('/api/register', function (req, res) {
 	delete req.body._id
 	let errors = []
-	let status_code = 400
-	if (typeof req.body.email != 'string') {
-		errors.push({ type: "required", key: "email", message: "Path `email` is required." })
-	}
-	if (typeof req.body.password != 'string') {
-		errors.push({ type: "required", key: "password", message: "Path `password` is required." })
+	if (!credentials_given(req, res, errors)) {
+		return
 	}
 	bcrypt.hash(req.body.password, salt_rounds)
 		.then(function (password_hash) {
@@ -112,20 +108,15 @@ app.post('/api/register', function (req, res) {
 				errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
 			}
 			if (errors.length > 0) {
-				res.status(status_code).send({ errors: errors })
+				res.status(400).send({ errors: errors })
 				return
 			}
 			req.body._id = mongoose.Types.ObjectId()
-			new user_model(req.body).save()
-				.then(function () {
-						req.session.logged_in = true
-						req.session.user_id = req.body._id
-						req.session.account_type = req.body.account_type
-						res.send({})
-						return
-					})
+			const user = new user_model(req.body)
+			user.save()
+				.then(user => login_user(user, req, res))
 				.catch(function (db_error) {
-					if (!('errors' in insert_error)) { // Highly likely a MongoError, but perhaps not guaranteed.
+					if (!('errors' in insert_error)) { // Mongoose has errors, MongoDB has single error
 						insert_error = { errors: [ insert_error ] }
 					}
 					for (const key in insert_error.errors) {
@@ -139,23 +130,16 @@ app.post('/api/register', function (req, res) {
 						}
 						errors.push({ type: error.kind, key: error.path, message: error.message })
 					}
-					res.status(status_code).send({errors: errors})
+					res.status(400).send({errors: errors})
 				})
 		})
-		.catch(function (hash_error) {
-				errors.push({ type: "failure", key: "hash", message: hash_error.message })
-				status_code = 500
-				res.status(status_code).send({ errors: errors })
-		})
+		.catch(hash_error => handle_hash_error(hash_error, res, errors))
 })
 
 app.post('/api/login', function (req, res) { // This allows a user to log in.
 	let errors = []
-	if (typeof req.body.email != 'string') {
-		errors.push({ type: "required", key: "email", message: "Path `email` is required." })
-	}
-	if (typeof req.body.password != 'string') {
-		errors.push({ type: "required", key: "password", message: "Path `password` is required." })
+	if (!credentials_given(req, res, errors)) {
+		return
 	}
 	const user_model = get_model_from_account_type(req.body.account_type)
 	if (user_model == null) {
@@ -179,16 +163,10 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
 						res.status(401).send({ errors: errors })
 						return
 					}
-					req.session.logged_in = true
-					req.session.user_id = user._id
-					req.session.account_type = req.body.account_type
-					delete user.password_hash // We don't want this shown, but it was needed for verifying details
-					res.send(user)
+					delete user.password_hash
+					login_user(user, req, res)
 				})
-				.catch(function (hash_error) {
-					errors.push({ type: "failure", key: "hash", message: hash_error.message })
-					res.status(500).send({ errors: errors })
-				})
+				.catch(hash_error => handle_hash_error(hash_error, res, errors))
 		})
 		.catch(db_error => respond_user_error(db_error, res, errors))
 })
@@ -200,9 +178,45 @@ app.get('/api/logout', function (req, res) {
 
 app.get('/api/users/:user_id', function(req, res) {
 	let errors = []
+	if (!check_users_okay(req, res, errors)) {
+		return
+	}
+	user_model.findOne({ _id: req.params.user_id }).lean().exec()
+		.then(user => respond_user(user, res, errors))
+		.catch(db_error => respond_user_error(db_error, res, errors))
+})
+
+function credentials_given(req, res, errors) {
+	if (typeof req.body.email != 'string') {
+		errors.push({ type: "required", key: "email", message: "Path `email` is required." })
+	}
+	if (typeof req.body.password != 'string') {
+		errors.push({ type: "required", key: "password", message: "Path `password` is required." })
+	}
+	if (errors.length > 0) {
+		res.status(400).send({ errors: errors })
+		return false
+	}
+	return true
+}
+
+function login_user(user, req, res) {
+	req.session.logged_in = true
+	req.session.user_id = user._id
+	req.session.account_type = req.body.account_type
+	res.send(user)
+}
+
+function handle_hash_error(hash_error, res, errors) {
+	errors.push({ type: "failure", key: "hash", message: hash_error.message })
+	status_code = 500
+	res.status(status_code).send({ errors: errors })
+}
+
+function check_users_okay(req, res, errors) {
 	if (!req.session.logged_in) {
 		res.status(401).send({errors: [{ type: "flow", key: "login", message: "You need to be logged in before you can get your details." }]})
-		return
+		return false
 	}
 	if (req.params.user_id == 'me') {
 		req.params.user_id = req.session.user_id
@@ -215,12 +229,10 @@ app.get('/api/users/:user_id', function(req, res) {
 	}
 	if (errors.length > 0) {
 		res.status(400).send({ errors: errors })
-		return
+		return false
 	}
-	user_model.findOne({ _id: req.params.user_id }).lean().exec()
-		.then(user => respond_user(user, res, errors))
-		.catch(db_error => respond_user_error(db_error, res, errors))
-})
+	return true
+}
 
 function respond_user(user, res, errors) {
 	if (user == null) {
@@ -243,21 +255,7 @@ function respond_user_error(db_error, res, errors) {
 app.post('/api/users/:user_id', function(req, res) {
 	delete req.body.password_hash // If they modified this, they'd never be able to log in again.
 	let errors = []
-	if (!req.session.logged_in) {
-		res.status(401).send({errors: [{ type: "flow", key: "login", message: "You need to be logged in before you can get your details." }]})
-		return
-	}
-	if (req.params.user_id == 'me') {
-		req.params.user_id = req.session.user_id
-		req.body.account_type = req.session.account_type
-	}
-	// TODO: Check if logged-in user has permission to view this user's details.
-	const user_model = get_model_from_account_type(req.body.account_type)
-	if (user_model == null) {
-		errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
-	}
-	if (errors.length > 0) {
-		res.status(400).send({ errors: errors })
+	if (!check_users_okay(req, res, errors)) {
 		return
 	}
 	if (req.body.password != null) {
