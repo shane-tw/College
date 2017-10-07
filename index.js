@@ -97,20 +97,13 @@ app.all('/api/*', function (req, res, next) { // This route mitigates CSRF attac
 app.post('/api/register', function (req, res) {
 	delete req.body._id
 	let errors = []
-	if (!credentials_given(req, res, errors)) {
+	const user_model = get_model_from_account_type(req.body.account_type)
+	if (!check_auth_body(req, res, errors, user_model)) {
 		return
 	}
 	bcrypt.hash(req.body.password, salt_rounds)
 		.then(function (password_hash) {
 			req.body.password_hash = password_hash
-			const user_model = get_model_from_account_type(req.body.account_type)
-			if (user_model == null) {
-				errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
-			}
-			if (errors.length > 0) {
-				res.status(400).send({ errors: errors })
-				return
-			}
 			req.body._id = mongoose.Types.ObjectId()
 			const user = new user_model(req.body)
 			user.save()
@@ -138,15 +131,8 @@ app.post('/api/register', function (req, res) {
 
 app.post('/api/login', function (req, res) { // This allows a user to log in.
 	let errors = []
-	if (!credentials_given(req, res, errors)) {
-		return
-	}
 	const user_model = get_model_from_account_type(req.body.account_type)
-	if (user_model == null) {
-		errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
-	}
-	if (errors.length > 0) {
-		res.status(400).send({ errors: errors })
+	if (!check_auth_body(req, res, errors, user_model)) {
 		return
 	}
 	user_model.findOne({ email: req.body.email }, '+password_hash').lean().exec()
@@ -178,7 +164,8 @@ app.get('/api/logout', function (req, res) {
 
 app.get('/api/users/:user_id', function(req, res) {
 	let errors = []
-	if (!check_users_okay(req, res, errors)) {
+	const user_model = get_model_from_account_type(req.body.account_type)
+	if (!check_users_okay(req, res, errors, user_model)) {
 		return
 	}
 	user_model.findOne({ _id: req.params.user_id }).lean().exec()
@@ -186,12 +173,15 @@ app.get('/api/users/:user_id', function(req, res) {
 		.catch(db_error => respond_user_error(db_error, res, errors))
 })
 
-function credentials_given(req, res, errors) {
+function check_auth_body(req, res, errors, user_model) {
 	if (typeof req.body.email != 'string') {
 		errors.push({ type: "required", key: "email", message: "Path `email` is required." })
 	}
 	if (typeof req.body.password != 'string') {
 		errors.push({ type: "required", key: "password", message: "Path `password` is required." })
+	}
+	if (user_model == null) {
+		errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
 	}
 	if (errors.length > 0) {
 		res.status(400).send({ errors: errors })
@@ -213,7 +203,7 @@ function handle_hash_error(hash_error, res, errors) {
 	res.status(status_code).send({ errors: errors })
 }
 
-function check_users_okay(req, res, errors) {
+function check_users_okay(req, res, errors, user_model) {
 	if (!req.session.logged_in) {
 		res.status(401).send({errors: [{ type: "flow", key: "login", message: "You need to be logged in before you can get your details." }]})
 		return false
@@ -223,7 +213,6 @@ function check_users_okay(req, res, errors) {
 		req.body.account_type = req.session.account_type
 	}
 	// TODO: Check if logged-in user has permission to view this user's details.
-	const user_model = get_model_from_account_type(req.body.account_type)
 	if (user_model == null) {
 		errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
 	}
@@ -255,7 +244,8 @@ function respond_user_error(db_error, res, errors) {
 app.post('/api/users/:user_id', function(req, res) {
 	delete req.body.password_hash // If they modified this, they'd never be able to log in again.
 	let errors = []
-	if (!check_users_okay(req, res, errors)) {
+	const user_model = get_model_from_account_type(req.body.account_type)
+	if (!check_users_okay(req, res, errors, user_model)) {
 		return
 	}
 	if (req.body.password != null) {
