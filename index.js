@@ -46,7 +46,7 @@ const Patient = mongoose.model('Patient', {
 	calendar_events: [{ name: { type: String, required: true }, date: { type: Date, required: true }}],
 	enable_geofence: { type: Boolean, default: false, required: true },
 	geofence_points: [{ latitude: { type: Number, required: true }, longitude: { type: Number, required: true }}],
-	carer: { type: Schema.Types.ObjectId, ref: 'Carer' },
+	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false }
 })
 
