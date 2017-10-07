@@ -50,15 +50,6 @@ const Patient = mongoose.model('Patient', {
 	__v: { type: Number, select: false }
 })
 
-const account_models = ['Patient', 'Carer', 'CareCompany']
-
-function get_model_from_account_type(account_type) {
-	if (account_models.indexOf(account_type) == -1) {
-		return null
-	}
-	return mongoose.model(account_type)
-}
-
 app.use(body_parser.urlencoded({extended: true}))
 app.use(body_parser.json())
 app.use(session({
@@ -89,6 +80,13 @@ app.all('/api/*', function (req, res, next) { // This route mitigates CSRF attac
 	}
 	if (errors.length > 0) {
 		res.status(403).send(errors)
+		return
+	}
+	if (req.url === '/api/login' || req.url === '/api/register') {
+		return next()
+	}
+	if (!req.session.logged_in) {
+		res.status(401).send({errors: [{ type: "flow", key: "login", message: "You need to be logged in before you can use this." }]})
 		return
 	}
 	next()
@@ -162,16 +160,79 @@ app.get('/api/logout', function (req, res) {
 	res.send({})
 })
 
-app.get('/api/users/:user_id', function(req, res) {
+app.get('/api/patients/:user_id', (req, res) => get_user('Patient', req, res))
+app.get('/api/carers/:user_id', (req, res) => get_user('Carer', req, res))
+app.get('/api/companies/:user_id', (req, res) => get_user('CareCompany', req, res))
+app.get('/api/me', (req, res) => {
+	req.params.user_id = req.session.user_id
+	get_user(req.session.account_type, req, res)
+})
+
+app.post('/api/patients/:user_id', (req, res) => update_user('Patient', req, res))
+app.post('/api/carers/:user_id', (req, res) => update_user('Carer', req, res))
+app.post('/api/companies/:user_id', (req, res) => update_user('CareCompany', req, res))
+app.post('/api/me', (req, res) => {
+	req.params.user_id = req.session.user_id
+	update_user(req.session.account_type, req, res)
+})
+
+app.all('/api/*', function (req, res) { // In the event that a route is not handled, 404.
+	res.status(404).send({errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }]})
+})
+
+app.get('/login', function (req, res) {
+	res.send(pug.renderFile("views/login.pug"))
+})
+
+app.get('/register', function (req, res) {
+	res.send(pug.renderFile("views/register.pug"))
+})
+
+const server = app.listen(80, function() {
+	const port = server.address().port
+	console.log('Listening on port %d', port)
+})
+
+// TODO: Check if logged-in user has permission to view/edit this user's details.
+function get_user(model_name, req, res) {
 	let errors = []
-	const user_model = get_model_from_account_type(req.body.account_type)
-	if (!check_users_okay(req, res, errors, user_model)) {
-		return
-	}
+	const user_model = mongoose.model(model_name)
 	user_model.findOne({ _id: req.params.user_id }).lean().exec()
 		.then(user => respond_user(user, res, errors))
 		.catch(db_error => respond_user_error(db_error, res, errors))
-})
+}
+
+function update_user(model_name, req, res) {
+	delete req.body.password_hash // We don't want someone trying to modify this.
+	let errors = []
+	const user_model = mongoose.model(model_name)
+	if (req.body.password != null) {
+		bcrypt.hash(req.body.password, salt_rounds)
+			.then(function (password_hash) {
+				req.body.password_hash = password_hash
+				user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
+					.then(user => respond_user(user, res, errors))
+					.catch(db_error => respond_user_error(db_error, res, errors));
+			})
+			.catch(function (hash_error) {
+				errors.push({ type: "failure", key: "hash", message: hash_error.message })
+				res.status(500).send({ errors: errors })
+			})
+		return
+	}
+	user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
+		.then(user => respond_user(user, res, errors))
+		.catch(db_error => respond_user_error(db_error, res, errors));
+}
+
+const account_models = ['Patient', 'Carer', 'CareCompany']
+
+function get_model_from_account_type(account_type) {
+	if (account_models.indexOf(account_type) == -1) {
+		return null
+	}
+	return mongoose.model(account_type)
+}
 
 function check_auth_body(req, res, errors, user_model) {
 	if (typeof req.body.email != 'string') {
@@ -199,28 +260,7 @@ function login_user(user, req, res) {
 
 function handle_hash_error(hash_error, res, errors) {
 	errors.push({ type: "failure", key: "hash", message: hash_error.message })
-	status_code = 500
-	res.status(status_code).send({ errors: errors })
-}
-
-function check_users_okay(req, res, errors, user_model) {
-	if (!req.session.logged_in) {
-		res.status(401).send({errors: [{ type: "flow", key: "login", message: "You need to be logged in before you can get your details." }]})
-		return false
-	}
-	if (req.params.user_id == 'me') {
-		req.params.user_id = req.session.user_id
-		req.body.account_type = req.session.account_type
-	}
-	// TODO: Check if logged-in user has permission to view this user's details.
-	if (user_model == null) {
-		errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
-	}
-	if (errors.length > 0) {
-		res.status(400).send({ errors: errors })
-		return false
-	}
-	return true
+	res.status(500).send({ errors: errors })
 }
 
 function respond_user(user, res, errors) {
@@ -240,47 +280,3 @@ function respond_user_error(db_error, res, errors) {
 	errors.push({ type: "communication", key: "database", message: "Failed to communicate with database." })
 	res.status(503).send({ errors: errors })
 }
-
-app.post('/api/users/:user_id', function(req, res) {
-	delete req.body.password_hash // If they modified this, they'd never be able to log in again.
-	let errors = []
-	const user_model = get_model_from_account_type(req.body.account_type)
-	if (!check_users_okay(req, res, errors, user_model)) {
-		return
-	}
-	if (req.body.password != null) {
-		bcrypt.hash(req.body.password, salt_rounds)
-			.then(function (password_hash) {
-				req.body.password_hash = password_hash
-				user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
-					.then(user => respond_user(user, res, errors))
-					.catch(db_error => respond_user_error(db_error, res, errors));
-			})
-			.catch(function (hash_error) {
-				errors.push({ type: "failure", key: "hash", message: hash_error.message })
-				status_code = 500
-				res.status(status_code).send({ errors: errors })
-			})
-		return
-	}
-	user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
-		.then(user => respond_user(user, res, errors))
-		.catch(db_error => respond_user_error(db_error, res, errors));
-})
-
-app.all('/api/*', function (req, res) { // In the event that a route is not handled, 404.
-	res.status(404).send({errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }]})
-})
-
-app.get('/login', function (req, res) {
-	res.send(pug.renderFile("views/login.pug"))
-})
-
-app.get('/register', function (req, res) {
-	res.send(pug.renderFile("views/register.pug"))
-})
-
-const server = app.listen(80, function() {
-	const port = server.address().port
-	console.log('Listening on port %d', port)
-})
