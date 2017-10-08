@@ -106,23 +106,7 @@ app.post('/api/register', function (req, res) {
 			const user = new user_model(req.body)
 			user.save()
 				.then(user => login_user(user, req, res))
-				.catch(function (db_error) {
-					if (!('errors' in insert_error)) { // Mongoose has errors, MongoDB has single error
-						insert_error = { errors: [ insert_error ] }
-					}
-					for (const key in insert_error.errors) {
-						let error = insert_error.errors[key]
-						if (!('kind' in error)) {
-							error.kind = error.name
-						}
-						error.path = null
-						if (!('path' in error) && typeof error.code !== 'string') {
-							error.path = error.code.toString()
-						}
-						errors.push({ type: error.kind, key: error.path, message: error.message })
-					}
-					res.status(400).send({errors: errors})
-				})
+				.catch(db_error => handle_db_error(db_error, res))
 		})
 		.catch(hash_error => handle_hash_error(hash_error, res, errors))
 })
@@ -152,7 +136,7 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
 				})
 				.catch(hash_error => handle_hash_error(hash_error, res, errors))
 		})
-		.catch(db_error => respond_user_error(db_error, res, errors))
+		.catch(db_error => handle_db_error(db_error, res))
 })
 
 app.get('/api/logout', (req, res) => {
@@ -199,7 +183,7 @@ function get_user(model_name, req, res) {
 	const user_model = mongoose.model(model_name)
 	user_model.findOne({ _id: req.params.user_id }).lean().exec()
 		.then(user => respond_user(user, res, errors))
-		.catch(db_error => respond_user_error(db_error, res, errors))
+		.catch(db_error => handle_db_error(db_error, res))
 }
 
 function update_user(model_name, req, res) {
@@ -212,17 +196,14 @@ function update_user(model_name, req, res) {
 				req.body.password_hash = password_hash
 				user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
 					.then(user => respond_user(user, res, errors))
-					.catch(db_error => respond_user_error(db_error, res, errors));
+					.catch(db_error => handle_db_error(db_error, res));
 			})
-			.catch(function (hash_error) {
-				errors.push({ type: "failure", key: "hash", message: hash_error.message })
-				res.status(500).send({ errors: errors })
-			})
+			.catch(hash_error => handle_hash_error(hash_error, res, errors))
 		return
 	}
 	user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
 		.then(user => respond_user(user, res, errors))
-		.catch(db_error => respond_user_error(db_error, res, errors));
+		.catch(db_error => handle_db_error(db_error, res));
 }
 
 const account_models = ['Patient', 'Carer', 'CareCompany']
@@ -271,12 +252,21 @@ function respond_user(user, res, errors) {
 	res.send(user)
 }
 
-function respond_user_error(db_error, res, errors) {
-	if (db_error.kind === 'ObjectId') {
-		errors.push({ type: "not-found", key: "user", message: "User does not exist." })
-		res.status(404).send({ errors: errors })
-		return
+function handle_db_error(db_error, res) {
+	if (!('errors' in db_error)) { // Mongoose has errors, MongoDB has single error
+		db_error = { errors: [ db_error ] }
 	}
-	errors.push({ type: "communication", key: "database", message: "Failed to communicate with database." })
-	res.status(503).send({ errors: errors })
+	for (const key in db_error.errors) {
+		let error = db_error.errors[key]
+		if (db_error.kind === 'ObjectId') {
+			res.status(404).send({ errors: [{ type: "not-found", key: "user", message: "User does not exist." }]})
+			return
+		}
+		if (error.code == 11000) {
+			res.status(409).send({ errors: [{ type: "conflict", key: "database", message: "User already exists." }]})
+			return
+		}
+		console.log(error)
+	}
+	res.status(503).send({ errors: [{ type: "communication", key: "database", message: "Failed to communicate with database." }]})
 }
