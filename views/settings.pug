@@ -1,0 +1,30 @@
+extends common.pug
+block vars
+	- var title='Virtual Care - Settings'
+	- var description='This is a test'
+append scripts
+	script(src='scripts/settings.js')
+append body
+	.container
+		form#settings-form
+			h2 Please sign up
+			.form-group
+				label.sr-only(for='settings-name') Full name
+				input.form-control#settings-name(name='name', type='text', placeholder='Full name', required='', autofocus='')
+			.form-group
+				label.sr-only(for='settings-email') Email address
+				input.form-control#settings-email(name='email', type='email', placeholder='Email address', required='')
+			.form-group
+				label.sr-only(for='settings-password') Current Password
+				input.form-control#settings-password(name='password', type='password', placeholder='Password', required='')
+			.form-group
+				label.sr-only(for='settings-password-new') New Password
+				input.form-control#settings-password(name='password_new', type='password', placeholder='Password', required='')
+			.form-group
+				label(for='settings-account-type') Account type
+				select.form-control#settings-account-type(name='account_type', required='')
+					option(value='', selected='', disabled='') Account type
+					option(value='Patient') Patient
+					option(value='Carer') Carer
+					option(value='CareCompany') Care company
+			button.btn.btn-lg.btn-primary.btn-block#settings-btn(type='submit') Sign in

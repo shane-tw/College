@@ -9,13 +9,23 @@ const pug = require('pug')
 const bcrypt = require('bcrypt')
 const salt_rounds = 10
 
-mongoose.Promise = global.Promise
-mongoose.connect('mongodb://localhost/care_assistant?authSource=admin', {
-	user: 'shane',
-	pass: 'mongodb',
+mongoose_connect_options = {
+	user: 'mongoadmin',
+	pass: 'm0ngodb',
 	useMongoClient: true,
 	bufferMaxEntries: 0
-})
+}
+
+mongoose.Promise = global.Promise
+mongoose.connect('mongodb://localhost/care_assistant?authSource=admin', mongoose_connect_options)
+	.then(() => {
+		console.log('Connected to database successfully.')
+	})
+	.catch((db_error) => {
+		console.log('Failed to connect to database.')
+		console.log(db_error.stack)
+		process.exit(1)
+	})
 
 const CareCompany = mongoose.model('CareCompany', {
 	name: { type: String, required: true },
@@ -174,7 +184,7 @@ app.get('/register', (req, res) => {
 
 const server = app.listen(80, () => {
 	const port = server.address().port
-	console.log('Listening on port %d', port)
+	console.log('Listening on port %d.', port)
 })
 
 // TODO: Check if logged-in user has permission to view/edit this user's details.
@@ -209,7 +219,7 @@ function update_user(model_name, req, res) {
 const account_models = ['Patient', 'Carer', 'CareCompany']
 
 function get_model_from_account_type(account_type) {
-	if (account_models.indexOf(account_type) == -1) {
+	if (account_models.indexOf(account_type) === -1) {
 		return null
 	}
 	return mongoose.model(account_type)
@@ -261,14 +271,15 @@ function handle_db_error(db_error, res) {
 	}
 	for (const key in db_error.errors) {
 		let error = db_error.errors[key]
-		if (db_error.kind === 'ObjectId') {
+		if (error.kind === 'ObjectId') {
 			res.status(404).send({ errors: [{ type: "not-found", key: "user", message: "User does not exist." }]})
 			return
 		}
-		if (error.code == 11000) {
+		if (error.code === 11000) {
 			res.status(409).send({ errors: [{ type: "conflict", key: "database", message: "User already exists." }]})
 			return
 		}
+		// TODO: Figure out how to distinguish between missing required fields and database connection failure.
 	}
 	res.status(503).send({ errors: [{ type: "communication", key: "database", message: "Failed to communicate with database." }]})
 }
