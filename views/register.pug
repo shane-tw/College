@@ -9,8 +9,11 @@ append body
 		form#register-form
 			h2 Please sign up
 			.form-group
+				label.sr-only(for='register-name') Full name
+				input.form-control#register-name(name='name', type='text', placeholder='Full name', required='', autofocus='')
+			.form-group
 				label.sr-only(for='register-email') Email address
-				input.form-control#register-email(name='email', type='email', placeholder='Email address', required='', autofocus='')
+				input.form-control#register-email(name='email', type='email', placeholder='Email address', required='')
 			.form-group
 				label.sr-only(for='register-password') Password
 				input.form-control#register-password(name='password', type='password', placeholder='Password', required='')
@@ -21,11 +24,4 @@ append body
 					option(value='Patient') Patient
 					option(value='Carer') Carer
 					option(value='CareCompany') Care company
-			#company-specific-fields.hide
-				.form-group#register-company-name-group
-					label.sr-only(for='register-name') Company name
-					input.form-control#register-name(name='name', type='text', placeholder='Company name')
-				.form-group#register-country-group
-					label.sr-only(for='register-country') Country
-					input.form-control#register-country(name='country', type='text', placeholder='Country')
 			button.btn.btn-lg.btn-primary.btn-block#register-btn(type='submit') Sign in

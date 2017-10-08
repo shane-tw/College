@@ -18,16 +18,16 @@ mongoose.connect('mongodb://localhost/care_assistant?authSource=admin', {
 })
 
 const CareCompany = mongoose.model('CareCompany', {
-	email: { type: String, required: true, select: false },
-	password_hash: { type: String, required: true, select: false },
 	name: { type: String, required: true },
-	country: { type: String, required: true },
+	email: { type: String, required: true, unique: true },
+	password_hash: { type: String, required: true, select: false },
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false }
 })
 
 const Carer = mongoose.model('Carer', {
-	email: { type: String, required: true, select: false },
+	name: { type: String, required: true },
+	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
 	patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
 	companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }],
@@ -35,7 +35,8 @@ const Carer = mongoose.model('Carer', {
 })
 
 const Patient = mongoose.model('Patient', {
-	email: { type: String, required: true, unique: true, select: false },
+	name: { type: String, required: true },
+	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
 	allow_location_tracking: { type: Boolean, default: true, required: true },
 	facebook_token: String,
@@ -131,7 +132,6 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
 						res.status(401).send({ errors: errors })
 						return
 					}
-					delete user.password_hash
 					login_user(user, req, res)
 				})
 				.catch(hash_error => handle_hash_error(hash_error, res, errors))
@@ -233,6 +233,9 @@ function check_auth_params(req, res, errors, user_model) {
 }
 
 function login_user(user, req, res) {
+	user = user.toObject()
+	delete user.password_hash
+	delete user.__v
 	req.session.logged_in = true
 	req.session.user_id = user._id
 	req.session.account_type = req.body.account_type
