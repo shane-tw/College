@@ -266,7 +266,6 @@ function handle_db_error(db_error, res) {
 			res.status(409).send({ errors: [{ type: "conflict", key: "database", message: "User already exists." }]})
 			return
 		}
-		console.log(error)
 	}
 	res.status(503).send({ errors: [{ type: "communication", key: "database", message: "Failed to communicate with database." }]})
 }
