@@ -43,4 +43,14 @@ $(function() {
 			$('#register-btn').prop('disabled', false)
 		}
 	})
+	$('#register-account-type').change(function() {
+		var company_fields = $('#company-specific-fields')
+		if ($(this).val() === 'CareCompany') {
+			company_fields.removeClass('hide')
+			company_fields.find('input').prop('required', true);
+		} else {
+			company_fields.addClass('hide')
+			company_fields.find('input').prop('required', false);
+		}
+	})
 })

@@ -21,10 +21,11 @@ append body
 					option(value='Patient') Patient
 					option(value='Carer') Carer
 					option(value='CareCompany') Care company
-			.form-group
-				label.sr-only(for='register-name') Company name
-				input.form-control#register-name(name='name', type='text', placeholder='Company name', required='')
-			.form-group
-				label.sr-only(for='register-country') Country
-				input.form-control#register-country(name='country', type='text', placeholder='Country', required='')
+			#company-specific-fields.hide
+				.form-group#register-company-name-group
+					label.sr-only(for='register-name') Company name
+					input.form-control#register-name(name='name', type='text', placeholder='Company name', required='')
+				.form-group#register-country-group
+					label.sr-only(for='register-country') Country
+					input.form-control#register-country(name='country', type='text', placeholder='Country', required='')
 			button.btn.btn-lg.btn-primary.btn-block#register-btn(type='submit') Sign in

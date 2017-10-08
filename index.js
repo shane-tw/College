@@ -60,9 +60,9 @@ app.use(session({
 }))
 app.use(express.static('public'))
 
-app.all('/api/*', function (req, res, next) { // This route mitigates CSRF attacks.
+app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, and also blocks non-logged in users.
 	let errors = []
-	if (req.header('X-Requested-With') != 'XMLHttpRequest') {
+	if (req.header('X-Requested-With') !== 'XMLHttpRequest') {
 		errors.push({ type: "csrf", key: "x-requested-with", message: "Missing 'X-Requested-With: XMLHttpRequest' header from request." })
 	}
 	let source_domain = req.headers.origin
@@ -96,7 +96,7 @@ app.post('/api/register', function (req, res) {
 	delete req.body._id
 	let errors = []
 	const user_model = get_model_from_account_type(req.body.account_type)
-	if (!check_auth_body(req, res, errors, user_model)) {
+	if (!check_auth_params(req, res, errors, user_model)) {
 		return
 	}
 	bcrypt.hash(req.body.password, salt_rounds)
@@ -116,7 +116,7 @@ app.post('/api/register', function (req, res) {
 							error.kind = error.name
 						}
 						error.path = null
-						if (!('path' in error) && typeof error.code != 'string') {
+						if (!('path' in error) && typeof error.code !== 'string') {
 							error.path = error.code.toString()
 						}
 						errors.push({ type: error.kind, key: error.path, message: error.message })
@@ -130,7 +130,7 @@ app.post('/api/register', function (req, res) {
 app.post('/api/login', function (req, res) { // This allows a user to log in.
 	let errors = []
 	const user_model = get_model_from_account_type(req.body.account_type)
-	if (!check_auth_body(req, res, errors, user_model)) {
+	if (!check_auth_params(req, res, errors, user_model)) {
 		return
 	}
 	user_model.findOne({ email: req.body.email }, '+password_hash').lean().exec()
@@ -155,7 +155,7 @@ app.post('/api/login', function (req, res) { // This allows a user to log in.
 		.catch(db_error => respond_user_error(db_error, res, errors))
 })
 
-app.get('/api/logout', function (req, res) {
+app.get('/api/logout', (req, res) => {
 	req.session.destroy()
 	res.send({})
 })
@@ -176,19 +176,19 @@ app.post('/api/me', (req, res) => {
 	update_user(req.session.account_type, req, res)
 })
 
-app.all('/api/*', function (req, res) { // In the event that a route is not handled, 404.
+app.all('/api/*', (req, res) => { // In the event that a route is not handled, 404.
 	res.status(404).send({errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }]})
 })
 
-app.get('/login', function (req, res) {
+app.get('/login', (req, res) => {
 	res.send(pug.renderFile("views/login.pug"))
 })
 
-app.get('/register', function (req, res) {
+app.get('/register', (req, res) => {
 	res.send(pug.renderFile("views/register.pug"))
 })
 
-const server = app.listen(80, function() {
+const server = app.listen(80, () => {
 	const port = server.address().port
 	console.log('Listening on port %d', port)
 })
@@ -234,11 +234,11 @@ function get_model_from_account_type(account_type) {
 	return mongoose.model(account_type)
 }
 
-function check_auth_body(req, res, errors, user_model) {
-	if (typeof req.body.email != 'string') {
+function check_auth_params(req, res, errors, user_model) {
+	if (typeof req.body.email !== 'string') {
 		errors.push({ type: "required", key: "email", message: "Path `email` is required." })
 	}
-	if (typeof req.body.password != 'string') {
+	if (typeof req.body.password !== 'string') {
 		errors.push({ type: "required", key: "password", message: "Path `password` is required." })
 	}
 	if (user_model == null) {
@@ -272,7 +272,7 @@ function respond_user(user, res, errors) {
 }
 
 function respond_user_error(db_error, res, errors) {
-	if (db_error.kind == 'ObjectId') {
+	if (db_error.kind === 'ObjectId') {
 		errors.push({ type: "not-found", key: "user", message: "User does not exist." })
 		res.status(404).send({ errors: errors })
 		return
