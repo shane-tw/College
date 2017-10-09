@@ -1,0 +1,34 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Geo-tagging features">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="geotag_switch"
+            android:title="Enable automatic geo-tagging"
+            android:summary="Other users will be able to view your location remotely" />
+
+        <Preference
+            android:dependency="geotag_switch"
+            android:key="link_facebook_btn"
+            android:title="Link Facebook account"
+            android:summary="Geo-tags will be posted to your Facebook wall" />
+
+        <Preference
+            android:dependency="geotag_switch"
+            android:key="link_twitter_btn"
+            android:title="Link Twitter account"
+            android:summary="Geo-tags will be posted to your Twitter feed" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Geo-fence features">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications_new_message"
+            android:title="Enable fence breach notification"
+            android:summary="Send yourself a notification if you breach the geo-fence" />
+        <Preference
+            android:defaultValue="true"
+            android:key="notifications_new_message"
+            android:title="Link phone number"
+            android:summary="An SMS message will be sent to another user if you breach the geo-fence" />
+    </PreferenceCategory>
+</PreferenceScreen>

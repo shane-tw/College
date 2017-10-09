@@ -1,0 +1,5 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="sign_out_btn"
+        android:title="Sign out" />
+</PreferenceScreen>

@@ -1,0 +1,21 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+    <header
+        android:fragment="pm.shane.alexaclone.SettingsActivity$HomePreferenceFragment"
+        android:icon="@drawable/ic_home_black_24px"
+        android:title="@string/pref_header_home" />
+
+    <header
+        android:fragment="pm.shane.alexaclone.SettingsActivity$MedicalPreferenceFragment"
+        android:icon="@drawable/ic_stethoscope_black_24px"
+        android:title="@string/pref_header_medical" />
+
+    <header
+        android:fragment="pm.shane.alexaclone.SettingsActivity$SecurityPreferenceFragment"
+        android:icon="@drawable/ic_place_black_24px"
+        android:title="@string/pref_header_location" />
+
+    <header
+        android:fragment="pm.shane.alexaclone.SettingsActivity$SettingsPreferenceFragment"
+        android:icon="@drawable/ic_settings_black_24px"
+        android:title="@string/pref_header_settings" />
+</preference-headers>

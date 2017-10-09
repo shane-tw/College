@@ -1,0 +1,47 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_category_assistant">
+        <Preference
+            android:key="current_time_btn"
+            android:title="@string/pref_title_time" />
+
+        <Preference
+            android:key="current_weather_btn"
+            android:title="@string/pref_title_weather"
+            android:summary="@string/pref_description_weather" />
+
+        <Preference
+            android:key="play_music_btn"
+            android:title="Play music" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_automation">
+        <SwitchPreference
+            android:key="lights_switch"
+            android:title="@string/pref_title_lights"
+            android:summary="@string/pref_description_lights" />
+
+        <SwitchPreference
+            android:key="heating_switch"
+            android:title="@string/pref_title_heating"
+            android:summary="@string/pref_description_heating" />
+
+        <SwitchPreference
+            android:key="remote_camera_btn"
+            android:title="Remote Camera"
+            android:summary="Let others see everything you're doing" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_interactive">
+        <Preference
+            android:key="order_takeaway_btn"
+            android:title="Order take-away" />
+
+        <Preference
+            android:key="order_shopping_btn"
+            android:title="Order shopping" />
+
+        <Preference
+            android:key="order_taxi_btn"
+            android:title="Order taxi" />
+    </PreferenceCategory>
+</PreferenceScreen>
