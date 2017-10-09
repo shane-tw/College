@@ -17,17 +17,20 @@ append body
 				form#personal-form
 					.form-group
 						label.sr-only(for='settings-name') Full name
-						input.form-control#settings-name(name='name', type='text', placeholder='Full name', required='', autofocus='')
+						input.form-control#settings-name(name='name', type='text', placeholder='Full name', required='', autofocus='', value= user.name)
 					.form-group
 						label.sr-only(for='settings-email') Email address
-						input.form-control#settings-email(name='email', type='email', placeholder='Email address', required='')
+						input.form-control#settings-email(name='email', type='email', placeholder='Email address', required='', value= user.email)
 					button.btn.btn-lg.btn-primary.btn-block#personal-btn(type='submit') Save changes
 			#password.tab-pane
 				form#password-form
 					.form-group
 						label.sr-only(for='settings-password') Old Password
-						input.form-control#settings-password(name='password', type='password', placeholder='Old Password', required='')
+						input.form-control#settings-password(name='password_old', type='password', placeholder='Old Password', required='')
 					.form-group
 						label.sr-only(for='settings-password-new') New Password
 						input.form-control#settings-password(name='password_new', type='password', placeholder='New Password', required='')
+					.form-group
+						label.sr-only(for='settings-password-confirm') New Password
+						input.form-control#settings-password(name='password_confirm', type='password', placeholder='Confirm Password', required='')
 					button.btn.btn-lg.btn-primary.btn-block#password-btn(type='submit') Save changes

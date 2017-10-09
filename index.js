@@ -8,6 +8,7 @@ const Schema = mongoose.Schema
 const pug = require('pug')
 const bcrypt = require('bcrypt')
 const salt_rounds = 10
+const fs = require('fs-extra')
 
 mongoose_connect_options = {
 	user: 'mongoadmin',
@@ -17,15 +18,6 @@ mongoose_connect_options = {
 }
 
 mongoose.Promise = global.Promise
-mongoose.connect('mongodb://localhost/care_assistant?authSource=admin', mongoose_connect_options)
-	.then(() => {
-		console.log('Connected to database successfully.')
-	})
-	.catch((db_error) => {
-		console.log('Failed to connect to database.')
-		console.log(db_error.stack)
-		process.exit(1)
-	})
 
 const CareCompany = mongoose.model('CareCompany', {
 	name: { type: String, required: true },
@@ -103,50 +95,62 @@ app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, an
 	next()
 })
 
-app.post('/api/register', function (req, res) {
+app.post('/api/register', async function (req, res) {
 	delete req.body._id
 	let errors = []
 	const user_model = get_model_from_account_type(req.body.account_type)
 	if (!check_auth_params(req, res, errors, user_model)) {
 		return
 	}
-	bcrypt.hash(req.body.password, salt_rounds)
-		.then(function (password_hash) {
-			req.body.password_hash = password_hash
-			req.body._id = mongoose.Types.ObjectId()
-			const user = new user_model(req.body)
-			user.save()
-				.then(user => login_user(user, req, res))
-				.catch(db_error => handle_db_error(db_error, res))
-		})
-		.catch(hash_error => handle_hash_error(hash_error, res, errors))
+	try {
+		password_hash = await bcrypt.hash(req.body.password, salt_rounds)
+	} catch (hash_error) {
+		handle_hash_error(hash_error, res, errors)
+		return
+	}
+	req.body.password_hash = password_hash
+	req.body._id = mongoose.Types.ObjectId()
+	const user = new user_model(req.body)
+	try {
+		const new_user = await user.save()
+		login_user(new_user, req, res)
+	}
+	catch (db_error) {
+		handle_db_error(db_error, res)
+	}
 })
 
-app.post('/api/login', function (req, res) { // This allows a user to log in.
+app.post('/api/login', async function (req, res) { // This allows a user to log in.
 	let errors = []
 	const user_model = get_model_from_account_type(req.body.account_type)
 	if (!check_auth_params(req, res, errors, user_model)) {
 		return
 	}
-	user_model.findOne({ email: req.body.email }, '+password_hash').lean().exec()
-		.then(function (user) {
-			if (user == null) {
-				errors.push({ type: "invalid", key: "login-details", message: "Invalid email or password." })
-				res.status(401).send({ errors: errors })
-				return
-			}
-			bcrypt.compare(req.body.password, user.password_hash)
-				.then(function (match) {
-					if (!match) {
-						errors.push({ type: "invalid", key: "login-details", message: "Invalid email or password." })
-						res.status(401).send({ errors: errors })
-						return
-					}
-					login_user(user, req, res)
-				})
-				.catch(hash_error => handle_hash_error(hash_error, res, errors))
-		})
-		.catch(db_error => handle_db_error(db_error, res))
+	let user
+	try {
+		user = await user_model.findOne({ email: req.body.email }, '+password_hash').lean().exec()
+	} catch (db_error) {
+		handle_db_error(db_error, res)
+		return
+	}
+	if (user == null) {
+		errors.push({ type: "invalid", key: "login-details", message: "Invalid email or password." })
+		res.status(401).send({ errors: errors })
+		return
+	}
+	let password_matches
+	try {
+		password_matches = await bcrypt.compare(req.body.password, user.password_hash)
+	} catch (hash_error) {
+		handle_hash_error(hash_error, res, errors)
+		return
+	}
+	if (!password_matches) {
+		errors.push({ type: "invalid", key: "login-details", message: "Invalid email or password." })
+		res.status(401).send({ errors: errors })
+		return
+	}
+	login_user(user, req, res)
 })
 
 app.get('/api/logout', (req, res) => {
@@ -190,42 +194,97 @@ app.get('*', (req, res, next) => {
 	next()
 })
 
-app.get('/settings', (req, res) => {
-	res.send(pug.renderFile("views/settings.pug"))
+app.get('/settings', async (req, res) => {
+	const user_model = mongoose.model(req.session.account_type)
+	try {
+		const user = await user_model.findOne({ _id: req.session.user_id }).lean().exec()
+		res.send(pug.renderFile("views/settings.pug", { user: user}))
+	} catch (db_error) {
+		res.status(500).send("Can't edit settings right now.")
+	}
 })
 
-const server = app.listen(80, () => {
+app.get('/upload', async (req, res) => {
+	try {
+		await fs.writeFile('test.txt', 'hello world', { encoding: 'base64' })
+	} catch (err) {
+		console.log(err)
+	}
+})
+
+const server = app.listen(80, async () => {
 	const port = server.address().port
 	console.log('Listening on port %d.', port)
+	try {
+		await mongoose.connect('mongodb://localhost/care_assistant?authSource=admin', mongoose_connect_options)
+		console.log('Connected to database successfully.')
+	} catch (db_error) {
+		console.log('Failed to connect to database.')
+		console.log(db_error.stack)
+		process.exit(1)
+	}
 })
 
 // TODO: Check if logged-in user has permission to view/edit this user's details.
-function get_user(model_name, req, res) {
+async function get_user(model_name, req, res) {
 	let errors = []
 	const user_model = mongoose.model(model_name)
-	user_model.findOne({ _id: req.params.user_id }).lean().exec()
-		.then(user => respond_user(user, res, errors))
-		.catch(db_error => handle_db_error(db_error, res))
+	try {
+		const user = await user_model.findOne({ _id: req.params.user_id }).lean().exec()
+		respond_user(user, res, errors)
+	} catch (db_error) {
+		handle_db_error(db_error, res)
+	}
 }
 
-function update_user(model_name, req, res) {
+async function update_user(model_name, req, res) {
 	delete req.body.password_hash // We don't want someone trying to modify this.
 	let errors = []
 	const user_model = mongoose.model(model_name)
-	if (req.body.password != null) {
-		bcrypt.hash(req.body.password, salt_rounds)
-			.then(function (password_hash) {
-				req.body.password_hash = password_hash
-				user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
-					.then(user => respond_user(user, res, errors))
-					.catch(db_error => handle_db_error(db_error, res));
-			})
-			.catch(hash_error => handle_hash_error(hash_error, res, errors))
+	if (req.body.password_new == null) {
+		try {
+			const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
+			respond_user(new_user, res, errors)
+		} catch (db_error) {
+			handle_db_error(db_error, res)
+		}
 		return
 	}
-	user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
-		.then(user => respond_user(user, res, errors))
-		.catch(db_error => handle_db_error(db_error, res));
+	if (req.body.password_new != req.body.password_confirm) {
+		res.status(400).send({ errors: [{ type: "invalid", key: "password_confirm", message: "New passwords must match."}] })
+		return
+	}
+	let user
+	try {
+		user = await user_model.findOne({ _id: req.session.user_id }, '+password_hash').lean().exec()
+	} catch (db_error) {
+		handle_db_error(db_error, res)
+		return
+	}
+	let old_password_matches
+	try {
+		old_password_matches = await bcrypt.compare(req.body.password_old, user.password_hash)
+	} catch (hash_error) {
+		handle_hash_error(hash_error, res, errors)
+		return
+	}
+	if (!old_password_matches) {
+		errors.push({ type: "invalid", key: "login-details", message: "Old password does not match the one on record." })
+		res.status(401).send({ errors: errors })
+		return
+	}
+	try {
+		req.body.password_hash = await bcrypt.hash(req.body.password_new, salt_rounds)
+	} catch (hash_error) {
+		handle_hash_error(hash_error, res, errors)
+		return
+	}
+	try {
+		const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
+		respond_user(new_user, res, errors)
+	} catch (db_error) {
+		handle_db_error(db_error, res)
+	}
 }
 
 const account_models = ['Patient', 'Carer', 'CareCompany']
@@ -284,7 +343,7 @@ function handle_db_error(db_error, res) {
 		db_error = { errors: [ db_error ] }
 	}
 	for (const key in db_error.errors) {
-		let error = db_error.errors[key]
+		const error = db_error.errors[key]
 		if (error.kind === 'ObjectId') {
 			res.status(404).send({ errors: [{ type: "not-found", key: "user", message: "User does not exist." }]})
 			return

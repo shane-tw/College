@@ -36,7 +36,7 @@ $(function() {
 			new PNotify({
 				title: 'Settings Failure',
 				text: message,
-				type: 'Failed to save settings.'
+				type: 'error'
 			})
 		},
 		complete: function() {
