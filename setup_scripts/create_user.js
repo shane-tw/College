@@ -7,4 +7,3 @@ db.createUser(
 	}
 )
 db.shutdownServer()
-exit

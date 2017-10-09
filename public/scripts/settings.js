@@ -1,19 +1,18 @@
 $(function() {
-	$('#login-form').ajaxForm({
-		url: '/api/login',
+	$('#settings-container form').ajaxForm({
+		url: '/api/me',
 		type: 'post',
 		dataType: 'json',
 		timeout: 5000,
 		beforeSubmit: function(arr, form, options) { 
-			$('#login-btn').prop('disabled', true)
+			$('#register-btn').prop('disabled', true)
 		},
 		success: function(response, textStatus, xhr, form) {
 			new PNotify({
-				title: 'Login successful',
-				text: 'You will be redirected soon.',
+				title: 'Settings Success',
+				text: 'Settings changed successfully.',
 				type: 'success'
 			})
-			document.location.href = $('#next-url').val()
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			var response = { errors: [] }
@@ -35,13 +34,13 @@ $(function() {
 				}
 			}
 			new PNotify({
-				title: 'Login failed',
+				title: 'Settings Failure',
 				text: message,
-				type: 'error'
+				type: 'Failed to save settings.'
 			})
 		},
 		complete: function() {
-			$('#login-btn').prop('disabled', false)
+			$('#register-btn').prop('disabled', false)
 		}
 	})
 })

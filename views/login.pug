@@ -21,4 +21,7 @@ append body
 					option(value='Patient') Patient
 					option(value='Carer') Carer
 					option(value='CareCompany') Care company
+			- if (next_url == null)
+				- next_url = '/'
+			input#next-url(name='next_url', type='hidden', value= next_url)
 			button.btn.btn-lg.btn-primary.btn-block#login-btn(type='submit') Sign in

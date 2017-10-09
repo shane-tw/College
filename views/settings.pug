@@ -5,22 +5,29 @@ block vars
 append scripts
 	script(src='scripts/settings.js')
 append body
-	.container
-		form#settings-form
-			h2 Settings
-			.form-group
-				label.sr-only(for='settings-name') Full name
-				input.form-control#settings-name(name='name', type='text', placeholder='Full name', required='', autofocus='')
-			.form-group
-				label.sr-only(for='settings-email') Email address
-				input.form-control#settings-email(name='email', type='email', placeholder='Email address', required='')
-			.form-group
-				label.sr-only(for='settings-password') Current Password
-				input.form-control#settings-password(name='password', type='password', placeholder='Password', required='')
-			.form-group
-				label.sr-only(for='settings-password-new') New Password
-				input.form-control#settings-password(name='password_new', type='password', placeholder='Password', required='')
-			.form-group
-				label(for='settings-account-type') Account type
-				span#settings-account-type(name='account_type') Patient
-			button.btn.btn-lg.btn-primary.btn-block#settings-btn(type='submit') Sign in
+	#settings-container.container
+		h2 Settings
+		ul.nav.nav-tabs
+			li.active
+				a(href="#personal", data-toggle="tab") Personal
+			li
+				a(href="#password", data-toggle="tab") Password
+		.tab-content.margin-top
+			#personal.tab-pane.active
+				form#personal-form
+					.form-group
+						label.sr-only(for='settings-name') Full name
+						input.form-control#settings-name(name='name', type='text', placeholder='Full name', required='', autofocus='')
+					.form-group
+						label.sr-only(for='settings-email') Email address
+						input.form-control#settings-email(name='email', type='email', placeholder='Email address', required='')
+					button.btn.btn-lg.btn-primary.btn-block#personal-btn(type='submit') Save changes
+			#password.tab-pane
+				form#password-form
+					.form-group
+						label.sr-only(for='settings-password') Old Password
+						input.form-control#settings-password(name='password', type='password', placeholder='Old Password', required='')
+					.form-group
+						label.sr-only(for='settings-password-new') New Password
+						input.form-control#settings-password(name='password_new', type='password', placeholder='New Password', required='')
+					button.btn.btn-lg.btn-primary.btn-block#password-btn(type='submit') Save changes

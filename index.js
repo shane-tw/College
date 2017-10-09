@@ -175,11 +175,23 @@ app.all('/api/*', (req, res) => { // In the event that a route is not handled, 4
 })
 
 app.get('/login', (req, res) => {
-	res.send(pug.renderFile("views/login.pug"))
+	res.send(pug.renderFile("views/login.pug", { next_url: req.query.next_url }))
 })
 
 app.get('/register', (req, res) => {
 	res.send(pug.renderFile("views/register.pug"))
+})
+
+app.get('*', (req, res, next) => {
+	if (!req.session.logged_in) {
+		res.redirect('/login?next_url=' + encodeURIComponent(req.url));
+		return
+	}
+	next()
+})
+
+app.get('/settings', (req, res) => {
+	res.send(pug.renderFile("views/settings.pug"))
 })
 
 const server = app.listen(80, () => {
@@ -243,7 +255,9 @@ function check_auth_params(req, res, errors, user_model) {
 }
 
 function login_user(user, req, res) {
-	user = user.toObject()
+	if (typeof user !== 'object') {
+		user = user.toObject()
+	}
 	delete user.password_hash
 	delete user.__v
 	req.session.logged_in = true
