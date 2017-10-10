@@ -25,7 +25,7 @@ const CareCompany = mongoose.model('CareCompany', {
 	password_hash: { type: String, required: true, select: false },
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: 'uploads/default-avatar.png'}
+	avatar: { type: String, required: true, default: 'uploads/images/default-avatar.png'}
 })
 
 const Carer = mongoose.model('Carer', {
@@ -58,7 +58,7 @@ const Patient = mongoose.model('Patient', {
 	geofence_points: [{ latitude: { type: Number, required: true }, longitude: { type: Number, required: true }}],
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: 'uploads/default-avatar.png'}
+	avatar: { type: String, required: true, default: 'uploads/images/default-avatar.png'}
 })
 
 app.use(body_parser.urlencoded({extended: true}))
