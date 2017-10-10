@@ -34,7 +34,7 @@ const Carer = mongoose.model('Carer', {
 	password_hash: { type: String, required: true, select: false },
 	patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
 	companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }],
-	__v: { type: Number, select: false }
+	__v: { type: Number, select: false },
 	avatar: { type: String, required: true, default: 'public/uploads/default-avatar.png'}
 })
 
