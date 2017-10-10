@@ -1,3 +1,7 @@
+## Prerequisites:
+NodeJS >= 8.0
+MongoDB
+
 ## Setup:
 Run `npm install`  
 Run `mkdir mongodb && mongod --dbpath mongodb`  
