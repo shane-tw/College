@@ -29,7 +29,7 @@ append body
 								option(value='CareCompany') Care company
 						- if (next_url == null)
 							- next_url = '/'
-						input#next-url(name='next_url', type='hidden', value= next_url)
+						input#register-next-url(name='next_url', type='hidden', value= next_url)
 					.modal-footer
 						button.btn.btn-secondary(type="button", data-dismiss="modal") Close
 						button.btn.btn-primary#register-btn(type="submit") Register

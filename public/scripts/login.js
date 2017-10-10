@@ -13,7 +13,7 @@ $(function() {
 				text: 'You will be redirected soon.',
 				type: 'success'
 			})
-			document.location.href = $('#next-url').val()
+			document.location.href = $('#login-next-url').val()
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			var response = { errors: [] }
