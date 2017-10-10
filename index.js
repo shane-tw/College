@@ -25,7 +25,7 @@ const CareCompany = mongoose.model('CareCompany', {
 	password_hash: { type: String, required: true, select: false },
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: 'public/uploads/default-avatar.png'}
+	avatar: { type: String, required: true, default: 'uploads/default-avatar.png'}
 })
 
 const Carer = mongoose.model('Carer', {
@@ -35,12 +35,12 @@ const Carer = mongoose.model('Carer', {
 	patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
 	companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }],
 	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: 'public/uploads/default-avatar.png'}
+	avatar: { type: String, required: true, default: 'uploads/images/default-avatar.png'}
 })
 
 const RemoteCameraSchema = new Schema({
 	enabled: { type: Boolean, default: true, required: true },
-	last_picture: { type: String, required: true, default: 'public/uploads/no-camera.jpg' }
+	last_picture: { type: String, required: true, default: 'uploads/images/no-camera.jpg' }
 },{ _id : false })
 
 const Patient = mongoose.model('Patient', {
@@ -58,7 +58,7 @@ const Patient = mongoose.model('Patient', {
 	geofence_points: [{ latitude: { type: Number, required: true }, longitude: { type: Number, required: true }}],
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: 'public/uploads/default-avatar.png'}
+	avatar: { type: String, required: true, default: 'uploads/default-avatar.png'}
 })
 
 app.use(body_parser.urlencoded({extended: true}))
@@ -185,31 +185,35 @@ app.all('/api/*', (req, res) => { // In the event that a route is not handled, 4
 	res.status(404).send({errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }]})
 })
 
-app.get('/login', (req, res) => {
-	res.send(pug.renderFile("views/login.pug", { next_url: req.query.next_url }))
-})
-
-app.get('/register', (req, res) => {
-	res.send(pug.renderFile("views/register.pug"))
+app.get('/', async (req, res) => {
+	show_pug('views/index.pug', req, res)
 })
 
 app.get('*', (req, res, next) => {
 	if (!req.session.logged_in) {
-		res.redirect('/login?next_url=' + encodeURIComponent(req.url));
+		res.redirect('/?next_url=' + encodeURIComponent(req.url));
 		return
 	}
 	next()
 })
 
 app.get('/settings', async (req, res) => {
+	show_pug('views/settings.pug', req, res)
+})
+
+async function show_pug(pug_name, req, res) {
+	if (!req.session.logged_in) {
+		res.send(pug.renderFile(pug_name, { current_url: req.path, user: null, logged_in: false }))
+		return
+	}
 	const user_model = mongoose.model(req.session.account_type)
 	try {
 		const user = await user_model.findOne({ _id: req.session.user_id }).lean().exec()
-		res.send(pug.renderFile("views/settings.pug", { user: user}))
+		res.send(pug.renderFile(pug_name, { current_url: req.path, user: user, logged_in: true }))
 	} catch (db_error) {
-		res.status(500).send("Can't edit settings right now.")
+		res.status(503).send("Failed to communicate with the database.")
 	}
-})
+}
 
 const server = app.listen(80, async () => {
 	const port = server.address().port
@@ -251,7 +255,7 @@ async function update_user(model_name, req, res) {
 	if (!await run_image_checks({ name: 'avatar', content: req.body.avatar }, req, res)) {
 		return
 	}
-	if (!await run_image_checks({ name: 'remote-camera', content: req.body['remote_camera.last_picture'] }, req, res)) {
+	if (!await run_image_checks({ name: 'remote-camera', content: req.body['remote_camera[last_picture]'] }, req, res)) {
 		return
 	}
 	try {
@@ -282,17 +286,19 @@ async function run_image_checks(image, req, res) {
 		res.status(400).send({ errors: [{ type: "failure", key: "base64", message: "Invalid image format. Should be in base64 with data-type."}]})
 		return false
 	}
-	const image_directory = 'public/uploads/images/' + get_path_from_type(req.body.account_type) + '/' + req.params.user_id
+	const image_directory_web = 'uploads/images/' + get_path_from_type(req.body.account_type) + '/' + req.params.user_id
+	const image_path_web = image_directory_web + '/' + image.name
+	const image_directory = 'public/' + image_directory_web
 	const image_path = image_directory + '/' + image.name
 	try {
 		await fs.mkdirs(image_directory)
 		await fs.writeFile(image_path, image_matches[2], { encoding: 'base64' })
 		switch (image.name) {
 			case 'avatar':
-				req.body.avatar = image_path
+				req.body.avatar = image_path_web
 				break
 			case 'remote-camera':
-				req.body['remote_camera.last_picture'] = image_path
+				req.body['remote_camera[last_picture]'] = image_path_web
 		}
 	} catch (err) {
 		res.status(500).send({ errors: [{ type: "failure", key: "io-write", message: "Failed to write image to file."}]})

@@ -1,4 +1,5 @@
-extends common.pug
+extends navbar.pug
+
 block vars
 	- var title='Virtual Care - Settings'
 	- var description='This is a test'
@@ -12,8 +13,6 @@ append body
 				a(href="#personal", data-toggle="tab") Personal
 			li
 				a(href="#password", data-toggle="tab") Password
-			li
-				a(href="#patients", data-toggle="tab") Patients
 			
 		.tab-content.margin-top
 			#personal.tab-pane.active
@@ -37,9 +36,3 @@ append body
 						label.sr-only(for='settings-password-confirm') Confirm Password
 						input.form-control#settings-password(name='password_confirm', type='password', placeholder='Confirm Password', required='')
 					button.btn.btn-lg.btn-primary.btn-block#password-btn(type='submit') Save changes
-			#patients.tab-pane
-				.card
-					ul.list-group.list-group-flush
-						li.list-group-item Cras justo odio
-						li.list-group-item Dapibus ac facilisis in
-						li.list-group-item Vestibulum at eros

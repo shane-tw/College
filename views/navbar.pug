@@ -1,0 +1,43 @@
+extend common.pug
+
+append scripts
+	script(src='scripts/navbar.js')
+
+append body
+	nav.navbar.navbar-default
+		.container
+			.navbar-header
+				button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#bs-example-navbar-collapse-1", aria-expanded="false")
+					span.sr-only Toggle navigation
+					span.icon-bar
+					span.icon-bar
+					span.icon-bar
+				a.navbar-brand(href="#") Care Assistant
+			#bs-example-navbar-collapse-1.collapse.navbar-collapse
+				ul.nav.navbar-nav
+					li(class=(current_url == '/') && 'active')
+						a(href="/")
+							| Dashboard 
+							span.sr-only (current)
+					li
+						a(data-target="#") Patients
+				ul.nav.navbar-nav.navbar-right
+					- if (logged_in)
+						li.dropdown
+							a.dropdown-toggle(href="#", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")
+								img.avatar-thumb.img-circle(src= user.avatar, width="18")
+								| #{user.name}
+								span.caret
+							ul.dropdown-menu
+								li
+									a(href="/settings") Settings
+								li.divider(role="separator")
+								li
+									a#logout-btn(href="#", data-target="#") Sign out
+					- else
+						li
+							a(href="#", data-toggle="modal", data-target="#registerModal") Register
+						li
+							a(href="#", data-toggle="modal", data-target="#loginModal") Log In
+include login.pug
+include register.pug
