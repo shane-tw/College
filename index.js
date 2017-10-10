@@ -38,6 +38,11 @@ const Carer = mongoose.model('Carer', {
 	avatar: { type: String, required: true, default: 'public/uploads/default-avatar.png'}
 })
 
+const RemoteCameraSchema = new Schema({
+	enabled: { type: Boolean, default: true, required: true },
+	last_picture: { type: String, required: true, default: 'public/uploads/no-camera.jpg' }
+},{ _id : false })
+
 const Patient = mongoose.model('Patient', {
 	name: { type: String, required: true },
 	email: { type: String, required: true, unique: true },
@@ -47,7 +52,7 @@ const Patient = mongoose.model('Patient', {
 	twitter_token: String,
 	last_location: { latitude: Number, longitude: Number },
 	last_location_time: Date,
-	remote_camera: { enabled: { type: Boolean, default: true, required: true }, last_picture: { type: String, required: true, default: 'public/uploads/no-camera.jpg' } },
+	remote_camera: { type: RemoteCameraSchema, required: true, default: {} },
 	calendar_events: [{ name: { type: String, required: true }, date: { type: Date, required: true }}],
 	enable_geofence: { type: Boolean, default: false, required: true },
 	geofence_points: [{ latitude: { type: Number, required: true }, longitude: { type: Number, required: true }}],
@@ -99,20 +104,18 @@ app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, an
 })
 
 app.post('/api/register', async function (req, res) {
-	delete req.body._id
+	delete req.body._id // Prevents users from modifying this.
 	let errors = []
 	const user_model = get_model_from_account_type(req.body.account_type)
 	if (!check_auth_params(req, res, errors, user_model)) {
 		return
 	}
 	try {
-		password_hash = await bcrypt.hash(req.body.password, salt_rounds)
+		req.body.password_hash = await bcrypt.hash(req.body.password, salt_rounds)
 	} catch (hash_error) {
 		handle_hash_error(hash_error, res, errors)
 		return
 	}
-	req.body.password_hash = password_hash
-	req.body._id = mongoose.Types.ObjectId()
 	const user = new user_model(req.body)
 	try {
 		const new_user = await user.save()
@@ -207,14 +210,6 @@ app.get('/settings', async (req, res) => {
 	}
 })
 
-app.get('/upload', async (req, res) => {
-	try {
-		await fs.writeFile('public/uploads/images/', 'hello world', { encoding: 'base64' })
-	} catch (err) {
-		console.log(err)
-	}
-})
-
 const server = app.listen(80, async () => {
 	const port = server.address().port
 	console.log('Listening on port %d.', port)
@@ -234,7 +229,7 @@ async function get_user(model_name, req, res) {
 	const user_model = mongoose.model(model_name)
 	try {
 		const user = await user_model.findOne({ _id: req.params.user_id }).lean().exec()
-		respond_user(user, res, errors)
+		respond_user(user, res)
 	} catch (db_error) {
 		handle_db_error(db_error, res)
 	}
@@ -242,22 +237,72 @@ async function get_user(model_name, req, res) {
 
 async function update_user(model_name, req, res) {
 	delete req.body.password_hash // We don't want someone trying to modify this.
-	let errors = []
+	req.body.account_type = model_name
 	const user_model = mongoose.model(model_name)
-	if (!await run_password_checks(req, res, errors)) {
+	if (!await run_password_checks(req, res)) {
 		return
 	}
+	if (!await run_image_checks({ name: 'avatar', content: req.body.avatar }, req, res)) {
+		return
+	}
+	if (typeof req.body.remote_camera !== 'object') {
+		req.body.remote_camera = { last_picture: null }
+	}
+	if (!await run_image_checks({ name: 'remote-camera', content: req.body.remote_camera.last_picture }, req, res)) {
+		return
+	}
+	if (req.body.remote_camera.last_picture == null) {
+		delete req.body.remote_camera.last_picture
+	}
 	try {
-		const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
-		respond_user(new_user, res, errors)
+		const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true, runValidators: true}).exec()
+		respond_user(new_user, res)
 	} catch (db_error) {
 		handle_db_error(db_error, res)
 	}
 }
 
 const account_models = ['Patient', 'Carer', 'CareCompany']
+const account_paths = ['patients', 'carers', 'companies']
 
-async function run_password_checks(req, res, errors) {
+function get_path_from_type(account_type) {
+	const models_index = account_models.indexOf(account_type)
+	if (models_index === -1) {
+		return null
+	}
+	return account_paths[models_index]
+}
+
+async function run_image_checks(image, req, res) {
+	if (image.content == null) {
+		return true
+	}
+	const image_matches = image.content.match(/^data:(image\/[a-z.-]+);base64,(.+)$/)
+	if (image_matches.length !== 3) {
+		res.status(400).send({ errors: [{ type: "failure", key: "base64", message: "Invalid image format. Should be in base64 with data-type."}]})
+		return false
+	}
+	const image_directory = 'public/uploads/images/' + get_path_from_type(req.body.account_type) + '/' + req.params.user_id
+	const image_path = image_directory + '/' + image.name
+	try {
+		await fs.mkdirs(image_directory)
+		await fs.writeFile(image_path, image_matches[2], { encoding: 'base64' })
+		switch (image.name) {
+			case 'avatar':
+				req.body.avatar = image_path
+				break
+			case 'remote-camera':
+				req.body.remote_camera.last_picture = image_path
+		}
+	} catch (err) {
+		res.status(500).send({ errors: [{ type: "failure", key: "io-write", message: "Failed to write image to file."}]})
+		return false
+	}
+	return true
+}
+
+async function run_password_checks(req, res) {
+	let errors = []
 	if (req.body.password_new == null) {
 		return true
 	}
@@ -334,7 +379,7 @@ function handle_hash_error(hash_error, res, errors) {
 	res.status(500).send({ errors: errors })
 }
 
-function respond_user(user, res, errors) {
+function respond_user(user, res) {
 	if (user == null) {
 		res.status(404).send({errors: [{ type: "not-found", key: "user", message: "User does not exist." }]})
 		return
@@ -346,17 +391,23 @@ function handle_db_error(db_error, res) {
 	if (!('errors' in db_error)) { // Mongoose has errors, MongoDB has single error
 		db_error = { errors: [ db_error ] }
 	}
+	let errors = []
 	for (const key in db_error.errors) {
 		const error = db_error.errors[key]
 		if (error.kind === 'ObjectId') {
 			res.status(404).send({ errors: [{ type: "not-found", key: "user", message: "User does not exist." }]})
 			return
-		}
-		if (error.code === 11000) {
+		} else if (error.kind === 'required') {
+			errors.push({ type: error.kind, key: error.path, message: error.message })
+		} else if (error.code === 11000) {
 			res.status(409).send({ errors: [{ type: "conflict", key: "database", message: "User already exists." }]})
 			return
 		}
 		// TODO: Figure out how to distinguish between missing required fields and database connection failure.
+	}
+	if (errors.length > 0) {
+		res.status(400).send({ errors: errors })
+		return
 	}
 	res.status(503).send({ errors: [{ type: "communication", key: "database", message: "Failed to communicate with database." }]})
 }
