@@ -403,7 +403,6 @@ function handle_db_error(db_error, res) {
 			res.status(409).send({ errors: [{ type: "conflict", key: "database", message: "User already exists." }]})
 			return
 		}
-		// TODO: Figure out how to distinguish between missing required fields and database connection failure.
 	}
 	if (errors.length > 0) {
 		res.status(400).send({ errors: errors })
