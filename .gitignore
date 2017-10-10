@@ -1,5 +1,5 @@
 node_modules/
 mongodb/
-public/uploads/images/
+public/uploads/images/*
 !public/uploads/images/default-avatar.png
 !public/uploads/images/no-camera.jpg
