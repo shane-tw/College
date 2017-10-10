@@ -105,6 +105,7 @@ app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, an
 
 app.post('/api/register', async function (req, res) {
 	delete req.body._id // Prevents users from modifying this.
+	delete req.body.__v
 	let errors = []
 	const user_model = get_model_from_account_type(req.body.account_type)
 	if (!check_auth_params(req, res, errors, user_model)) {
@@ -363,7 +364,7 @@ function check_auth_params(req, res, errors, user_model) {
 }
 
 function login_user(user, req, res) {
-	if (typeof user !== 'object') {
+	if (typeof user.toObject === 'function') { // Convert mongoose document to plain object
 		user = user.toObject()
 	}
 	delete user.password_hash
