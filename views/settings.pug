@@ -12,6 +12,9 @@ append body
 				a(href="#personal", data-toggle="tab") Personal
 			li
 				a(href="#password", data-toggle="tab") Password
+			li
+				a(href="#patients", data-toggle="tab") Patients
+			
 		.tab-content.margin-top
 			#personal.tab-pane.active
 				form#personal-form
@@ -31,6 +34,12 @@ append body
 						label.sr-only(for='settings-password-new') New Password
 						input.form-control#settings-password(name='password_new', type='password', placeholder='New Password', required='')
 					.form-group
-						label.sr-only(for='settings-password-confirm') New Password
+						label.sr-only(for='settings-password-confirm') Confirm Password
 						input.form-control#settings-password(name='password_confirm', type='password', placeholder='Confirm Password', required='')
 					button.btn.btn-lg.btn-primary.btn-block#password-btn(type='submit') Save changes
+			#patients.tab-pane
+				.card
+					ul.list-group.list-group-flush
+						li.list-group-item Cras justo odio
+						li.list-group-item Dapibus ac facilisis in
+						li.list-group-item Vestibulum at eros

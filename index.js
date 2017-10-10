@@ -24,7 +24,8 @@ const CareCompany = mongoose.model('CareCompany', {
 	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
-	__v: { type: Number, select: false }
+	__v: { type: Number, select: false },
+	avatar: { type: String, required: true, default: 'public/uploads/default-avatar.png'}
 })
 
 const Carer = mongoose.model('Carer', {
@@ -34,6 +35,7 @@ const Carer = mongoose.model('Carer', {
 	patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
 	companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }],
 	__v: { type: Number, select: false }
+	avatar: { type: String, required: true, default: 'public/uploads/default-avatar.png'}
 })
 
 const Patient = mongoose.model('Patient', {
@@ -45,12 +47,13 @@ const Patient = mongoose.model('Patient', {
 	twitter_token: String,
 	last_location: { latitude: Number, longitude: Number },
 	last_location_time: Date,
-	allow_remote_camera: { type: Boolean, default: true, required: true },
+	remote_camera: { enabled: { type: Boolean, default: true, required: true }, last_picture: { type: String, required: true, default: 'public/uploads/no-camera.jpg' } },
 	calendar_events: [{ name: { type: String, required: true }, date: { type: Date, required: true }}],
 	enable_geofence: { type: Boolean, default: false, required: true },
 	geofence_points: [{ latitude: { type: Number, required: true }, longitude: { type: Number, required: true }}],
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
-	__v: { type: Number, select: false }
+	__v: { type: Number, select: false },
+	avatar: { type: String, required: true, default: 'public/uploads/default-avatar.png'}
 })
 
 app.use(body_parser.urlencoded({extended: true}))
@@ -206,7 +209,7 @@ app.get('/settings', async (req, res) => {
 
 app.get('/upload', async (req, res) => {
 	try {
-		await fs.writeFile('test.txt', 'hello world', { encoding: 'base64' })
+		await fs.writeFile('public/uploads/images/', 'hello world', { encoding: 'base64' })
 	} catch (err) {
 		console.log(err)
 	}
@@ -241,42 +244,7 @@ async function update_user(model_name, req, res) {
 	delete req.body.password_hash // We don't want someone trying to modify this.
 	let errors = []
 	const user_model = mongoose.model(model_name)
-	if (req.body.password_new == null) {
-		try {
-			const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true}).exec()
-			respond_user(new_user, res, errors)
-		} catch (db_error) {
-			handle_db_error(db_error, res)
-		}
-		return
-	}
-	if (req.body.password_new != req.body.password_confirm) {
-		res.status(400).send({ errors: [{ type: "invalid", key: "password_confirm", message: "New passwords must match."}] })
-		return
-	}
-	let user
-	try {
-		user = await user_model.findOne({ _id: req.session.user_id }, '+password_hash').lean().exec()
-	} catch (db_error) {
-		handle_db_error(db_error, res)
-		return
-	}
-	let old_password_matches
-	try {
-		old_password_matches = await bcrypt.compare(req.body.password_old, user.password_hash)
-	} catch (hash_error) {
-		handle_hash_error(hash_error, res, errors)
-		return
-	}
-	if (!old_password_matches) {
-		errors.push({ type: "invalid", key: "login-details", message: "Old password does not match the one on record." })
-		res.status(401).send({ errors: errors })
-		return
-	}
-	try {
-		req.body.password_hash = await bcrypt.hash(req.body.password_new, salt_rounds)
-	} catch (hash_error) {
-		handle_hash_error(hash_error, res, errors)
+	if (!await run_password_checks(req, res, errors)) {
 		return
 	}
 	try {
@@ -288,6 +256,42 @@ async function update_user(model_name, req, res) {
 }
 
 const account_models = ['Patient', 'Carer', 'CareCompany']
+
+async function run_password_checks(req, res, errors) {
+	if (req.body.password_new == null) {
+		return true
+	}
+	if (req.body.password_new != req.body.password_confirm) {
+		res.status(400).send({ errors: [{ type: "invalid", key: "password_confirm", message: "New passwords must match."}] })
+		return false
+	}
+	let user
+	try {
+		user = await user_model.findOne({ _id: req.session.user_id }, '+password_hash').lean().exec()
+	} catch (db_error) {
+		handle_db_error(db_error, res)
+		return false
+	}
+	let old_password_matches
+	try {
+		old_password_matches = await bcrypt.compare(req.body.password_old, user.password_hash)
+	} catch (hash_error) {
+		handle_hash_error(hash_error, res, errors)
+		return false
+	}
+	if (!old_password_matches) {
+		errors.push({ type: "invalid", key: "login-details", message: "Old password does not match the one on record." })
+		res.status(401).send({ errors: errors })
+		return false
+	}
+	try {
+		req.body.password_hash = await bcrypt.hash(req.body.password_new, salt_rounds)
+	} catch (hash_error) {
+		handle_hash_error(hash_error, res, errors)
+		return false
+	}
+	return true
+}
 
 function get_model_from_account_type(account_type) {
 	if (account_models.indexOf(account_type) === -1) {
