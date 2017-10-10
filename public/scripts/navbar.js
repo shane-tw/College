@@ -43,6 +43,10 @@ $(function() {
 			complete: function() {
 				$('#logout-btn').prop('disabled', false)
 			}
-		});
+		})
+	})
+
+	$('ul.navbar-nav > li.active').click(function (e) {
+		e.preventDefault()
 	})
 })

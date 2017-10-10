@@ -15,10 +15,14 @@ append body
 				a.navbar-brand(href="#") Care Assistant
 			#bs-example-navbar-collapse-1.collapse.navbar-collapse
 				ul.nav.navbar-nav
-					li(class=(current_url == '/') && 'active')
-						a(href="/")
-							| Dashboard 
-							span.sr-only (current)
+					- if (current_url == '/')
+						li.active
+							a(href="#") Dashboard
+					- else
+						li
+							a(href="/")
+								| Dashboard
+								span.sr-only (current)
 					li
 						a(href="#") Patients
 				ul.nav.navbar-nav.navbar-right
