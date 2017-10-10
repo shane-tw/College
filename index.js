@@ -224,6 +224,10 @@ const server = app.listen(80, async () => {
 	}
 })
 
+process.on('unhandledRejection', (reason, p) => { // Without this, unhandled exceptions in promises would give unhelpful messages.
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+});
+
 // TODO: Check if logged-in user has permission to view/edit this user's details.
 async function get_user(model_name, req, res) {
 	let errors = []
@@ -247,10 +251,8 @@ async function update_user(model_name, req, res) {
 	if (!await run_image_checks({ name: 'avatar', content: req.body.avatar }, req, res)) {
 		return
 	}
-	if (typeof req.body.remote_camera === 'object') {
-		if (!await run_image_checks({ name: 'remote-camera', content: req.body.remote_camera.last_picture }, req, res)) {
-			return
-		}
+	if (!await run_image_checks({ name: 'remote-camera', content: req.body['remote_camera.last_picture'] }, req, res)) {
+		return
 	}
 	try {
 		const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true, runValidators: true}).exec()
@@ -276,7 +278,7 @@ async function run_image_checks(image, req, res) {
 		return true
 	}
 	const image_matches = image.content.match(/^data:(image\/[a-z.-]+);base64,(.+)$/)
-	if (image_matches.length !== 3) {
+	if (image_matches == null || image_matches.length !== 3) {
 		res.status(400).send({ errors: [{ type: "failure", key: "base64", message: "Invalid image format. Should be in base64 with data-type."}]})
 		return false
 	}
@@ -290,7 +292,7 @@ async function run_image_checks(image, req, res) {
 				req.body.avatar = image_path
 				break
 			case 'remote-camera':
-				req.body.remote_camera.last_picture = image_path
+				req.body['remote_camera.last_picture'] = image_path
 		}
 	} catch (err) {
 		res.status(500).send({ errors: [{ type: "failure", key: "io-write", message: "Failed to write image to file."}]})
