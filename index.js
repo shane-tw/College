@@ -238,6 +238,7 @@ async function get_user(model_name, req, res) {
 
 async function update_user(model_name, req, res) {
 	delete req.body.password_hash // We don't want someone trying to modify this.
+	delete req.body.__v
 	req.body.account_type = model_name
 	const user_model = mongoose.model(model_name)
 	if (!await run_password_checks(req, res)) {
@@ -246,14 +247,10 @@ async function update_user(model_name, req, res) {
 	if (!await run_image_checks({ name: 'avatar', content: req.body.avatar }, req, res)) {
 		return
 	}
-	if (typeof req.body.remote_camera !== 'object') {
-		req.body.remote_camera = { last_picture: null }
-	}
-	if (!await run_image_checks({ name: 'remote-camera', content: req.body.remote_camera.last_picture }, req, res)) {
-		return
-	}
-	if (req.body.remote_camera.last_picture == null) {
-		delete req.body.remote_camera.last_picture
+	if (typeof req.body.remote_camera === 'object') {
+		if (!await run_image_checks({ name: 'remote-camera', content: req.body.remote_camera.last_picture }, req, res)) {
+			return
+		}
 	}
 	try {
 		const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true, runValidators: true}).exec()
