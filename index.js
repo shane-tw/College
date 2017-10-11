@@ -316,6 +316,7 @@ async function run_password_checks(req, res) {
 		res.status(400).send({ errors: [{ type: "invalid", key: "password_confirm", message: "New passwords must match."}] })
 		return false
 	}
+	const user_model = mongoose.model(req.body.account_type)
 	let user
 	try {
 		user = await user_model.findOne({ _id: req.session.user_id }, '+password_hash').lean().exec()
