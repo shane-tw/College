@@ -202,14 +202,16 @@ app.get('/settings', async (req, res) => {
 })
 
 async function show_pug(pug_name, req, res) {
+    let user = { logged_in: false }
 	if (!req.session.logged_in) {
-		res.send(pug.renderFile(pug_name, { current_url: req.path, next_url: req.query.next_url, user: null, logged_in: false }))
+		res.send(pug.renderFile(pug_name, { current_url: req.path, next_url: req.query.next_url, user: user }))
 		return
 	}
 	const user_model = mongoose.model(req.session.account_type)
 	try {
-		const user = await user_model.findOne({ _id: req.session.user_id }).lean().exec()
-		res.send(pug.renderFile(pug_name, { current_url: req.path, next_url: req.query.next_url, user: user, logged_in: true }))
+		user = Object.assign(user, await user_model.findOne({ _id: req.session.user_id }).lean().exec())
+        user.logged_in = true
+		res.send(pug.renderFile(pug_name, { current_url: req.path, next_url: req.query.next_url, user: user }))
 	} catch (db_error) {
 		res.status(503).send("Failed to communicate with the database.")
 	}
