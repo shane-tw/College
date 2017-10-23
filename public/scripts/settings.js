@@ -13,6 +13,7 @@ $(function() {
 				text: 'Settings changed successfully.',
 				type: 'success'
 			})
+			document.location.reload()
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			var response = { errors: [] }

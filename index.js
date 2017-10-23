@@ -67,7 +67,9 @@ app.use(session({
 	secret: 'Z"\'l!|FiIL<7ty(^',
 	resave: false,
 	saveUninitialized: true,
-	cookie: { maxAge: 60 * 60 * 24 * 7 }
+	cookie: {
+		maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days (in milliseconds)
+	}
 }))
 app.use(express.static('public'))
 
@@ -380,7 +382,8 @@ function login_user(user, req, res) {
 	req.session.logged_in = true
 	req.session.user_id = user._id
 	req.session.account_type = req.body.account_type
-	res.send(user)
+	user.account_type = req.session.account_type
+	res.send({data: user})
 }
 
 function handle_hash_error(hash_error, res, errors) {
@@ -393,7 +396,8 @@ function respond_user(user, res) {
 		res.status(404).send({errors: [{ type: "not-found", key: "user", message: "User does not exist." }]})
 		return
 	}
-	res.send(user)
+	user.account_type = req.session.account_type
+	res.send({data: user})
 }
 
 function handle_db_error(db_error, res) {
