@@ -58,16 +58,16 @@ html(lang="en")
 			link(rel="icon",href="../../favicon.ico")
 			title= title
 			block styles
-				link(rel="stylesheet",href="styles/dependencies/bootstrap.min.css")
-				link(rel='stylesheet',href='styles/dependencies/pnotify.custom.min.css')
+				link(rel="stylesheet",href="dependencies/bootstrap/css/bootstrap.min.css")
+				link(rel='stylesheet',href='dependencies/pnotify.custom.min.css')
 				link(rel='stylesheet',href='styles/common.css')
 	body(data-spy="scroll",data-target=".scrollspy")
 		block body
 
 		block scripts
-			script(src="scripts/dependencies/jquery.min.js")
-			script(src="scripts/dependencies/bootstrap.min.js")
-			script(src='scripts/dependencies/pnotify.custom.min.js')
-			script(src='scripts/dependencies/jquery.form.min.js')
+			script(src="dependencies/jquery.min.js")
+			script(src="dependencies/bootstrap/js/bootstrap.min.js")
+			script(src='dependencies/pnotify.custom.min.js')
+			script(src='dependencies/jquery.form.min.js')
 			script.
 				PNotify.prototype.options.styling = "bootstrap3"
