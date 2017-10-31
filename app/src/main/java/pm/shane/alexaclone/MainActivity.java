@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (MainApp.getConnectedDevice() != null) {
-            //((ToggleButton)findViewById(R.id.toggleButton)).setChecked(checked);
+            // TODO: Change button text and colour maybe
             return;
         }
         OneSheeldManager manager = OneSheeldSdk.getManager();
@@ -46,11 +46,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDeviceFind(OneSheeldDevice device) {
                 OneSheeldSdk.getManager().cancelScanning();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainApp.getContext(), "Found OneSheeld.", Toast.LENGTH_SHORT).show();
-                    }
+                runOnUiThread(() -> {
+                    Toast.makeText(MainApp.getContext(), "Found OneSheeld.", Toast.LENGTH_SHORT).show();
                 });
                 device.connect();
             }
@@ -60,11 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 if (!foundDevices.isEmpty()) {
                     return;
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainApp.getContext(), "Failed to find OneSheeld.", Toast.LENGTH_SHORT).show();
-                    }
+                runOnUiThread(() -> {
+                    Toast.makeText(MainApp.getContext(), "Failed to find OneSheeld.", Toast.LENGTH_SHORT).show();
                 });
             }
         };
@@ -74,11 +68,9 @@ public class MainActivity extends AppCompatActivity {
                 MainApp.setConnectedDevice(device);
                 startService(new Intent(MainApp.getContext(), AlexaService.class));
                 device.pinMode(7, OneSheeldDevice.OUTPUT);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainApp.getContext(), "Connected!", Toast.LENGTH_SHORT).show();
-                    }
+                runOnUiThread(() -> {
+                    Toast.makeText(MainApp.getContext(), "Connected!", Toast.LENGTH_SHORT).show();
+                    // TODO: Change button text and colour maybe
                 });
             }
         };

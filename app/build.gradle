@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "pm.shane.alexaclone"
         minSdkVersion 14
@@ -38,7 +37,21 @@ dependencies {
     compile 'com.integreight.onesheeld:sdk:2.2.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     compile 'com.android.support:preference-v14:26.1.0'
+
+    // Retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.5'
+
+    // JSON Parsing
+    compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
 }
+
+
 
 
 
