@@ -10,9 +10,9 @@ append scripts
 append body
 	.container.mt-4
 		h2 Invite User
-		- if (them == null)
+		if (them == null)
 			p The target user does not exist.
-		- else
+		else
 			form#invite-form
 				p Please make sure these details match the user you're looking to invite.
 				.form-group
@@ -21,7 +21,7 @@ append body
 				.form-group
 					label.sr-only(for='invite-email') Email
 					input.form-control#invite-email(type='email', placeholder='Email', readonly='readonly', value= them.email)
-				- if (next_url == null)
+				if (next_url == null)
 					- next_url = '/'
 				input(id='invite-next-url', name='next_url', type='hidden', value= next_url)
 				button.btn.btn-lg.btn-primary.btn-block#invite-btn(type='submit') Confirm invite

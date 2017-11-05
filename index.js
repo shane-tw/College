@@ -331,10 +331,12 @@ async function invite_user(model_name, req, res) {
 		const already_invited = me[them_account_path].some(function (me_user_objectid) { // Check user[them_account_path] and see if they're already in it.
     		return me_user_objectid.equals(them._id)
 		})
-		if (!already_invited) {
-			me[them_account_path].push(them)
-			them[me_account_path].push(me)
+		if (already_invited) {
+			res.status(409).send({ errors: [{ type: "conflict", key: "target-user", message: "You've already invited this user."}]})
+			return
 		}
+		me[them_account_path].push(them)
+		them[me_account_path].push(me)
 		me.save()
 		them.save()
 		res.status(200).send({})

@@ -9,7 +9,7 @@ $(function() {
 		},
 		success: function(response, textStatus, xhr, form) {
 			new PNotify({
-				title: 'invite successful',
+				title: 'Invite successful',
 				text: 'You will be redirected soon.',
 				type: 'success'
 			})

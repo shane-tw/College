@@ -5,7 +5,7 @@ block vars
 	- var description='This is a test'
 
 append body
-	- if (!me.logged_in)
+	if (!me.logged_in)
 		include index_guest.pug
-	- else
+	else
 		include index_user.pug

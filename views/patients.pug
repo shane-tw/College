@@ -7,9 +7,9 @@ block vars
 append body
 	.container.mt-4
 		h2 Patients
-		- if (!('patients' in me) || me.patients.length === 0)
+		if (!('patients' in me) || me.patients.length === 0)
 			p You don't have any patients.
-		- else
+		else
 			each patient in me.patients
 				.card-deck
 					.col-sm-6.col-md-4.col-lg-3.mt-4

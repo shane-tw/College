@@ -4,7 +4,7 @@ append scripts
 	script(src='/scripts/navbar.js')
 
 append body
-	nav.navbar.navbar-light.bg-light.navbar-expand-sm.text-primary
+	nav.navbar.navbar-light.bg-light.navbar-expand-sm
 		.container
 			button.navbar-toggler.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
 				span.sr-only Toggle navigation
@@ -12,21 +12,21 @@ append body
 			a.navbar-brand(href='/') Care Assistant
 			#bs-example-navbar-collapse-1.collapse.navbar-collapse
 				ul.nav.navbar-nav
-					- if (current_url == '/')
+					if (current_url == '/')
 						li.nav-item.active
 							a.nav-link(href='#') Dashboard
-					- else
+					else
 						li.nav-item
 							a.nav-link(href='/') Dashboard
 								span.sr-only (current)
-					- if (current_url == '/patients')
+					if (current_url == '/patients' && me.patients != null)
 						li.nav-item.active
 							a.nav-link(href='#') Patients
-					- else
+					else if (me.patients != null)
 						li.nav-item
 							a.nav-link(href='/patients') Patients
 				ul.nav.navbar-nav.ml-auto
-					- if (me.logged_in)
+					if (me.logged_in)
 						li.dropdown.nav-item
 							a.dropdown-toggle.nav-link(href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false', id='magic')
 								img.avatar-thumb.rounded-circle(src= me.avatar, width='18')
@@ -35,7 +35,7 @@ append body
 								a.dropdown-item(href='/settings') Settings
 								div.dropdown-divider
 								a.dropdown-item#logout-btn(href='#') Sign out
-					- else
+					else
 						li.nav-item
 							a.nav-link(href='#', data-toggle='modal', data-target='#registerModal') Register
 						li.nav-item
