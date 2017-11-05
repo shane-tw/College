@@ -52,23 +52,24 @@ html(lang="en")
 		block head
 			meta(charset="UTF-8")
 			meta(http-equiv="X-UA-Compatible", content="IE=edge")
-			meta(name="viewport",content="width=device-width, initial-scale=1")
-			meta(name="description",content= description)
-			meta(name="author",content="Shane")
-			link(rel="icon",href="../../favicon.ico")
+			meta(name="viewport", content="width=device-width, initial-scale=1")
+			meta(name="description", content= description)
+			meta(name="author", content="Shane")
+			link(rel="icon", href="../../favicon.ico")
 			title= title
 			block styles
-				link(rel="stylesheet",href="/dependencies/bootstrap/css/bootstrap.min.css")
-				link(rel='stylesheet',href='/dependencies/pnotify.custom.min.css')
-				link(rel='stylesheet',href='/styles/common.css')
+				link(rel="stylesheet", href="/dependencies/bootstrap/css/bootstrap.min.css")
+				link(rel='stylesheet', href='/dependencies/pnotify.custom.min.css')
+				link(rel='stylesheet', href='/styles/common.css')
+				link(rel='stylesheet', href='/dependencies/glyphicons.css')
 	body(data-spy="scroll",data-target=".scrollspy")
 		block body
 
 		block scripts
 			script(src='/dependencies/jquery.min.js')
 			script(src='/dependencies/popper.min.js')
-			script(src="/dependencies/bootstrap/js/bootstrap.min.js")
+			script(src='/dependencies/bootstrap/js/bootstrap.min.js')
 			script(src='/dependencies/pnotify.custom.min.js')
 			script(src='/dependencies/jquery.form.min.js')
 			script.
-				PNotify.prototype.options.styling = "bootstrap4"
+				PNotify.prototype.options.styling = "bootstrap3"
