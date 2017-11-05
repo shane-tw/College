@@ -12,6 +12,7 @@ const bcrypt = require('bcrypt')
 const salt_rounds = 10
 const fs = require('fs-extra')
 const merge = require('deepmerge')
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals')
 
 mongoose_connect_options = {
 	user: 'mongoadmin',
@@ -21,6 +22,7 @@ mongoose_connect_options = {
 }
 
 mongoose.Promise = global.Promise
+mongoose.plugin(mongooseLeanVirtuals)
 
 const CareCompany = mongoose.model('CareCompany', {
 	name: { type: String, required: true },
@@ -210,15 +212,18 @@ app.get('/settings', async (req, res) => {
 	show_pug(200, 'views/settings.pug', req, res)
 })
 
+app.get('/patients', async (req, res) => {
+	show_pug(200, 'views/patients.pug', req, res)
+})
+
 app.get('/:them_account_path/:them_id/invite', async (req, res) => {
 	const me_model = get_model_from_name(req.session.account_model_name)
 	const them_model = get_model_from_path(req.params.them_account_path)
 	let them = null
 	let status_code = 404
 	if (them_model != null && ObjectID.isValid(req.params.them_id)) {
-		them = await them_model.findOne({ _id: req.params.them_id }).lean().exec()
+		them = await them_model.findOne({ _id: req.params.them_id }).lean({ virtuals: ['id'] }).exec()
 		if (them != null) {
-			them._id = them._id.toString()
 			status_code = 200
 		}
 	}
@@ -236,8 +241,7 @@ async function show_pug(status_code, pug_name, req, res, extra_vars = {}) {
 	}
 	const user_model = mongoose.model(req.session.account_model_name)
 	try {
-		let temp_user = await user_model.findOne({ _id: req.session.user_id }).lean().exec()
-		temp_user._id = temp_user._id.toString()
+		let temp_user = await user_model.findOne({ _id: req.session.user_id }).populate(['carers', 'patients', 'companies']).lean({ virtuals: ['id'] }).exec()
 		user = merge(user, temp_user)
 		user.account_path = get_path_from_model_name(req.session.account_model_name)
         user.logged_in = true

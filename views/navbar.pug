@@ -4,43 +4,41 @@ append scripts
 	script(src='/scripts/navbar.js')
 
 append body
-	nav.navbar.navbar-default
+	nav.navbar.navbar-light.bg-light.navbar-expand-sm
 		.container
-			.navbar-header
-				button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#bs-example-navbar-collapse-1", aria-expanded="false")
-					span.sr-only Toggle navigation
-					span.icon-bar
-					span.icon-bar
-					span.icon-bar
-				a.navbar-brand(href="/") Care Assistant
+			button.navbar-toggler.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+				span.sr-only Toggle navigation
+				| &#x2630;
+			a.navbar-brand(href='/') Care Assistant
 			#bs-example-navbar-collapse-1.collapse.navbar-collapse
 				ul.nav.navbar-nav
 					- if (current_url == '/')
-						li.active
-							a(href="#") Dashboard
+						li.nav-item.active
+							a.nav-link(href='#') Dashboard
 					- else
-						li
-							a(href="/") Dashboard
+						li.nav-item
+							a.nav-link(href='/') Dashboard
 								span.sr-only (current)
-					li
-						a(href="#") Patients
-				ul.nav.navbar-nav.navbar-right
-					- if (me.logged_in)
-						li.dropdown
-							a.dropdown-toggle(href="#", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")
-								img.avatar-thumb.img-circle(src= me.avatar, width="18")
-								| #{me.name}
-								span.caret
-							ul.dropdown-menu
-								li
-									a(href="/settings") Settings
-								li.divider(role="separator")
-								li
-									a#logout-btn(href="#") Sign out
+					- if (current_url == '/patients')
+						li.nav-item.active
+							a.nav-link(href='#') Patients
 					- else
-						li
-							a(href="#", data-toggle="modal", data-target="#registerModal") Register
-						li
-							a(href="#", data-toggle="modal", data-target="#loginModal") Log In
+						li.nav-item
+							a.nav-link(href='/patients') Patients
+				ul.nav.navbar-nav.ml-auto
+					- if (me.logged_in)
+						li.dropdown.nav-item
+							a.dropdown-toggle.nav-link(href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false', id='magic')
+								img.avatar-thumb.rounded-circle(src= me.avatar, width='18')
+								| #{me.name}
+							.dropdown-menu(aria-labelledby='magic')
+								a.dropdown-item(href='/settings') Settings
+								div.dropdown-divider
+								a.dropdown-item#logout-btn(href='#') Sign out
+					- else
+						li.nav-item
+							a.nav-link(href='#', data-toggle='modal', data-target='#registerModal') Register
+						li.nav-item
+							a.nav-link(href='#', data-toggle='modal', data-target='#loginModal') Log In
 include login.pug
 include register.pug

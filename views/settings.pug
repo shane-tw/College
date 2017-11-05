@@ -6,14 +6,13 @@ block vars
 append scripts
 	script(src='/scripts/settings.js')
 append body
-	#settings-container.container
+	#settings-container.container.mt-4
 		h2 Settings
 		ul.nav.nav-tabs
-			li.active
-				a(href='#personal', data-toggle='tab') Personal
-			li
-				a(href='#password', data-toggle='tab') Password
-			
+			li.active.nav-item
+				a.active.nav-link(href='#personal', data-toggle='tab') Personal
+			li.nav-item
+				a.nav-link(href='#password', data-toggle='tab') Password
 		.tab-content.margin-top
 			#personal.tab-pane.active
 				form#personal-form
@@ -36,4 +35,4 @@ append body
 						label.sr-only(for='settings-password-confirm') Confirm Password
 						input.form-control#settings-password(name='password_confirm', type='password', placeholder='Confirm Password', required='')
 					button.btn.btn-lg.btn-primary.btn-block#password-btn(type='submit') Save changes
-			a(href=`/${me.account_path}/${me._id}/invite`) Invite link
+			a(href=`/${me.account_path}/${me.id}/invite`) Invite link
