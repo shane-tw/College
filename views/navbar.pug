@@ -1,7 +1,7 @@
 extend common.pug
 
 append scripts
-	script(src='scripts/navbar.js')
+	script(src='/scripts/navbar.js')
 
 append body
 	nav.navbar.navbar-default
@@ -25,11 +25,11 @@ append body
 					li
 						a(href="#") Patients
 				ul.nav.navbar-nav.navbar-right
-					- if (user.logged_in)
+					- if (me.logged_in)
 						li.dropdown
 							a.dropdown-toggle(href="#", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")
-								img.avatar-thumb.img-circle(src= user.avatar, width="18")
-								| #{user.name}
+								img.avatar-thumb.img-circle(src= me.avatar, width="18")
+								| #{me.name}
 								span.caret
 							ul.dropdown-menu
 								li

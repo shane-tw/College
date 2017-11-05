@@ -4,11 +4,14 @@ const url = require('url')
 const body_parser = require('body-parser')
 const session = require('express-session')
 const mongoose = require('mongoose')
+const mongodb = require('mongodb')
+const ObjectID = mongodb.ObjectID
 const Schema = mongoose.Schema
 const pug = require('pug')
 const bcrypt = require('bcrypt')
 const salt_rounds = 10
 const fs = require('fs-extra')
+const merge = require('deepmerge')
 
 mongoose_connect_options = {
 	user: 'mongoadmin',
@@ -25,7 +28,7 @@ const CareCompany = mongoose.model('CareCompany', {
 	password_hash: { type: String, required: true, select: false },
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: 'uploads/images/default-avatar.png'}
+	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'}
 })
 
 const Carer = mongoose.model('Carer', {
@@ -35,12 +38,12 @@ const Carer = mongoose.model('Carer', {
 	patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
 	companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }],
 	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: 'uploads/images/default-avatar.png'}
+	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'}
 })
 
 const RemoteCameraSchema = new Schema({
 	enabled: { type: Boolean, default: true, required: true },
-	last_picture: { type: String, required: true, default: 'uploads/images/no-camera.jpg' }
+	last_picture: { type: String, required: true, default: '/uploads/images/no-camera.jpg' }
 },{ _id : false })
 
 const Patient = mongoose.model('Patient', {
@@ -58,7 +61,7 @@ const Patient = mongoose.model('Patient', {
 	geofence_points: [{ latitude: { type: Number, required: true }, longitude: { type: Number, required: true }}],
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: 'uploads/images/default-avatar.png'}
+	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'}
 })
 
 app.use(body_parser.urlencoded({extended: true}))
@@ -109,7 +112,7 @@ app.post('/api/register', async function (req, res) {
 	delete req.body._id // Prevents users from modifying this.
 	delete req.body.__v
 	let errors = []
-	const user_model = get_model_from_account_type(req.body.account_type)
+	const user_model = get_model_from_name(req.body.account_model_name)
 	if (!check_auth_params(req, res, errors, user_model)) {
 		return
 	}
@@ -125,13 +128,13 @@ app.post('/api/register', async function (req, res) {
 		login_user(new_user, req, res)
 	}
 	catch (db_error) {
-		handle_db_error(db_error, res)
+		handle_api_db_error(db_error, res)
 	}
 })
 
 app.post('/api/login', async function (req, res) { // This allows a user to log in.
 	let errors = []
-	const user_model = get_model_from_account_type(req.body.account_type)
+	const user_model = get_model_from_name(req.body.account_model_name)
 	if (!check_auth_params(req, res, errors, user_model)) {
 		return
 	}
@@ -139,7 +142,7 @@ app.post('/api/login', async function (req, res) { // This allows a user to log 
 	try {
 		user = await user_model.findOne({ email: req.body.email }, '+password_hash').lean().exec()
 	} catch (db_error) {
-		handle_db_error(db_error, res)
+		handle_api_db_error(db_error, res)
 		return
 	}
 	if (user == null) {
@@ -172,7 +175,7 @@ app.get('/api/carers/:user_id', (req, res) => get_user('Carer', req, res))
 app.get('/api/companies/:user_id', (req, res) => get_user('CareCompany', req, res))
 app.get('/api/me', (req, res) => {
 	req.params.user_id = req.session.user_id
-	get_user(req.session.account_type, req, res)
+	get_user(req.session.account_model_name, req, res)
 })
 
 app.post('/api/patients/:user_id', (req, res) => update_user('Patient', req, res))
@@ -180,41 +183,68 @@ app.post('/api/carers/:user_id', (req, res) => update_user('Carer', req, res))
 app.post('/api/companies/:user_id', (req, res) => update_user('CareCompany', req, res))
 app.post('/api/me', (req, res) => {
 	req.params.user_id = req.session.user_id
-	update_user(req.session.account_type, req, res)
+	update_user(req.session.account_model_name, req, res)
 })
+
+app.post('/api/patients/:user_id/invite', (req, res) => invite_user('Patient', req, res))
+app.post('/api/carers/:user_id/invite', (req, res) => invite_user('Carer', req, res))
+app.post('/api/companies/:user_id/invite', (req, res) => invite_user('CareCompany', req, res))
 
 app.all('/api/*', (req, res) => { // In the event that a route is not handled, 404.
 	res.status(404).send({errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }]})
 })
 
 app.get('/', async (req, res) => {
-	show_pug('views/index.pug', req, res)
+	show_pug(200, 'views/index.pug', req, res)
 })
 
 app.get('*', (req, res, next) => {
 	if (!req.session.logged_in) {
-		res.redirect('/?next_url=' + encodeURIComponent(req.url));
+		res.redirect('/?next_url=' + encodeURIComponent(req.url))
 		return
 	}
 	next()
 })
 
 app.get('/settings', async (req, res) => {
-	show_pug('views/settings.pug', req, res)
+	show_pug(200, 'views/settings.pug', req, res)
 })
 
-async function show_pug(pug_name, req, res) {
+app.get('/:them_account_path/:them_id/invite', async (req, res) => {
+	const me_model = get_model_from_name(req.session.account_model_name)
+	const them_model = get_model_from_path(req.params.them_account_path)
+	let them = null
+	let status_code = 404
+	if (them_model != null && ObjectID.isValid(req.params.them_id)) {
+		them = await them_model.findOne({ _id: req.params.them_id }).lean().exec()
+		if (them != null) {
+			them._id = them._id.toString()
+			status_code = 200
+		}
+	}
+	show_pug(status_code, 'views/invite.pug', req, res, { them: them })
+})
+
+async function show_pug(status_code, pug_name, req, res, extra_vars = {}) {
+	let vars = { current_url: req.path, next_url: req.query.next_url }
+	vars = merge(vars, extra_vars)
     let user = { logged_in: false }
 	if (!req.session.logged_in) {
-		res.send(pug.renderFile(pug_name, { current_url: req.path, next_url: req.query.next_url, user: user }))
+		vars['me'] = user
+		res.status(status_code).send(pug.renderFile(pug_name, vars))
 		return
 	}
-	const user_model = mongoose.model(req.session.account_type)
+	const user_model = mongoose.model(req.session.account_model_name)
 	try {
-		user = Object.assign(user, await user_model.findOne({ _id: req.session.user_id }).lean().exec())
+		let temp_user = await user_model.findOne({ _id: req.session.user_id }).lean().exec()
+		temp_user._id = temp_user._id.toString()
+		user = merge(user, temp_user)
+		user.account_path = get_path_from_model_name(req.session.account_model_name)
         user.logged_in = true
-		res.send(pug.renderFile(pug_name, { current_url: req.path, next_url: req.query.next_url, user: user }))
+        vars['me'] = user
+		res.send(pug.renderFile(pug_name, vars))
 	} catch (db_error) {
+		console.log(db_error)
 		res.status(503).send("Failed to communicate with the database.")
 	}
 }
@@ -233,25 +263,28 @@ const server = app.listen(80, async () => {
 })
 
 process.on('unhandledRejection', (reason, p) => { // Without this, unhandled exceptions in promises would give unhelpful messages.
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-});
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
+})
 
 // TODO: Check if logged-in user has permission to view/edit this user's details.
 async function get_user(model_name, req, res) {
 	let errors = []
 	const user_model = mongoose.model(model_name)
 	try {
-		const user = await user_model.findOne({ _id: req.params.user_id }).lean().exec()
-		respond_user(user, res)
+		let user = null
+		if (ObjectID.isValid(req.params.user_id)) {
+			user = await user_model.findOne({ _id: req.params.user_id }).lean().exec()
+		}
+		respond_user(user, req, res)
 	} catch (db_error) {
-		handle_db_error(db_error, res)
+		handle_api_db_error(db_error, res)
 	}
 }
 
 async function update_user(model_name, req, res) {
 	delete req.body.password_hash // We don't want someone trying to modify this.
 	delete req.body.__v
-	req.body.account_type = model_name
+	req.body.account_model_name = model_name
 	const user_model = mongoose.model(model_name)
 	if (!await run_password_checks(req, res)) {
 		return
@@ -264,17 +297,69 @@ async function update_user(model_name, req, res) {
 	}
 	try {
 		const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true, runValidators: true}).exec()
-		respond_user(new_user, res)
+		respond_user(new_user, req, res)
 	} catch (db_error) {
-		handle_db_error(db_error, res)
+		handle_api_db_error(db_error, res)
+	}
+}
+
+async function invite_user(model_name, req, res) {
+	const me_model = mongoose.model(req.session.account_model_name)
+	const me_account_path = get_path_from_model_name(req.session.account_model_name)
+	const them_account_path = get_path_from_model_name(model_name)
+	const them_model = mongoose.model(model_name)
+	if (them_model == null) {
+		res.status(400).send({ errors: [{ type: "invalid", key: "user-type", message: "This user type is invalid; It doesn't exist."}]})
+	}
+	try {
+		const me = await me_model.findOne({ _id: req.session.user_id })
+		let them = null
+		if (ObjectID.isValid(req.params.user_id)) {
+			them = await them_model.findOne({ _id: req.params.user_id })
+		}
+		if (them == null) {
+			res.status(404).send({ errors: [{ type: "not-found", key: "target-user", message: "No user exists with this account type and ID."}]})
+		}
+		if (!(them_account_path in me) || !(me_account_path in them)) {
+			res.status(400).send({ errors: [{ type: "invalid", key: "user-type", message: "You can't add the other user. Your account types are incompatible."}]})
+			return
+		}
+		const already_invited = me[them_account_path].some(function (me_user_objectid) { // Check user[them_account_path] and see if they're already in it.
+    		return me_user_objectid.equals(them._id)
+		})
+		if (!already_invited) {
+			me[them_account_path].push(them)
+			them[me_account_path].push(me)
+		}
+		me.save()
+		them.save()
+		res.status(200).send({})
+	} catch (db_error) {
+		handle_api_db_error(db_error, res)
+		return
 	}
 }
 
 const account_models = ['Patient', 'Carer', 'CareCompany']
 const account_paths = ['patients', 'carers', 'companies']
 
-function get_path_from_type(account_type) {
-	const models_index = account_models.indexOf(account_type)
+function get_model_from_name(model_name) {
+	if (account_models.indexOf(model_name) === -1) { // Ensure only account models can be retrieved with this method
+		return null
+	}
+	return mongoose.model(model_name)
+}
+
+function get_model_from_path(account_path) {
+	const path_index = account_paths.indexOf(account_path)
+	if (path_index === -1) {
+		return null;
+	}
+	return get_model_from_name(account_models[path_index])
+}
+
+function get_path_from_model_name(account_model_name) {
+	const models_index = account_models.indexOf(account_model_name)
 	if (models_index === -1) {
 		return null
 	}
@@ -290,9 +375,9 @@ async function run_image_checks(image, req, res) {
 		res.status(400).send({ errors: [{ type: "failure", key: "base64", message: "Invalid image format. Should be in base64 with data-type."}]})
 		return false
 	}
-	const image_directory_web = 'uploads/images/' + get_path_from_type(req.body.account_type) + '/' + req.params.user_id
+	const image_directory_web = '/uploads/images/' + get_path_from_model_name(req.body.account_model_name) + '/' + req.params.user_id
 	const image_path_web = image_directory_web + '/' + image.name
-	const image_directory = 'public/' + image_directory_web
+	const image_directory = 'public' + image_directory_web
 	const image_path = image_directory + '/' + image.name
 	try {
 		await fs.mkdirs(image_directory)
@@ -320,12 +405,12 @@ async function run_password_checks(req, res) {
 		res.status(400).send({ errors: [{ type: "invalid", key: "password_confirm", message: "New passwords must match."}] })
 		return false
 	}
-	const user_model = mongoose.model(req.body.account_type)
+	const user_model = mongoose.model(req.body.account_model_name)
 	let user
 	try {
 		user = await user_model.findOne({ _id: req.session.user_id }, '+password_hash').lean().exec()
 	} catch (db_error) {
-		handle_db_error(db_error, res)
+		handle_api_db_error(db_error, res)
 		return false
 	}
 	let old_password_matches
@@ -349,13 +434,6 @@ async function run_password_checks(req, res) {
 	return true
 }
 
-function get_model_from_account_type(account_type) {
-	if (account_models.indexOf(account_type) === -1) {
-		return null
-	}
-	return mongoose.model(account_type)
-}
-
 function check_auth_params(req, res, errors, user_model) {
 	if (typeof req.body.email !== 'string') {
 		errors.push({ type: "required", key: "email", message: "Path `email` is required." })
@@ -364,7 +442,7 @@ function check_auth_params(req, res, errors, user_model) {
 		errors.push({ type: "required", key: "password", message: "Path `password` is required." })
 	}
 	if (user_model == null) {
-		errors.push({ type: "required", key: "account_type", message: "Path `account_type` is required." })
+		errors.push({ type: "required", key: "account_model_name", message: "Path `account_model_name` is required." })
 	}
 	if (errors.length > 0) {
 		res.status(400).send({ errors: errors })
@@ -381,8 +459,8 @@ function login_user(user, req, res) {
 	delete user.__v
 	req.session.logged_in = true
 	req.session.user_id = user._id
-	req.session.account_type = req.body.account_type
-	user.account_type = req.session.account_type
+	req.session.account_model_name = req.body.account_model_name
+	user.account_model_name = req.session.account_model_name
 	res.send({data: user})
 }
 
@@ -391,16 +469,16 @@ function handle_hash_error(hash_error, res, errors) {
 	res.status(500).send({ errors: errors })
 }
 
-function respond_user(user, res) {
+function respond_user(user, req, res) {
 	if (user == null) {
 		res.status(404).send({errors: [{ type: "not-found", key: "user", message: "User does not exist." }]})
 		return
 	}
-	user.account_type = req.session.account_type
+	user.account_model_name = req.session.account_model_name
 	res.send({data: user})
 }
 
-function handle_db_error(db_error, res) {
+function handle_api_db_error(db_error, res) {
 	if (!('errors' in db_error)) { // Mongoose has errors, MongoDB has single error
 		db_error = { errors: [ db_error ] }
 	}
@@ -421,5 +499,6 @@ function handle_db_error(db_error, res) {
 		res.status(400).send({ errors: errors })
 		return
 	}
+	console.log(db_error)
 	res.status(503).send({ errors: [{ type: "communication", key: "database", message: "Failed to communicate with database." }]})
 }

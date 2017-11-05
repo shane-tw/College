@@ -1,5 +1,5 @@
 append scripts
-	script(src='scripts/register.js')
+	script(src='/scripts/register.js')
 
 append body
 	#registerModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="registerModalLabel", aria-hidden="true")
@@ -22,7 +22,7 @@ append body
 							input.form-control#register-password(name='password', type='password', placeholder='Password', required='')
 						.form-group
 							label.sr-only(for='register-account-type') Account type
-							select.form-control#register-account-type(name='account_type', required='')
+							select.form-control#register-account-type(name='account_model_name', required='')
 								option(value='', selected='', disabled='') Account type
 								option(value='Patient') Patient
 								option(value='Carer') Carer
