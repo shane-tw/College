@@ -12,7 +12,7 @@ const bcrypt = require('bcrypt')
 const salt_rounds = 10
 const fs = require('fs-extra')
 const merge = require('deepmerge')
-const mongooseLeanVirtuals = require('mongoose-lean-virtuals')
+const lean_id = require('mongoose-lean-id')
 
 mongoose_connect_options = {
 	user: 'mongoadmin',
@@ -22,7 +22,7 @@ mongoose_connect_options = {
 }
 
 mongoose.Promise = global.Promise
-mongoose.plugin(mongooseLeanVirtuals)
+mongoose.plugin(lean_id)
 
 const CareCompany = mongoose.model('CareCompany', {
 	name: { type: String, required: true },
@@ -216,18 +216,53 @@ app.get('/patients', async (req, res) => {
 	show_pug(200, 'views/patients.pug', req, res)
 })
 
+app.get('/:them_account_path/:them_id', async (req, res) => {
+	const me_model = get_model_from_name(req.session.account_model_name)
+	const me_account_path = get_path_from_model_name(req.session.account_model_name)
+	const them_account_path = req.params.them_account_path
+	const them_model = get_model_from_path(them_account_path)
+	let them = null
+	let status_code = 404
+	if (them_model == null || !ObjectID.isValid(req.params.them_id)) {
+		show_pug(404, 'views/not_found.pug', req, res)
+		return
+	}
+	them = await them_model.findOne({ _id: req.params.them_id }).lean().exec()
+	const me = await me_model.findOne({ _id: req.session.user_id }).lean().exec()
+	if (them == null) {
+		show_pug(404, 'views/not_found.pug', req, res)
+		return
+	}
+	const can_view_user = ((me._id.equals(them._id) && me_account_path == them_account_path) || (them_account_path in me && me[them_account_path].some(function (me_user_objectid) { // Check user[them_account_path] and see if they're already in it.
+		return me_user_objectid.equals(them._id)
+	})))
+	if (!can_view_user) {
+		them = null
+	} else {
+		status_code = 200
+	}
+	show_pug(status_code, 'views/patient.pug', req, res, { them: them })
+})
+
 app.get('/:them_account_path/:them_id/invite', async (req, res) => {
 	const me_model = get_model_from_name(req.session.account_model_name)
 	const them_model = get_model_from_path(req.params.them_account_path)
 	let them = null
+	if (them_model == null || !ObjectID.isValid(req.params.them_id)) {
+		show_pug(404, 'views/not_found.pug', req, res)
+		return
+	}
 	let status_code = 404
-	if (them_model != null && ObjectID.isValid(req.params.them_id)) {
-		them = await them_model.findOne({ _id: req.params.them_id }).lean({ virtuals: ['id'] }).exec()
-		if (them != null) {
-			status_code = 200
-		}
+	them = await them_model.findOne({ _id: req.params.them_id }).lean().exec()
+	if (them == null) {
+		show_pug(404, 'views/not_found.pug', req, res)
+		return
 	}
 	show_pug(status_code, 'views/invite.pug', req, res, { them: them })
+})
+
+app.get('*', async (req, res) => {
+	show_pug(404, 'views/not_found.pug', req, res)
 })
 
 async function show_pug(status_code, pug_name, req, res, extra_vars = {}) {
@@ -241,7 +276,7 @@ async function show_pug(status_code, pug_name, req, res, extra_vars = {}) {
 	}
 	const user_model = mongoose.model(req.session.account_model_name)
 	try {
-		let temp_user = await user_model.findOne({ _id: req.session.user_id }).populate(['carers', 'patients', 'companies']).lean({ virtuals: ['id'] }).exec()
+		let temp_user = await user_model.findOne({ _id: req.session.user_id }).populate(['carers', 'patients', 'companies']).lean().exec()
 		user = merge(user, temp_user)
 		user.account_path = get_path_from_model_name(req.session.account_model_name)
         user.logged_in = true
@@ -329,7 +364,7 @@ async function invite_user(model_name, req, res) {
 			return
 		}
 		const already_invited = me[them_account_path].some(function (me_user_objectid) { // Check user[them_account_path] and see if they're already in it.
-    		return me_user_objectid.equals(them._id)
+			return me_user_objectid.equals(them._id)
 		})
 		if (already_invited) {
 			res.status(409).send({ errors: [{ type: "conflict", key: "target-user", message: "You've already invited this user."}]})
