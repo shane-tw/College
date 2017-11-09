@@ -99,13 +99,13 @@ public class LoginActivity extends AppCompatActivity {
             validationError = true;
         }
 
-        if (validationError) {
-            // focus the first form field with an error.
-            focusView.requestFocus();
-        } else {
+    //    if (validationError) {
+    //        // focus the first form field with an error.
+    //       focusView.requestFocus();
+    //    } else {
             showProgress(true);
 
-            CareApi service = RetrofitManager.getRetrofit().create(CareApi.class);
+          /*  CareApi service = RetrofitManager.getRetrofit().create(CareApi.class);
             service.login(new Credentials(mEmailView.getText().toString(), mPasswordView.getText().toString(), "Patient"))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -113,14 +113,15 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSubscribe(Disposable s) {}
 
+
                         @Override
                         public void onNext(GenericResponse<User> userResponse) {
                             Toast.makeText(LoginActivity.this, "Logged in successfully.", Toast.LENGTH_SHORT).show();
-                            SessionManager.setLoggedInUser(userResponse.getData());
+                            SessionManager.setLoggedInUser(userResponse.getData()); */
                             Intent myIntent = new Intent(LoginActivity.this, SettingsActivity.class);
                             LoginActivity.this.startActivity(myIntent);
-                            finish();
-                        }
+                            finish();}
+     /*                   }
 
                         @Override
                         public void onError(Throwable t) {
@@ -150,8 +151,8 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete() {}
                     });
         }
-    }
-
+   // }
+*/
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");

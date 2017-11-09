@@ -6,6 +6,8 @@
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:name=".MainApp"
@@ -18,6 +20,16 @@
         <activity android:name=".MainActivity" />
 
         <service android:name=".AlexaService" />
+        <service android:name=".preferences.locationclasses.GeofenceService" />
+        <service android:name=".preferences.locationclasses.LocationUpdatesListner" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBoKRfOfuXEy00EL_Z0YoFtKfSa8f_FyvQ"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
 
         <activity
             android:name=".SettingsActivity"

@@ -1,6 +1,7 @@
 package pm.shane.alexaclone;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -23,11 +24,13 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_LOCATION = 101; // Code for coarse pref_location permission
+    public static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
 
         if (MainApp.getConnectedDevice() != null) {
             // TODO: Change button text and colour maybe

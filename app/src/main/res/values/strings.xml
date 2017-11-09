@@ -49,4 +49,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="permissionPositive">Allow</string>
+    <string name="permissionNegative">Deny</string>
+    <string name="permissionLocationExplain">In order for the geo fence to work you need to accept the following permissions</string>
+    <string name="permissionSMSExplain">In order to send sms to your emergency contacts when you exit the geo fence you need to accept the following permissions</string>
 </resources>
