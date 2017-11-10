@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -15,6 +16,9 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
+
+import pm.shane.alexaclone.R;
+import pm.shane.alexaclone.preferences.SecurityPreferenceFragment;
 
 /**
  * Created by underscorexxxjesus on 09/11/17.
@@ -27,7 +31,7 @@ public class GeofenceService extends IntentService{
     public static final int GEOFENCE_NOTIFICATION_ID = 0;
 
     // needed to stop service from closing
-    public static final int ONGOING_NOTIFICATION = 99;
+    public static final int BREACH_NOTIFICATION = 22;
     @Override
     public void onCreate(){
         super.onCreate();
@@ -65,6 +69,7 @@ public class GeofenceService extends IntentService{
 
             Log.d(TAG,"geofence breached, sending sms ");
 
+            /*
            // createOnGoingNotification();
 
             //sms people
@@ -74,15 +79,25 @@ public class GeofenceService extends IntentService{
                 smsManager.sendTextMessage(phones[i],null, smsMessage, null, null);
             }
 
+            */
 
+            SharedPreferences sharedPref = getApplication().getSharedPreferences(SecurityPreferenceFragment.PREF_NAME, Context.MODE_PRIVATE );
+            boolean notify = false;
+            if(sharedPref.contains(SecurityPreferenceFragment.ENABLE_NOTIFICATION_ON_GEOFENCE_BREACH)){
+                notify = sharedPref.getBoolean(SecurityPreferenceFragment.ENABLE_NOTIFICATION_ON_GEOFENCE_BREACH, false);
+            }
+
+            if (notify){
+                createNotification();
+            }
 
 
         }
     }
 
 
-/*
-    private void createOnGoingNotification(){
+
+    private void createNotification(){
         Intent notificationIntent = GeofenceMap.makeNotificationIntent(getApplicationContext(), "");
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -92,23 +107,21 @@ public class GeofenceService extends IntentService{
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder
-                .setSmallIcon(android.R.color.transparent)
-                .setContentTitle("background geofence")
-                .setContentText("Geofence listner")
-                .setContentIntent(notificationPendingIntent)
-                .setAutoCancel(false)
-                .setOngoing(true);
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Geofence breached")
+                .setContentText("You have breached the geofence")
+                .setContentIntent(notificationPendingIntent);
 
         // Creating and sending Notification
         NotificationManager notificatioMng = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-        notificatioMng.notify(ONGOING_NOTIFICATION,notificationBuilder.build());
+        notificatioMng.notify(BREACH_NOTIFICATION,notificationBuilder.build());
 
 
 
 
     }
 
-*/
+
     private static String getErrorString(int errorCode) {
         switch (errorCode) {
             case GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE:

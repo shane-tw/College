@@ -39,6 +39,15 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE );
         SharedPreferences.Editor editor = sharedPref.edit();
+        boolean notificationenabled = false;
+
+        if(sharedPref.contains(ENABLE_NOTIFICATION_ON_GEOFENCE_BREACH)){
+            notificationenabled = sharedPref.getBoolean(ENABLE_NOTIFICATION_ON_GEOFENCE_BREACH,false);
+        }
+
+
+
+
 
         findPreference("geotag_switch").setOnPreferenceClickListener(this::handleGeoTagSwitch);
         findPreference("link_facebook_btn").setOnPreferenceClickListener(this::handleLinkFacebook);
@@ -46,6 +55,7 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
         findPreference("show_map").setOnPreferenceClickListener(this::handleShowMap);
 
         SwitchPreference notification = (android.support.v14.preference.SwitchPreference) findPreference("notifications_new_message");
+        notification.setChecked(notificationenabled);
         notification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -66,6 +76,8 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+
 
 
         findPreference("link_phone").setOnPreferenceClickListener(this::handleLinkPhone);

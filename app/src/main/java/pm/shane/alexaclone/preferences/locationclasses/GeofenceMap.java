@@ -295,7 +295,7 @@ public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.Co
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-
+                geoFenceMarker.setPosition(marker.getPosition());
                 map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 drawGeofence();
             }
