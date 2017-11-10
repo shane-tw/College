@@ -98,6 +98,10 @@ public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.Co
         int min = 100;
 
 
+
+
+
+
         seekbarradius.setMax( (max - min) / step );
 
 
@@ -139,6 +143,8 @@ public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.Co
                     .addApi(LocationServices.API)
                     .build();
         }
+
+
 
     }
 
@@ -268,10 +274,33 @@ public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.Co
     // Callback called when Map is ready
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         Log.d(TAG, "onMapReady()");
         map = googleMap;
         map.setOnMapClickListener(this);
         map.setOnMarkerClickListener(this);
+
+        map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+                geoFenceMarker.setPosition(marker.getPosition());
+                drawGeofence();
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                drawGeofence();
+            }
+        });
+
     }
 
     @Override
@@ -281,10 +310,11 @@ public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.Co
         drawGeofence();
     }
 
+
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.d(TAG, "onMarkerClickListener: " + marker.getPosition());
-        return false;
+        return true;
     }
 
     private LocationRequest locationRequest;
@@ -396,6 +426,7 @@ public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.Co
         // Define marker options
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
+                .draggable(true)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
                 .title("geofence");
         if ( map!=null ) {

@@ -14,6 +14,7 @@ import android.util.Log;
 
 import pm.shane.alexaclone.MainActivity;
 import pm.shane.alexaclone.R;
+import pm.shane.alexaclone.preferences.locationclasses.GeofenceMap;
 import pm.shane.alexaclone.preferences.locationclasses.LocationUpdatesListner;
 
 
@@ -98,6 +99,8 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
 
     boolean handleShowMap(android.support.v7.preference.Preference onPreferenceClickListener) {
 
+        Intent intent = new Intent(getActivity(), GeofenceMap.class);
+        startActivity(intent);
 
 
         return true;
