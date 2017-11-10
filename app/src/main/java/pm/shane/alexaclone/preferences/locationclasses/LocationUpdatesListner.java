@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -23,6 +24,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.sql.Time;
+import java.util.ArrayList;
+
+import pm.shane.alexaclone.DBHandler;
+import pm.shane.alexaclone.MainActivity;
+
+import static android.app.PendingIntent.getActivity;
 
 /**
  * Created by underscorexxxjesus on 09/11/17.
@@ -32,6 +39,7 @@ public class LocationUpdatesListner extends Service implements LocationListener,
 
     private static final String TAG = LocationUpdatesListner.class.getSimpleName();
     private GoogleApiClient googleApiClient;
+    private DBHandler db = null;
 
     private LocationManager locationManager;
     private final int REQ_PERMISSIONS = 104;
@@ -56,6 +64,18 @@ public class LocationUpdatesListner extends Service implements LocationListener,
 
         googleApiClient.connect();
 
+        /*
+
+        db = new DBHandler(getApplicationContext());
+        ArrayList<Location> locations = new ArrayList<>();
+
+        locations = db.getAllLocationHistory();
+
+        for (int i = 0; i < locations.size(); i++){
+            Log.e(TAG, " " + locations.get(i).getLongitude() + " " + locations.get(i).getLatitude() + " " + locations.get(i).getAltitude() + " " + locations.get(i).getTime() + " ");
+        }
+
+        */ //works grand above
 
 
     }
@@ -108,6 +128,13 @@ public class LocationUpdatesListner extends Service implements LocationListener,
 
         //store in database
 
+        if(db == null){
+            db = new DBHandler(getApplicationContext());
+
+        }
+        else {
+            db.addLocationHistory(longitude, latitude, altitude, timestamp);
+        }
 
 
 

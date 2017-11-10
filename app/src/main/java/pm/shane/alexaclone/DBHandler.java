@@ -142,11 +142,11 @@ public class DBHandler extends SQLiteOpenHelper {
         double latitude;
         double altitude;
         long timestamp;
-        Location tmp = null;
+        Location tmp = new Location("");
 
         if (cursor.moveToFirst()) {
             do {
-                tmp = null;
+                tmp = new Location("");
 
                 longitude = cursor.getDouble(0);
                 latitude = cursor.getDouble(1);
