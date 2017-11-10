@@ -22,13 +22,15 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.sql.Time;
+
 /**
  * Created by underscorexxxjesus on 09/11/17.
  */
 
 public class LocationUpdatesListner extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = GeofenceService.class.getSimpleName();
+    private static final String TAG = LocationUpdatesListner.class.getSimpleName();
     private GoogleApiClient googleApiClient;
 
     private LocationManager locationManager;
@@ -98,6 +100,15 @@ public class LocationUpdatesListner extends Service implements LocationListener,
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Location listner service on location updates");
+
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+        double altitude = location.getAltitude();
+        long timestamp = location.getTime();
+
+        //store in database
+
+
 
 
 
