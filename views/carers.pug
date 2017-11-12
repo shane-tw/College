@@ -1,0 +1,25 @@
+extends navbar.pug
+
+block vars
+	- var title='Virtual Care - Carers'
+	- var description='This is a test'
+
+append scripts
+	script(src='/scripts/carers.js')
+
+append body
+	.container.mt-4
+		h2 Carers
+		if (!('carers' in me) || me.carers.length === 0)
+			p You don't have any carers.
+		else
+			each carer in me.carers
+				.card-deck
+					.col-sm-6.col-md-4.col-lg-3.mb-4
+						.card.text-center(name='card_carer', data-carer-id= carer.id)
+							img.card-img-top.col-12(src= carer.avatar, alt=`${carer.name}'s avatar`)
+							.card-body
+								h4.card-title= carer.name
+								div.btn-group.btn-group-justified.hidden-sm-down.hidden-md-down(role='group', aria-label='Card buttons')
+									a(name='btn_view', href=`/carers/${carer.id}`, class='btn btn-primary') View
+									a(name='btn_delete', href='#', class='btn') Delete

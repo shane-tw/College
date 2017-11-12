@@ -1,26 +1,37 @@
 .margin-top {
-    margin-top: 1.25rem;
+	margin-top: 1.25rem;
 }
 
 .avatar-thumb {
 	margin-right: 0.5rem;
 	border: 1px solid #A9A9A9;
-	padding: 0.1rem;
+	max-width: 100%;
 }
 
 .btn-group-justified {
-  display: flex;
-  width: 100%;
+	display: flex;
+	width: 100%;
 }
 
 .btn-group-justified .btn, .btn-group-justified .btn-group {
-  flex: 1;
+	flex: 1;
 }
 
 .btn-group-justified .btn .btn, .btn-group-justified .btn-group .btn {
-  width: 100%;
+	width: 100%;
 }
 
 .btn-group-justified .btn .dropdown-menu, .btn-group-justified .btn-group .dropdown-menu {
-  left: auto;
+	left: auto;
+}
+
+.card-horizontal {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+}
+
+#remote-camera-img {
+	width: 100%;
 }

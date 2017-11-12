@@ -24,10 +24,16 @@ mongoose_connect_options = {
 mongoose.Promise = global.Promise
 mongoose.plugin(lean_id)
 
+const PasswordResetSchema = new Schema({
+	value: String,
+	creation_date: { type: Date, required: true, default: new Date(0) }
+})
+
 const CareCompany = mongoose.model('CareCompany', {
 	name: { type: String, required: true },
 	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
+	password_reset_token: { type: PasswordResetSchema, required: true, select: false, default: {} },
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	__v: { type: Number, select: false },
 	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'}
@@ -37,6 +43,7 @@ const Carer = mongoose.model('Carer', {
 	name: { type: String, required: true },
 	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
+	password_reset_token: { type: PasswordResetSchema, required: true, select: false, default: {} },
 	patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
 	companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }],
 	__v: { type: Number, select: false },
@@ -52,6 +59,7 @@ const Patient = mongoose.model('Patient', {
 	name: { type: String, required: true },
 	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
+	password_reset_token: { type: PasswordResetSchema, required: true, select: false, default: {} },
 	allow_location_tracking: { type: Boolean, default: true, required: true },
 	facebook_token: String,
 	twitter_token: String,
@@ -212,8 +220,13 @@ app.get('/settings', async (req, res) => {
 	show_pug(200, 'views/settings.pug', req, res)
 })
 
-app.get('/patients', async (req, res) => {
-	show_pug(200, 'views/patients.pug', req, res)
+app.get('/:them_account_path', async (req, res) => {
+	const them_model = get_model_from_path(req.params.them_account_path)
+	if (them_model == null) {
+		show_pug(404, 'views/not_found.pug', req, res)
+		return
+	}
+	show_pug(200, 'views/' + req.params.them_account_path + '.pug', req, res)
 })
 
 app.get('/:them_account_path/:them_id', async (req, res) => {
@@ -241,7 +254,7 @@ app.get('/:them_account_path/:them_id', async (req, res) => {
 	} else {
 		status_code = 200
 	}
-	show_pug(status_code, 'views/patient.pug', req, res, { them: them })
+	show_pug(status_code, 'views/' + them_account_path + '_details.pug', req, res, { them: them })
 })
 
 app.get('/:them_account_path/:them_id/invite', async (req, res) => {
@@ -283,6 +296,10 @@ async function show_pug(status_code, pug_name, req, res, extra_vars = {}) {
         vars['me'] = user
 		res.send(pug.renderFile(pug_name, vars))
 	} catch (db_error) {
+		if (db_error.code === 'ENOENT') {
+			show_pug(404, 'views/not_found.pug', req, res)
+			return
+		}
 		console.log(db_error)
 		res.status(503).send("Failed to communicate with the database.")
 	}

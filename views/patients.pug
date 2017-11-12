@@ -21,5 +21,5 @@ append body
 							.card-body
 								h4.card-title= patient.name
 								div.btn-group.btn-group-justified.hidden-sm-down.hidden-md-down(role='group', aria-label='Card buttons')
-									a(name='btn_view', href='#', class='btn btn-primary') View
+									a(name='btn_view', href=`/patients/${patient.id}`, class='btn btn-primary') View
 									a(name='btn_delete', href='#', class='btn') Delete

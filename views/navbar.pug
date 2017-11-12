@@ -19,6 +19,18 @@ append body
 						li.nav-item
 							a.nav-link(href='/') Dashboard
 								span.sr-only (current)
+					if (current_url == '/companies' && me.companies != null)
+						li.nav-item.active
+							a.nav-link(href='#') Companies
+					else if (me.companies != null)
+						li.nav-item
+							a.nav-link(href='/companies') Companies
+					if (current_url == '/carers' && me.carers != null)
+						li.nav-item.active
+							a.nav-link(href='#') Carers
+					else if (me.carers != null)
+						li.nav-item
+							a.nav-link(href='/carers') Carers
 					if (current_url == '/patients' && me.patients != null)
 						li.nav-item.active
 							a.nav-link(href='#') Patients
