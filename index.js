@@ -114,10 +114,10 @@ app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, an
 		}
 	}
 	if (errors.length > 0) {
-		res.status(403).send(errors)
+		res.status(403).send({errors: errors})
 		return
 	}
-	if (req.url === '/api/takeaways' || req.url === '/api/taxis' || req.url === '/api/login' || req.url === '/api/register') {
+	if (req.url === '/api/places' || req.url === '/api/login' || req.url === '/api/register') {
 		return next()
 	}
 	if (!req.session.logged_in) {
@@ -127,55 +127,31 @@ app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, an
 	next()
 })
 
-app.post('/api/takeaways', async function (req, res) {
+app.post('/api/places', async function (req, res) {
 	let errors = []
 	req.body.longitude = parseFloat(req.body.longitude)
 	req.body.latitude = parseFloat(req.body.latitude)
-	if (typeof req.body.longitude !== 'number') {
+	if (isNaN(req.body.longitude)) {
 		errors.push({ type: "required", key: "longitude", message: "Path `longitude` is required." })
 	}
-	if (typeof req.body.latitude !== 'number') {
+	if (isNaN(req.body.latitude)) {
 		errors.push({ type: "required", key: "latitude", message: "Path `latitude` is required." })
+	}
+	if (typeof req.body.type !== 'string') {
+		errors.push({ type: "required", key: "type", message: "Path `type` is required." })
 	}
 	if (errors.length > 0) {
 		res.status(400).send({ errors: errors })
 		return
 	}
 	try {
-		const businesses = await Business.find().where('type', 'take-away').where('loc').near({
+		const businesses = await Business.find().where('type', req.body.type).where('loc').near({
 			center: {
 				type: 'Point',
 				coordinates: [req.body.longitude, req.body.latitude]
 			}
 		}).limit(20).lean().exec()
-		res.send(businesses)
-	} catch (db_error) {
-		handle_api_db_error(db_error, res)
-	}
-})
-
-app.post('/api/taxis', async function (req, res) {
-	let errors = []
-	req.body.longitude = parseFloat(req.body.longitude)
-	req.body.latitude = parseFloat(req.body.latitude)
-	if (typeof req.body.longitude !== 'number') {
-		errors.push({ type: "required", key: "longitude", message: "Path `longitude` is required." })
-	}
-	if (typeof req.body.latitude !== 'number') {
-		errors.push({ type: "required", key: "latitude", message: "Path `latitude` is required." })
-	}
-	if (errors.length > 0) {
-		res.status(400).send({ errors: errors })
-		return
-	}
-	try {
-		const businesses = await Business.find().where('type', 'taxi').where('loc').near({
-			center: {
-				type: 'Point',
-				coordinates: [req.body.longitude, req.body.latitude]
-			}
-		}).limit(20).lean().exec()
-		res.send(businesses)
+		res.send({data: businesses})
 	} catch (db_error) {
 		handle_api_db_error(db_error, res)
 	}
