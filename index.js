@@ -24,6 +24,18 @@ mongoose_connect_options = {
 mongoose.Promise = global.Promise
 mongoose.plugin(lean_id)
 
+const Business = mongoose.model('Business', {
+	eir_id: { type: String, required: true, unique: true },
+	name: { type: String, required: true },
+	longitude: { type: Number },
+	latitude: { type: Number },
+	area_code: { type: String },
+	phone_number: { type: String },
+	type: { type: String },
+	loc: { type: [ Number ], index: '2dsphere' },
+	__v: { type: Number, select: false }
+})
+
 const PasswordResetSchema = new Schema({
 	value: String,
 	creation_date: { type: Date, required: true, default: new Date(0) }
@@ -35,8 +47,8 @@ const CareCompany = mongoose.model('CareCompany', {
 	password_hash: { type: String, required: true, select: false },
 	password_reset_token: { type: PasswordResetSchema, required: true, select: false, default: {} },
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
-	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'}
+	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'},
+	__v: { type: Number, select: false }
 })
 
 const Carer = mongoose.model('Carer', {
@@ -46,8 +58,8 @@ const Carer = mongoose.model('Carer', {
 	password_reset_token: { type: PasswordResetSchema, required: true, select: false, default: {} },
 	patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
 	companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }],
-	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'}
+	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'},
+	__v: { type: Number, select: false }
 })
 
 const RemoteCameraSchema = new Schema({
@@ -70,8 +82,8 @@ const Patient = mongoose.model('Patient', {
 	enable_geofence: { type: Boolean, default: false, required: true },
 	geofence_points: [{ latitude: { type: Number, required: true }, longitude: { type: Number, required: true }}],
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
-	__v: { type: Number, select: false },
-	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'}
+	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'},
+	__v: { type: Number, select: false }
 })
 
 app.use(body_parser.urlencoded({extended: true}))
@@ -108,7 +120,7 @@ app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, an
 		res.status(403).send(errors)
 		return
 	}
-	if (req.url === '/api/login' || req.url === '/api/register') {
+	if (req.url === '/api/takeaways' || req.url === '/api/taxis' || req.url === '/api/login' || req.url === '/api/register') {
 		return next()
 	}
 	if (!req.session.logged_in) {
@@ -116,6 +128,34 @@ app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, an
 		return
 	}
 	next()
+})
+
+app.get('/api/takeaways', async function (req, res) {
+	try {
+		const businesses = await Business.find().where('type', 'take-away').where('loc').near({
+			center: {
+				type: 'Point',
+				coordinates: [req.body.longitude, req.body.latitude]
+			}
+		}).limit(20).lean().exec()
+		res.send(businesses)
+	} catch (db_error) {
+		handle_api_db_error(db_error, res)
+	}
+})
+
+app.get('/api/taxis', async function (req, res) {
+	try {
+		const businesses = await Business.find().where('type', 'taxi').where('loc').near({
+			center: {
+				type: 'Point',
+				coordinates: [req.body.longitude, req.body.latitude]
+			}
+		}).limit(20).lean().exec()
+		res.send(businesses)
+	} catch (db_error) {
+		handle_api_db_error(db_error, res)
+	}
 })
 
 app.post('/api/register', async function (req, res) {
@@ -136,8 +176,7 @@ app.post('/api/register', async function (req, res) {
 	try {
 		const new_user = await user.save()
 		login_user(new_user, req, res)
-	}
-	catch (db_error) {
+	} catch (db_error) {
 		handle_api_db_error(db_error, res)
 	}
 })
@@ -281,7 +320,7 @@ app.get('*', async (req, res) => {
 async function show_pug(status_code, pug_name, req, res, extra_vars = {}) {
 	let vars = { current_url: req.path, next_url: req.query.next_url }
 	vars = merge(vars, extra_vars)
-    let user = { logged_in: false }
+	let user = { logged_in: false }
 	if (!req.session.logged_in) {
 		vars['me'] = user
 		res.status(status_code).send(pug.renderFile(pug_name, vars))
@@ -292,8 +331,8 @@ async function show_pug(status_code, pug_name, req, res, extra_vars = {}) {
 		let temp_user = await user_model.findOne({ _id: req.session.user_id }).populate(['carers', 'patients', 'companies']).lean().exec()
 		user = merge(user, temp_user)
 		user.account_path = get_path_from_model_name(req.session.account_model_name)
-        user.logged_in = true
-        vars['me'] = user
+		user.logged_in = true
+		vars['me'] = user
 		res.send(pug.renderFile(pug_name, vars))
 	} catch (db_error) {
 		if (db_error.code === 'ENOENT') {
@@ -411,7 +450,7 @@ function get_model_from_name(model_name) {
 function get_model_from_path(account_path) {
 	const path_index = account_paths.indexOf(account_path)
 	if (path_index === -1) {
-		return null;
+		return null
 	}
 	return get_model_from_name(account_models[path_index])
 }

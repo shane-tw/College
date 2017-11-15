@@ -5,7 +5,8 @@ MongoDB
 ## Setup
 Run `npm install`  
 Run `mkdir mongodb && mongod --dbpath mongodb`  
-Run `mongo < setup_scripts/create_user.js`  
+Run `mongoimport -c businesses -d care_assistant --mode merge --file businesses.json -u mongoadmin -p m0ngodb --authenticationDatabase admin`  
+Run `mongo < setup_scripts/create_user.js`
 
 ## Running
 Run `mongod --dbpath mongodb --auth`  
