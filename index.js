@@ -27,9 +27,6 @@ mongoose.plugin(lean_id)
 const Business = mongoose.model('Business', {
 	eir_id: { type: String, required: true, unique: true },
 	name: { type: String, required: true },
-	longitude: { type: Number },
-	latitude: { type: Number },
-	area_code: { type: String },
 	phone_number: { type: String },
 	type: { type: String },
 	loc: { type: [ Number ], index: '2dsphere' },
@@ -130,7 +127,20 @@ app.all('/api/*', (req, res, next) => { // This route mitigates CSRF attacks, an
 	next()
 })
 
-app.get('/api/takeaways', async function (req, res) {
+app.post('/api/takeaways', async function (req, res) {
+	let errors = []
+	req.body.longitude = parseFloat(req.body.longitude)
+	req.body.latitude = parseFloat(req.body.latitude)
+	if (typeof req.body.longitude !== 'number') {
+		errors.push({ type: "required", key: "longitude", message: "Path `longitude` is required." })
+	}
+	if (typeof req.body.latitude !== 'number') {
+		errors.push({ type: "required", key: "latitude", message: "Path `latitude` is required." })
+	}
+	if (errors.length > 0) {
+		res.status(400).send({ errors: errors })
+		return
+	}
 	try {
 		const businesses = await Business.find().where('type', 'take-away').where('loc').near({
 			center: {
@@ -144,7 +154,20 @@ app.get('/api/takeaways', async function (req, res) {
 	}
 })
 
-app.get('/api/taxis', async function (req, res) {
+app.post('/api/taxis', async function (req, res) {
+	let errors = []
+	req.body.longitude = parseFloat(req.body.longitude)
+	req.body.latitude = parseFloat(req.body.latitude)
+	if (typeof req.body.longitude !== 'number') {
+		errors.push({ type: "required", key: "longitude", message: "Path `longitude` is required." })
+	}
+	if (typeof req.body.latitude !== 'number') {
+		errors.push({ type: "required", key: "latitude", message: "Path `latitude` is required." })
+	}
+	if (errors.length > 0) {
+		res.status(400).send({ errors: errors })
+		return
+	}
 	try {
 		const businesses = await Business.find().where('type', 'taxi').where('loc').near({
 			center: {
