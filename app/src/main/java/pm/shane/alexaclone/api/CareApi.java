@@ -4,13 +4,13 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import pm.shane.alexaclone.api.response.GenericResponse;
+import pm.shane.alexaclone.api.response.data.Business;
 import pm.shane.alexaclone.api.response.data.Carer;
 import pm.shane.alexaclone.api.response.data.Company;
 import pm.shane.alexaclone.api.response.data.Patient;
 import pm.shane.alexaclone.api.response.data.User;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 /**
@@ -19,9 +19,8 @@ import retrofit2.http.POST;
 
 public interface CareApi {
 
-    String BASE_URL = "http://192.168.2.126/api/";
+    String BASE_URL = "http://vca.shane.pm/api/";
 
-    @Headers("X-Requested-With: XMLHttpRequest")
     @POST("login")
     Observable<GenericResponse<User>> login(@Body Credentials credentials);
     @POST("register")
@@ -34,5 +33,6 @@ public interface CareApi {
     Observable<GenericResponse<List<Carer>>> getCarers();
     @GET("companies")
     Observable<GenericResponse<List<Company>>> getCompanies();
-
+    @POST("places")
+    Observable<GenericResponse<List<Business>>> getPlaces(@Body PlaceFilter placeFilter);
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <pm.shane.alexaclone.preferences.UrlPreference
+        android:title="Brown Thomas"
+        url="http://www.brownthomas.com/"/>
+
+    <pm.shane.alexaclone.preferences.UrlPreference
+        android:title="Debenhams"
+        url="http://www.debenhams.ie/"/>
+
+    <pm.shane.alexaclone.preferences.UrlPreference
+        android:title="Boohoo"
+        url="http://ie.boohoo.com/"/>
+
+    <pm.shane.alexaclone.preferences.UrlPreference
+        android:title="M&amp;M Direct"
+        url="https://www.mandmdirect.ie/"/>
+
+    <pm.shane.alexaclone.preferences.UrlPreference
+        android:title="Sports Direct"
+        url="https://ie.sportsdirect.com/"/>
+
+</android.support.v7.preference.PreferenceScreen>

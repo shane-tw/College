@@ -5,7 +5,6 @@ import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -16,20 +15,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.sql.Time;
-import java.util.ArrayList;
-
 import pm.shane.alexaclone.DBHandler;
-import pm.shane.alexaclone.MainActivity;
-
-import static android.app.PendingIntent.getActivity;
 
 /**
  * Created by underscorexxxjesus on 09/11/17.

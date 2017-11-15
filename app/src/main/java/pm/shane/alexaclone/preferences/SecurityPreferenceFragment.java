@@ -8,11 +8,9 @@ import android.os.Bundle;
 
 import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.Log;
 
 
-import pm.shane.alexaclone.MainActivity;
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.preferences.locationclasses.GeofenceMap;
 import pm.shane.alexaclone.preferences.locationclasses.LocationUpdatesListner;

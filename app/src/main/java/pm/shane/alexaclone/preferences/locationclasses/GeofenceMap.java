@@ -52,13 +52,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import pm.shane.alexaclone.MainActivity;
+import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
 
 
 public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, ResultCallback<Status> {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MainApp.class.getSimpleName();
 
     private GoogleMap map;
     private GoogleApiClient googleApiClient;
@@ -81,7 +81,7 @@ public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.Co
 
     // Create a Intent send by the notification
     public static Intent makeNotificationIntent(Context context, String msg) {
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, GeofenceMap.class);
         intent.putExtra(NOTIFICATION_MSG, msg);
         return intent;
     }
@@ -242,7 +242,7 @@ public class GeofenceMap extends AppCompatActivity implements GoogleApiClient.Co
     private void locationPermissionsDenied() {
 
         AlertDialog.Builder dialog;
-        dialog = new AlertDialog.Builder(MainActivity.context);
+        dialog = new AlertDialog.Builder(MainApp.getContext());
         dialog.setMessage(getString(R.string.permissionLocationExplain));
 
         dialog.setPositiveButton(getString(R.string.permissionPositive), new DialogInterface.OnClickListener() {

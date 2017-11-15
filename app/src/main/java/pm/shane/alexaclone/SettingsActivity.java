@@ -1,6 +1,7 @@
 package pm.shane.alexaclone;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -11,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
-import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -33,26 +33,23 @@ import pm.shane.alexaclone.preferences.SettingsPreferenceFragment;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    private static final int REQUEST_CODE_LOCATION = 101;
     private Button connectBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // setupActionBar();
+        startService(new Intent(MainApp.getContext(), AlexaService.class));
         connectBtn = new Button(MainApp.getContext());
-        connectBtn.setId(R.id.connectBtn);
-        connectBtn.setText("Connect Device");
-        connectBtn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        connectBtn.setBackgroundResource(R.color.colorAccent);
-        connectBtn.setTextColor(Color.parseColor("#ffffff"));
+        getConnectBtn().setId(R.id.connectBtn);
+        getConnectBtn().setText(R.string.connect_device);
+        getConnectBtn().setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        getConnectBtn().setBackgroundResource(R.color.colorAccent);
+        getConnectBtn().setTextColor(Color.parseColor("#ffffff"));
         getListView().addFooterView(connectBtn);
         getListView().setDivider(ContextCompat.getDrawable(this, R.drawable.preference_list_divider_material));
-        connectBtn = findViewById(R.id.connectBtn);
 
         if (MainApp.getConnectedDevice() != null) {
-            getConnectBtn().setText("Disconnect Device");
-            // TODO: Change button text and colour maybe
+            getConnectBtn().setText(R.string.disconnect_device);
             return;
         }
 
@@ -63,14 +60,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             @Override
             public void onScanStart() {
                 super.onScanStart();
-                Toast.makeText(MainApp.getContext(), "Started scan.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainApp.getContext(), R.string.started_scan, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onDeviceFind(OneSheeldDevice device) {
                 OneSheeldSdk.getManager().cancelScanning();
                 runOnUiThread(() -> {
-                    Toast.makeText(MainApp.getContext(), "Found OneSheeld.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainApp.getContext(), R.string.found_device, Toast.LENGTH_SHORT).show();
                 });
                 device.connect();
             }
@@ -81,7 +78,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return;
                 }
                 runOnUiThread(() -> {
-                    Toast.makeText(MainApp.getContext(), "Failed to find OneSheeld.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainApp.getContext(), R.string.failed_find_device, Toast.LENGTH_SHORT).show();
                 });
             }
         };
@@ -89,12 +86,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             @Override
             public void onConnect(final OneSheeldDevice device) {
                 MainApp.setConnectedDevice(device);
-                startService(new Intent(MainApp.getContext(), AlexaService.class));
                 device.pinMode(7, OneSheeldDevice.OUTPUT);
                 runOnUiThread(() -> {
                     Toast.makeText(MainApp.getContext(), "Connected!", Toast.LENGTH_SHORT).show();
-                    getConnectBtn().setText("Disconnect Device");
-                    // TODO: Change button text and colour maybe
+                    getConnectBtn().setText(R.string.disconnect_device);
                 });
             }
         };
@@ -105,14 +100,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             if (MainApp.getConnectedDevice() != null) {
                 manager.disconnectAll();
                 MainApp.setConnectedDevice(null);
-
-                getConnectBtn().setText("Connect Device");
+                getConnectBtn().setText(R.string.connect_device);
                 return;
+            }
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (mBluetoothAdapter == null) {
+                Toast.makeText(MainApp.getContext(), R.string.bluetooth_not_supported, Toast.LENGTH_LONG).show();
+                return;
+            } else if (!mBluetoothAdapter.isEnabled()) {
+                mBluetoothAdapter.enable();
             }
             if (PermissionChecker.checkSelfPermission(MainApp.getContext(),
                     Manifest.permission.ACCESS_COARSE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_LOCATION);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PermissionUtils.REQUEST_LOCATION);
             } else {
                 Toast.makeText(MainApp.getContext(), "About to start scan.", Toast.LENGTH_SHORT).show();
                 manager.scan();
@@ -124,14 +125,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return connectBtn;
     }
 
-    public void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar == null) {
-            return;
-        }
-        actionBar.setDisplayHomeAsUpEnabled(!onIsMultiPane());
-    }
-
     @Override
     public boolean onIsMultiPane() {
         return (getResources().getConfiguration().screenLayout
@@ -140,7 +133,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     @Override
     public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
+        loadHeadersFromResource(R.xml.pref_headers_main, target);
     }
 
     @Override
@@ -155,11 +148,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_CODE_LOCATION:
+            case PermissionUtils.REQUEST_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     OneSheeldSdk.getManager().scan();
                 } else {
-                    Toast.makeText(MainApp.getContext(), "Permission denied.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainApp.getContext(), "Location permissions must be granted in order to connect to the device.", Toast.LENGTH_LONG).show();
                 }
                 break;
             default:

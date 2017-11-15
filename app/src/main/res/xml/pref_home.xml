@@ -34,14 +34,14 @@
     <PreferenceCategory android:title="@string/pref_category_interactive">
         <Preference
             android:key="order_takeaway_btn"
-            android:title="Order take-away" />
+            android:title="@string/order_takeaway" />
 
         <Preference
             android:key="order_shopping_btn"
-            android:title="Order shopping" />
+            android:title="@string/order_shopping" />
 
         <Preference
             android:key="order_taxi_btn"
-            android:title="Order taxi" />
+            android:title="@string/order_taxi" />
     </PreferenceCategory>
 </PreferenceScreen>

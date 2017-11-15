@@ -26,9 +26,9 @@ public class MainApp extends Application {
         mInstance = this;
         tts = new TextToSpeech(getContext(), (int status) -> {
             if(status == TextToSpeech.SUCCESS){
-                int result=tts.setLanguage(Locale.US);
-                if(result==TextToSpeech.LANG_MISSING_DATA ||
-                        result==TextToSpeech.LANG_NOT_SUPPORTED){
+                int result = tts.setLanguage(Locale.US);
+                if(result == TextToSpeech.LANG_MISSING_DATA ||
+                        result == TextToSpeech.LANG_NOT_SUPPORTED){
                     Log.e("error", "This Language is not supported");
                 }
                 else{
@@ -36,7 +36,7 @@ public class MainApp extends Application {
                 }
             }
             else
-                Log.e("error", "Initilization Failed!");
+                Log.e("error", "Initialisation Failed!");
         });
         OneSheeldSdk.init(getContext());
         super.onCreate();

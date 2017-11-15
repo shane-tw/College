@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:name=".MainApp"
@@ -17,7 +19,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
 
         <service android:name=".AlexaService" />
         <service android:name=".preferences.locationclasses.GeofenceService" />
@@ -33,11 +34,13 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:label="@string/dashboard"/>
+        <activity
+            android:name=".ShoppingActivity"
+            android:label="@string/shopping"/>
         <activity android:name=".preferences.locationclasses.GeofenceMap"/>
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login">
+            android:name=".LoginActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
 

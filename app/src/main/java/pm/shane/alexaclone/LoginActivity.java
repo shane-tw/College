@@ -10,25 +10,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
-import pm.shane.alexaclone.api.CareApi;
-import pm.shane.alexaclone.api.Credentials;
-import pm.shane.alexaclone.api.RetrofitManager;
-import pm.shane.alexaclone.api.response.Error;
-import pm.shane.alexaclone.api.response.GenericResponse;
-import pm.shane.alexaclone.api.response.data.User;
-import retrofit2.Converter;
-import retrofit2.HttpException;
-import retrofit2.Response;
 
 /**
  * A login screen that offers login via email/password.
@@ -49,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setTitle(R.string.sign_in);
         // Set up the login form.
         mEmailView = findViewById(R.id.email);
 
@@ -105,8 +87,8 @@ public class LoginActivity extends AppCompatActivity {
     //    } else {
             showProgress(true);
 
-          /*  CareApi service = RetrofitManager.getRetrofit().create(CareApi.class);
-            service.login(new Credentials(mEmailView.getText().toString(), mPasswordView.getText().toString(), "Patient"))
+          /*
+            RetrofitManager.getService().login(new Credentials(mEmailView.getText().toString(), mPasswordView.getText().toString(), "Patient"))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<GenericResponse<User>>() {
@@ -138,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                                     for (Error error : genericResponse.getErrors()) {
                                         Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                                     }
-                                } catch (IOException e) {
+                                } catch (IOException | JsonSyntaxException e) {
                                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             } else {

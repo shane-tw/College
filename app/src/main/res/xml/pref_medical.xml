@@ -6,6 +6,6 @@
 
     <Preference
         android:key="view_calendar_btn"
-        android:title="View calendar"
-        android:summary="Browse and schedule your appointments" />
+        android:title="@string/view_calendar"
+        android:summary="@string/browse_schedule_appointments" />
 </PreferenceScreen>

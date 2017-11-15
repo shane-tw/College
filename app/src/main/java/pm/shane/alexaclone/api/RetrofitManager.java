@@ -19,6 +19,7 @@ public class RetrofitManager {
 
     private static OkHttpClient webClient;
     private static Retrofit retrofit;
+    private static CareApi service;
 
     public static synchronized Retrofit getRetrofit() {
         if (retrofit == null) {
@@ -35,16 +36,27 @@ public class RetrofitManager {
     public static synchronized OkHttpClient getWebClient() {
         if (webClient == null) {
             webClient = new OkHttpClient.Builder()
-                    .addInterceptor(RetrofitManager::interceptAddOrigin)
+                    .addInterceptor(RetrofitManager::interceptAddHeaders)
                     .cookieJar(SessionManager.getCookieJar())
                     .build();
         }
         return webClient;
     }
 
-    public static Response interceptAddOrigin(Interceptor.Chain chain) throws IOException {
-        Request request = chain.request().newBuilder().addHeader("Origin", chain.request().url().toString()).build();
+    public static Response interceptAddHeaders(Interceptor.Chain chain) throws IOException {
+        Request request = chain.request().newBuilder()
+                .addHeader("Origin", chain.request().url().toString())
+                .addHeader("X-Requested-With", "XMLHttpRequest")
+                .build();
+
         return chain.proceed(request);
+    }
+
+    public static synchronized CareApi getService() {
+        if (service == null) {
+            service = getRetrofit().create(CareApi.class);
+        }
+        return service;
     }
 
 }
