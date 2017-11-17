@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -66,7 +67,34 @@ public class PlacePreferenceFragment extends PreferenceFragment {
             getActivity().onBackPressed();
             return;
         }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        List<String> providers = lm.getProviders(true);
+        Location location = null;
+        for (String provider : providers) {
+            lm.requestLocationUpdates(provider, 1000, 0, new LocationListener() {
+
+                public void onLocationChanged(Location location) {
+                }
+
+                public void onProviderDisabled(String provider) {
+                }
+
+                public void onProviderEnabled(String provider) {
+                }
+
+                public void onStatusChanged(String provider, int status,
+                                            Bundle extras) {
+                }
+            });
+            location = lm.getLastKnownLocation(provider);
+            if (location != null) {
+                break;
+            }
+        }
+        if (location == null) {
+            Toast.makeText(MainApp.getContext(), R.string.cant_find_location, Toast.LENGTH_LONG).show();
+            getActivity().onBackPressed();
+            return;
+        }
         RetrofitManager.getService().getPlaces(new PlaceFilter(location.getLongitude(), location.getLatitude(), type))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -102,10 +130,10 @@ public class PlacePreferenceFragment extends PreferenceFragment {
                                     Toast.makeText(MainApp.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             } catch (IOException | JsonSyntaxException e) {
-                                Toast.makeText(MainApp.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainApp.getContext(), R.string.failed_understand_response, Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            Toast.makeText(MainApp.getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainApp.getContext(), R.string.network_error_occurred, Toast.LENGTH_LONG).show();
                         }
                         getActivity().onBackPressed();
                     }
