@@ -7,10 +7,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
@@ -20,11 +25,22 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.hintdesk.core.activities.AlertMessageBox;
+import com.hintdesk.core.util.OSUtil;
+import com.hintdesk.core.util.StringUtil;
+
 import pm.shane.alexaclone.MainActivity;
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.preferences.locationclasses.ContactsActivity;
 import pm.shane.alexaclone.preferences.locationclasses.GeofenceMap;
 import pm.shane.alexaclone.preferences.locationclasses.LocationUpdatesListner;
+import pm.shane.alexaclone.preferences.locationclasses.twitterStuff.ConstantValues;
+import pm.shane.alexaclone.preferences.locationclasses.twitterStuff.OAuthActivity;
+import pm.shane.alexaclone.preferences.locationclasses.twitterStuff.TwitterActivity;
+import pm.shane.alexaclone.preferences.locationclasses.twitterStuff.TwitterService;
+import pm.shane.alexaclone.preferences.locationclasses.twitterStuff.TwitterUtil;
+import twitter4j.auth.RequestToken;
+
 
 import static android.app.Activity.RESULT_OK;
 
@@ -36,12 +52,14 @@ import static android.app.Activity.RESULT_OK;
 public class SecurityPreferenceFragment extends PreferenceFragment {
 
     public static final int RQS_PICK_CONTACT = 9;
-    private String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS};
+    private String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE};
     private final int REQ_PERMISSIONS = 104;
 
     private static final String TAG = SecurityPreferenceFragment.class.getSimpleName();
     public static final String  PREF_NAME = "locationsharedpreferences";
     public static final String ENABLE_NOTIFICATION_ON_GEOFENCE_BREACH = "ENABLE_NOTIFICATION_ON_GEOFENCE_BREACH";
+    private boolean isUseStoredTokenKey = false;
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.pref_location, rootKey);
@@ -92,6 +110,7 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
         findPreference("link_phone").setOnPreferenceClickListener(this::handleLinkPhone);
 
         getActivity().startService(new Intent(getActivity(), LocationUpdatesListner.class));
+        getActivity().startService(new Intent(getActivity(), TwitterService.class));
 
 
         if (!hasPermissions(getActivity(), PERMISSIONS)) {
@@ -99,6 +118,56 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
 
         }
 
+
+        if (!OSUtil.IsNetworkAvailable(getActivity().getApplicationContext())) {
+            AlertMessageBox.Show(getActivity(), "Internet connection", "A valid internet connection can't be established", AlertMessageBox.AlertMessageBoxIcon.Info);
+            return;
+        }
+
+        if (StringUtil.isNullOrWhitespace(ConstantValues.TWITTER_CONSUMER_KEY) || StringUtil.isNullOrWhitespace(ConstantValues.TWITTER_CONSUMER_SECRET)) {
+            AlertMessageBox.Show(getActivity(), "Twitter oAuth infos", "Please set your twitter consumer key and consumer secret", AlertMessageBox.AlertMessageBoxIcon.Info);
+            return;
+        }
+
+
+
+
+
+
+
+    }
+
+    private void logIn() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        if (!sharedPreferences.getBoolean(ConstantValues.PREFERENCE_TWITTER_IS_LOGGED_IN,false))
+        {
+            new TwitterAuthenticateTask().execute();
+        }
+        else
+        {
+            Intent intent = new Intent(getActivity(), TwitterActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    class TwitterAuthenticateTask extends AsyncTask<String, String, RequestToken> {
+
+        @Override
+        protected void onPostExecute(RequestToken requestToken) {
+            if (requestToken!=null)
+            {
+
+                    Intent intent = new Intent(getActivity().getApplicationContext(), OAuthActivity.class);
+                    intent.putExtra(ConstantValues.STRING_EXTRA_AUTHENCATION_URL,requestToken.getAuthenticationURL());
+                    startActivity(intent);
+
+            }
+        }
+
+        @Override
+        protected RequestToken doInBackground(String... params) {
+            return TwitterUtil.getInstance().getRequestToken();
+        }
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {
@@ -131,10 +200,31 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
         return true;
     }
 
+    public final String consumer_key = " iGutaCN8CCRUvrbQHx3gQjrAV";
+    public final String secret_key = " s1VaIqE6l1IhlTFToAJXzU6NEAGOruRz5fusk7qpN4PZpoVRWe";
     boolean handleLinkTwitter(android.support.v7.preference.Preference onPreferenceClickListener) {
+
+        logIn();
 
 
         return true;
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivity = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity == null) {
+            return false;
+        } else {
+            NetworkInfo[ ] info = connectivity.getAllNetworkInfo();
+            if (info != null) {
+                for (int i = 0; i < info.length; i++) {
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     boolean handleShowMap(android.support.v7.preference.Preference onPreferenceClickListener) {
