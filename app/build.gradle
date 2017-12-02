@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         applicationId "pm.shane.alexaclone"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.addUrlIntent.runner.AndroidJUnitRunner"
@@ -27,19 +27,19 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:support-vector-drawable:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support:support-vector-drawable:27.0.2'
+    implementation 'com.android.support:design:27.0.2'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:27.0.2'
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.integreight.onesheeld:sdk:2.2.0'
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
-    compile 'com.android.support:preference-v14:26.1.0'
-    compile "com.android.support:support-v13:26.1.0"
+    implementation 'com.android.support:recyclerview-v7:27.0.2'
+    compile 'com.android.support:preference-v14:27.0.2'
+    compile "com.android.support:support-v13:27.0.2"
     // Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
@@ -50,7 +50,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
     compile 'com.google.android.gms:play-services:11.6.2'
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile group: 'oauth.signpost', name: 'signpost-core', version: '1.2.1.2'
     compile group: 'oauth.signpost', name: 'signpost-commonshttp4', version: '1.2.1.2'
     compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.6'
