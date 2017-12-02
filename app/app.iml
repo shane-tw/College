@@ -141,13 +141,13 @@
     <orderEntry type="library" name="com.github.franmontiel:PersistentCookieJar-v1.0.1" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-analytics-11.2.0" level="project" />
     <orderEntry type="library" name="__local_aars__:/media/underscorexxxjesus/externalSSD/College-3rd-year/project/gitdir/VirtualCareApp/libs/signpost-core-1.2.1.1.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="__local_aars__:/media/underscorexxxjesus/externalSSD/College-3rd-year/project/gitdir/VirtualCareApp/libs/twitter4j-4.0.4/lib/twitter4j-async-4.0.4.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-nearby-11.2.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-fragment-26.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="com.android.support.test.espresso:espresso-core-3.0.1" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-config-11.2.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-cast-11.2.0" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-database-connection-11.2.0" level="project" />
-    <orderEntry type="library" name="__local_aars__:/media/underscorexxxjesus/externalSSD/College-3rd-year/project/gitdir/VirtualCareApp/libs/twitter4j-4.0.4/lib/twitter4j-media-support-4.0.4.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-appinvite-11.2.0" level="project" />
     <orderEntry type="library" name="com.squareup.retrofit2:retrofit:2.3.0@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-gass-11.2.0" level="project" />

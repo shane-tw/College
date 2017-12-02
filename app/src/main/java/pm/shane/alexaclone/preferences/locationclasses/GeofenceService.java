@@ -125,12 +125,12 @@ public class GeofenceService extends IntentService{
     private void createNotification(){
         Intent notificationIntent = GeofenceMap.makeNotificationIntent(getApplicationContext(), "");
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
         stackBuilder.addParentStack(GeofenceMap.class);
         stackBuilder.addNextIntent(notificationIntent);
         PendingIntent notificationPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext());
         notificationBuilder
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Geofence breached")
