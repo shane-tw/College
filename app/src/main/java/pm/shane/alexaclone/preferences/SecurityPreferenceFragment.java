@@ -3,35 +3,23 @@ package pm.shane.alexaclone.preferences;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.preference.Preference;
 import android.util.Log;
-import android.widget.Toast;
 
-
-<<<<<<< HEAD
-=======
 import com.hintdesk.core.activities.AlertMessageBox;
 import com.hintdesk.core.util.OSUtil;
 import com.hintdesk.core.util.StringUtil;
 
-import pm.shane.alexaclone.MainActivity;
->>>>>>> GpsFeatures
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.preferences.locationclasses.ContactsActivity;
 import pm.shane.alexaclone.preferences.locationclasses.GeofenceMap;
@@ -42,9 +30,6 @@ import pm.shane.alexaclone.preferences.locationclasses.twitterStuff.TwitterActiv
 import pm.shane.alexaclone.preferences.locationclasses.twitterStuff.TwitterService;
 import pm.shane.alexaclone.preferences.locationclasses.twitterStuff.TwitterUtil;
 import twitter4j.auth.RequestToken;
-
-
-import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -108,7 +93,6 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
             }
         });
 
-
         findPreference("link_phone").setOnPreferenceClickListener(this::handleLinkPhone);
 
         getActivity().startService(new Intent(getActivity(), LocationUpdatesListner.class));
@@ -130,12 +114,6 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
             AlertMessageBox.Show(getActivity(), "Twitter oAuth infos", "Please set your twitter consumer key and consumer secret", AlertMessageBox.AlertMessageBoxIcon.Info);
             return;
         }
-
-
-
-
-
-
 
     }
 
@@ -182,13 +160,6 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
         }
         return true;
     }
-
-
-
-
-
-
-
 
     boolean handleGeoTagSwitch(android.support.v7.preference.Preference onPreferenceClickListener) {
 
@@ -238,8 +209,6 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
         return true;
     }
 
-
-
     boolean handleLinkPhone(android.support.v7.preference.Preference onPreferenceClickListener) {
 
        // Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -250,10 +219,4 @@ public class SecurityPreferenceFragment extends PreferenceFragment {
         return true;
     }
 
-
-
-    }
-
-
-
-
+}

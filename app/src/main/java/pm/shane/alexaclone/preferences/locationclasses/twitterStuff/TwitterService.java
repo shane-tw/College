@@ -4,18 +4,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.text.Html;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.hintdesk.core.util.StringUtil;
-
-import java.util.ArrayList;
 
 import pm.shane.alexaclone.DBHandler;
 import pm.shane.alexaclone.preferences.locationclasses.GeofenceService;
@@ -43,13 +38,7 @@ public class TwitterService extends Service{
 
         initControl();
 
-
-
         new Thread(runnable).start();
-
-
-
-
 
     }
 
@@ -80,12 +69,6 @@ public class TwitterService extends Service{
                 new TwitterUpdateStatusTask().execute(status);
             }
         }
-
-
-
-
-
-
 
     };
 
@@ -136,7 +119,6 @@ public class TwitterService extends Service{
 
 
     class TwitterUpdateStatusTask extends AsyncTask<String, String, Boolean> {
-
 
         @Override
         protected Boolean doInBackground(String... params) {

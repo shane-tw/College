@@ -41,7 +41,6 @@
     <string name="permissionNegative">Deny</string>
     <string name="permissionLocationExplain">In order for the geo fence to work you need to accept the following permissions</string>
     <string name="permissionSMSExplain">In order to send sms to your emergency contacts when you exit the geo fence you need to accept the following permissions</string>
-<<<<<<< HEAD
 
     <!-- Settings settings -->
     <string name="pref_header_settings">Settings</string>
@@ -65,8 +64,5 @@
     <string name="cant_find_location">We can\'t find your location.</string>
     <string name="network_error_occurred">A network error occurred. Do you have any internet?</string>
     <string name="failed_understand_response">Could not understand the website\'s response. Perhaps the site is down?</string>
-
-=======
     <string name="title_activity_contacts">ContactsActivity</string>
->>>>>>> GpsFeatures
 </resources>
