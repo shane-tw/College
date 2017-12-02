@@ -35,7 +35,7 @@ public class LocationUpdatesListner extends Service implements LocationListener,
 
     private LocationManager locationManager;
     private final int REQ_PERMISSIONS = 104;
-    private String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS};
+    private String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS};
 
     @Override
     public void onCreate(){
@@ -124,9 +124,9 @@ public class LocationUpdatesListner extends Service implements LocationListener,
             db = new DBHandler(getApplicationContext());
 
         }
-        else {
+
             db.addLocationHistory(longitude, latitude, altitude, timestamp);
-        }
+
 
 
 

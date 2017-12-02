@@ -16,10 +16,15 @@ import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "virtualcare";
 
     private static final String TABLE_LOCATION_HISTORY = "locationhistory";
+    private static final String TABLE_CONTACTS = "contact";
+
+
+    private static final String KEY_CONTACTNAME = "contactname";
+    private static final String KEY_CONTACTNUMBER = "contactnumber";
 
 
     private static final String KEY_LONGITUDE = "longitude";
@@ -38,6 +43,11 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_LONGITUDE + " REAL," + KEY_LATITUDE + " REAL," + KEY_ALTITUDE + " REAL," + KEY_TIMESTAMP + " INTEGER"  + ")";
         db.execSQL(CREATE_TABLE_LOCATION);
 
+        String CREATE_TABLE_CONTACTS = "CREATE TABLE " + TABLE_CONTACTS+ "("
+                + KEY_CONTACTNAME + " TEXT," + KEY_CONTACTNUMBER + " TEXT" + ")";
+        db.execSQL(CREATE_TABLE_CONTACTS);
+
+
     }
 
     public DBHandler(Context context) {
@@ -47,6 +57,8 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION_HISTORY);
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
     }
 
 
@@ -89,6 +101,19 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
+    public void addContacts(String name, String number){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_CONTACTNAME, name);
+        values.put(KEY_CONTACTNUMBER, number);
+
+
+
+        db.insert(TABLE_CONTACTS, null, values);
+        db.close();
+
+    }
+
     public Location getLatestLocationHistory(){
         Location location = null;
         String selectQuery = "SELECT * FROM " + TABLE_LOCATION_HISTORY;
@@ -107,6 +132,7 @@ public class DBHandler extends SQLiteOpenHelper {
             altitude = cursor.getDouble(2);
             timestamp = cursor.getLong(3);
 
+            location = new Location("custom");
             location.setLongitude(longitude);
             location.setLatitude(latitude);
             location.setAltitude(altitude);
@@ -127,6 +153,69 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
         return location;
+    }
+
+    public ArrayList<String> getContactNames(){
+        ArrayList<String> names = new ArrayList<>();
+
+        String selectQuery = "SELECT "+KEY_CONTACTNAME+" FROM " + TABLE_CONTACTS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+
+                names.add(cursor.getString(0));
+
+
+            } while (cursor.moveToNext());
+        }
+
+        if(cursor != null && !cursor.isClosed()){
+            cursor.close();
+        }
+
+        return names;
+    }
+
+    public ArrayList<String> getContactsNumbers(){
+        ArrayList<String> numbers = new ArrayList<>();
+
+        String selectQuery = "SELECT "+KEY_CONTACTNUMBER+" FROM " + TABLE_CONTACTS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+
+                numbers.add(cursor.getString(0));
+
+
+            } while (cursor.moveToNext());
+        }
+
+        if(cursor != null && !cursor.isClosed()){
+            cursor.close();
+        }
+
+        return numbers;
+
+
+
+
+    }
+
+    public void deleteContact(String name){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String delete = "DELETE FROM " + TABLE_CONTACTS + " WHERE " + KEY_CONTACTNAME + " = \"" + name + "\"";
+        db.execSQL(delete);
+
+
+
     }
 
 
