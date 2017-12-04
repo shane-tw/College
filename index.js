@@ -83,8 +83,13 @@ const Patient = mongoose.model('Patient', {
 	__v: { type: Number, select: false }
 })
 
-app.use(body_parser.urlencoded({extended: true}))
-app.use(body_parser.json())
+app.use(body_parser.urlencoded({
+	extended: true,
+	limit: '500kb'
+}))
+app.use(body_parser.json({
+	limit: '500kb'
+}))
 app.use(session({
 	secret: 'Z"\'l!|FiIL<7ty(^',
 	resave: false,
@@ -386,7 +391,7 @@ async function update_user(model_name, req, res) {
 	if (!await run_image_checks({ name: 'avatar', content: req.body.avatar }, req, res)) {
 		return
 	}
-	if (!await run_image_checks({ name: 'remote-camera', content: req.body['remote_camera[last_picture]'] }, req, res)) {
+	if ('remote_camera' in req.body && !await run_image_checks({ name: 'remote-camera', content: req.body['remote_camera']['last_picture'] }, req, res)) {
 		return
 	}
 	try {
@@ -466,8 +471,8 @@ async function run_image_checks(image, req, res) {
 	if (image.content == null) {
 		return true
 	}
-	const image_matches = image.content.match(/^data:(image\/[a-z.-]+);base64,(.+)$/)
-	if (image_matches == null || image_matches.length !== 3) {
+	const image_matches = image.content.match(/^data:(image\/[a-z.-]+);base64,((.|\n)+)$/)
+	if (image_matches == null || image_matches.length !== 4) {
 		res.status(400).send({ errors: [{ type: "failure", key: "base64", message: "Invalid image format. Should be in base64 with data-type."}]})
 		return false
 	}
@@ -483,7 +488,7 @@ async function run_image_checks(image, req, res) {
 				req.body.avatar = image_path_web
 				break
 			case 'remote-camera':
-				req.body['remote_camera[last_picture]'] = image_path_web
+				req.body['remote_camera']['last_picture'] = image_path_web
 		}
 	} catch (err) {
 		res.status(500).send({ errors: [{ type: "failure", key: "io-write", message: "Failed to write image to file."}]})

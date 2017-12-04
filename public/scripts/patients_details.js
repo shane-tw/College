@@ -5,7 +5,7 @@ function updatePicture() {
 	}
 	$.getJSON('/api/patients/' + patient_id, function (data) {
 		var patient = data.data
-		$('#remote-camera-img').prop('src', patient.remote_camera.last_picture)
+		$('#remote-camera-img').prop('src', patient.remote_camera.last_picture + '#' + new Date().getTime())
 	})
 }
 
