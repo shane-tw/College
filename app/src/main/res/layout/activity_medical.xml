@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/list_item_vertical"
+    android:paddingBottom="@dimen/list_item_vertical"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/list_item_vertical"
+            android:paddingBottom="@dimen/list_item_vertical"
+            android:paddingLeft="@dimen/list_item_horizontal"
+            android:paddingRight="@dimen/list_item_horizontal"
+            android:background="?attr/selectableItemBackground"
+            android:onClick="onPlayMemoryGameClicked"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/list_item_text_size"
+                android:textColor="@color/black"
+                android:text="Play memory game" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@android:color/darker_gray"
+                android:text="Play the game and hone your skills!" />
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/preference_list_divider_material"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/list_item_vertical"
+            android:paddingBottom="@dimen/list_item_vertical"
+            android:paddingLeft="@dimen/list_item_horizontal"
+            android:paddingRight="@dimen/list_item_horizontal"
+            android:background="?attr/selectableItemBackground"
+            android:onClick="onViewCalendarClicked"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/list_item_text_size"
+                android:textColor="@color/black"
+                android:text="View calendar" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@android:color/darker_gray"
+                android:text="Browse and schedule your appointments" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -23,23 +23,22 @@ public class MainApp extends Application {
 
     @Override
     public void onCreate() {
-        mInstance = this;
-        tts = new TextToSpeech(getContext(), (int status) -> {
-            if(status == TextToSpeech.SUCCESS){
-                int result = tts.setLanguage(Locale.US);
-                if(result == TextToSpeech.LANG_MISSING_DATA ||
-                        result == TextToSpeech.LANG_NOT_SUPPORTED){
-                    Log.e("error", "This Language is not supported");
-                }
-                else{
-                    canSpeak = true;
-                }
-            }
-            else
-                Log.e("error", "Initialisation Failed!");
-        });
-        OneSheeldSdk.init(getContext());
         super.onCreate();
+        mInstance = this;
+        OneSheeldSdk.init(getContext());
+        tts = new TextToSpeech(getContext(), (int status) -> {
+            if (status != TextToSpeech.SUCCESS) {
+                Log.e("error", "Initialisation Failed!");
+                return;
+            }
+            int result = tts.setLanguage(Locale.US);
+            if (result == TextToSpeech.LANG_MISSING_DATA
+            || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                Log.e("error", "This Language is not supported");
+                return;
+            }
+            canSpeak = true;
+        });
     }
 
     public static boolean canSpeak() {

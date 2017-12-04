@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="@dimen/list_item_vertical"
+    android:paddingBottom="@dimen/list_item_vertical"
     android:orientation="vertical">
-
-    <FrameLayout
-        android:id="@+id/fragment"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </FrameLayout>
-
-    <Button
-        android:id="@+id/connectBtn"
-        android:text="Connect Device"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:textColor="#ffffff" />
-
-</LinearLayout>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingTop="@dimen/list_item_vertical"
+            android:paddingBottom="@dimen/list_item_vertical"
+            android:paddingLeft="@dimen/list_item_horizontal"
+            android:paddingRight="@dimen/list_item_horizontal"
+            android:textSize="@dimen/list_item_text_size"
+            android:textColor="@color/black"
+            android:onClick="onSignOutClicked"
+            android:text="Sign out" />
+    </LinearLayout>
+</ScrollView>

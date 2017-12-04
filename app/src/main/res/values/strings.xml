@@ -52,6 +52,7 @@
     <string name="started_scan">Started scan.</string>
     <string name="found_device">Found OneSheeld.</string>
     <string name="failed_find_device">Failed to find OneSheeld.</string>
+    <string name="failed_connect_device">Failed to connect to OneSheeld.</string>
     <string name="no_call_permission">No call permission; dialing instead.</string>
     <string name="running_in_background">This app is still running in the background.</string>
     <string name="running_title">Alexa Clone Running</string>

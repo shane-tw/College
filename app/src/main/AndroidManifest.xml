@@ -20,10 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service android:name=".AlexaService" />
-        <service android:name=".preferences.locationclasses.GeofenceService" />
-        <service android:name=".preferences.locationclasses.LocationUpdatesListner" />
-        <service android:name=".preferences.locationclasses.twitterStuff.TwitterService"/>
+        <service android:name=".services.AlexaService" />
+        <service android:name=".location.GeofenceService" />
+        <service android:name=".location.LocationUpdatesListner" />
+        <service android:name=".location.twitterStuff.TwitterService"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -32,13 +32,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/dashboard"/>
-        <activity
-            android:name=".ShoppingActivity"
-            android:label="@string/shopping"/>
-        <activity android:name=".preferences.locationclasses.GeofenceMap"/>
+        <activity android:name=".location.GeofenceMap"/>
         <activity
             android:name=".LoginActivity">
             <intent-filter>
@@ -48,12 +42,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".preferences.locationclasses.ContactsActivity"
+            android:name=".location.ContactsActivity"
             android:label="@string/title_activity_contacts"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
 
-        <activity android:name=".preferences.locationclasses.twitterStuff.OAuthActivity"/>
-        <activity android:name=".preferences.locationclasses.twitterStuff.TwitterActivity"/>
+        <activity android:name=".location.twitterStuff.OAuthActivity"/>
+        <activity android:name=".location.twitterStuff.TwitterActivity"/>
+        <activity android:name=".activities.DashboardActivity" />
+        <activity android:name=".activities.HomeActivity" />
+        <activity android:name=".activities.LocationActivity" />
+        <activity android:name=".activities.MedicalActivity" />
+        <activity android:name=".activities.PlaceActivity" />
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.ShoppingActivity" />
+        <activity android:name=".activities.shopping.GroceriesActivity" />
+        <activity android:name=".activities.shopping.ElectronicsActivity" />
+        <activity android:name=".activities.shopping.FashionActivity" />
+        <activity android:name=".activities.shopping.HomewareActivity" />
 
     </application>
 

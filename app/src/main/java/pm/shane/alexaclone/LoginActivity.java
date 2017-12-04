@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import pm.shane.alexaclone.activities.DashboardActivity;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -100,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onNext(GenericResponse<User> userResponse) {
                             Toast.makeText(LoginActivity.this, "Logged in successfully.", Toast.LENGTH_SHORT).show();
                             SessionManager.setLoggedInUser(userResponse.getData()); */
-                            Intent myIntent = new Intent(LoginActivity.this, SettingsActivity.class);
+                            Intent myIntent = new Intent(LoginActivity.this, DashboardActivity.class);
                             LoginActivity.this.startActivity(myIntent);
                             finish();}
      /*                   }
