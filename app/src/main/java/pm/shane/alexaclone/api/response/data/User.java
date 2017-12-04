@@ -21,7 +21,7 @@ public class User {
     @SerializedName("avatar")
     @Expose
     public String avatar;
-    @SerializedName("account_type")
+    @SerializedName("account_model_name")
     @Expose
     public String accountType;
 

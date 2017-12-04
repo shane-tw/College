@@ -66,4 +66,12 @@
     <string name="network_error_occurred">A network error occurred. Do you have any internet?</string>
     <string name="failed_understand_response">Could not understand the website\'s response. Perhaps the site is down?</string>
     <string name="title_activity_contacts">ContactsActivity</string>
+
+    <!-- Camera -->
+    <string name="camera_sleep_interrupted">Error: Camera sleep interrupted.</string>
+    <string name="device_has_no_camera">Error: Your device doesn\'t have a camera.</string>
+    <string name="camera_unavailable">Error: The camera is unavailable.</string>
+    <string name="failed_set_camera_display">Error: Failed to set display for camera.</string>
+    <string name="camera_has_no_resolutions">Error: The camera doesn\'t support any resolution.</string>
+    <string name="couldnt_open_camera">Error: Couldn\'t get camera instance. No permissions?</string>
 </resources>

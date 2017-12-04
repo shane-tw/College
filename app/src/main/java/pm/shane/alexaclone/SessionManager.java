@@ -8,7 +8,7 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
-import pm.shane.alexaclone.api.response.data.User;
+import pm.shane.alexaclone.api.response.data.Patient;
 
 /**
  * Created by Shane on 28/10/2017.
@@ -16,7 +16,7 @@ import pm.shane.alexaclone.api.response.data.User;
 
 public class SessionManager {
 
-    private static User loggedInUser;
+    private static Patient loggedInUser;
     private static SharedPreferences sharedPreferences;
     private static ClearableCookieJar cookieJar;
 
@@ -42,12 +42,12 @@ public class SessionManager {
         editor.apply();
     }
 
-    public static void setLoggedInUser(User user) {
+    public static void setLoggedInUser(Patient user) {
         loggedInUser = user;
         setLoggedIn(loggedInUser != null);
     }
 
-    public static User getLoggedInUser() {
+    public static Patient getLoggedInUser() {
         return loggedInUser;
     }
 

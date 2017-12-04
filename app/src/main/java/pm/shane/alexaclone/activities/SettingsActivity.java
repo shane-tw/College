@@ -13,6 +13,7 @@ import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.SessionManager;
 import pm.shane.alexaclone.location.GeofenceService;
 import pm.shane.alexaclone.services.AlexaService;
+import pm.shane.alexaclone.services.CameraService;
 
 /**
  * Created by Shane on 28/10/2017.
@@ -30,6 +31,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void onSignOutClicked(View view) {
         SessionManager.setLoggedIn(false);
         MainApp.get().stopService(new Intent(MainApp.get(), AlexaService.class));
+        MainApp.get().stopService(new Intent(MainApp.get(), CameraService.class));
         MainApp.get().stopService(new Intent(MainApp.get(), GeofenceService.class));
         Intent myIntent = new Intent(this, LoginActivity.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

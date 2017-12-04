@@ -8,7 +8,6 @@ import pm.shane.alexaclone.api.response.data.Business;
 import pm.shane.alexaclone.api.response.data.Carer;
 import pm.shane.alexaclone.api.response.data.Company;
 import pm.shane.alexaclone.api.response.data.Patient;
-import pm.shane.alexaclone.api.response.data.User;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -20,11 +19,12 @@ import retrofit2.http.POST;
 public interface CareApi {
 
     String BASE_URL = "http://vca.shane.pm/api/";
-
+    @POST("me")
+    Observable<GenericResponse<Patient>> me(@Body Patient patient);
     @POST("login")
-    Observable<GenericResponse<User>> login(@Body Credentials credentials);
+    Observable<GenericResponse<Patient>> login(@Body Credentials credentials);
     @POST("register")
-    Observable<GenericResponse<User>> register(@Body Credentials credentials);
+    Observable<GenericResponse<Patient>> register(@Body Credentials credentials);
     @GET("logout")
     Observable<GenericResponse<Void>> logout();
     @GET("patients")

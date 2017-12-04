@@ -86,14 +86,14 @@ public class OneSheeldFragment extends Fragment {
                 });
             }
         };
+        manager.addScanningCallback(scanningCallback);
         manager.addConnectionCallback(connectionCallback);
         manager.addErrorCallback(errorCallback);
-        manager.addScanningCallback(scanningCallback);
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_onesheeld, container, false);
         Button tmpConnectBtn = v.findViewById(R.id.connect_btn);
         if (connectBtn != null) {

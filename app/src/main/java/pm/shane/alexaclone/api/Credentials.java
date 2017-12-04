@@ -12,7 +12,7 @@ public class Credentials {
     private String email;
     @SerializedName("password")
     private String password;
-    @SerializedName("account_type")
+    @SerializedName("account_model_name")
     private String accountType;
 
     public Credentials(String email, String password, String accountType) {

@@ -15,6 +15,7 @@ public class PermissionUtils {
     public static final int REQUEST_CALL_PHONE = 39183;
     public static final int REQUEST_LOCATION = 48137;
     public static final int REQUEST_LOCATIONS = 48573;
+    public static final int REQUEST_CAMERA_CODE = 29123;
 
     public static boolean hasCallPermission() {
         int permissionCheck = ContextCompat.checkSelfPermission(MainApp.getContext(), Manifest.permission.CALL_PHONE);
@@ -25,6 +26,12 @@ public class PermissionUtils {
         ActivityCompat.requestPermissions(callingActivity,
                 new String[]{Manifest.permission.CALL_PHONE},
                 REQUEST_CALL_PHONE);
+    }
+
+    public static void requestCameraPermission(AppCompatActivity callingActivity) {
+        ActivityCompat.requestPermissions(callingActivity,
+                new String[]{Manifest.permission.CAMERA},
+                REQUEST_CAMERA_CODE);
     }
 
 }

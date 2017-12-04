@@ -36,7 +36,7 @@ public class ShoppingActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    
+
     private void showBackButton() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

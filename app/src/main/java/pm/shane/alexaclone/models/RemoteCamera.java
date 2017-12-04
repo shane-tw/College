@@ -1,5 +1,7 @@
 package pm.shane.alexaclone.models;
 
+import android.util.Base64;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,11 +11,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class RemoteCamera {
 
-        @SerializedName("last_picture")
-        @Expose
-        public String lastPicture;
-        @SerializedName("enabled")
-        @Expose
-        public boolean enabled;
+    @SerializedName("last_picture")
+    @Expose
+    public String lastPicture;
+    @SerializedName("enabled")
+    @Expose
+    public Boolean enabled;
+
+    public void setLastPicture(byte[] data) {
+        lastPicture = "data:image/jpeg;base64," + Base64.encodeToString(data, Base64.DEFAULT);
+    }
 
 }
