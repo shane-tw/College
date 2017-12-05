@@ -44,6 +44,7 @@ append body
 								img.avatar-thumb.rounded-circle(src= me.avatar, width='18')
 								| #{me.name}
 							.dropdown-menu(aria-labelledby='magic')
+								a.dropdown-item(href=`/${me.account_path}/${me.id}/invite`) View Profile
 								a.dropdown-item(href='/settings') Settings
 								div.dropdown-divider
 								a.dropdown-item#logout-btn(href='#') Sign out
