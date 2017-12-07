@@ -3,6 +3,7 @@
     package="pm.shane.alexaclone">
 
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -11,7 +12,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".MainApp"
@@ -21,11 +22,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <service android:name=".services.AlexaService" />
         <service android:name=".location.GeofenceService" />
         <service android:name=".location.LocationUpdatesListner" />
-        <service android:name=".location.twitterStuff.TwitterService"/>
+        <service android:name=".location.twitterStuff.TwitterService" />
         <service android:name=".services.CameraService" />
 
         <meta-data
@@ -34,10 +34,17 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
-        <activity android:name=".location.GeofenceMap"/>
-        <activity
-            android:name=".LoginActivity">
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider"
+            android:exported="true" />
+
+        <activity android:name=".location.GeofenceMap" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
 
@@ -47,10 +54,9 @@
         <activity
             android:name=".location.ContactsActivity"
             android:label="@string/title_activity_contacts"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity android:name=".location.twitterStuff.OAuthActivity"/>
-        <activity android:name=".location.twitterStuff.TwitterActivity"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".location.twitterStuff.OAuthActivity" />
+        <activity android:name=".location.twitterStuff.TwitterActivity" />
         <activity android:name=".activities.DashboardActivity" />
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.LocationActivity" />
@@ -62,7 +68,8 @@
         <activity android:name=".activities.shopping.ElectronicsActivity" />
         <activity android:name=".activities.shopping.FashionActivity" />
         <activity android:name=".activities.shopping.HomewareActivity" />
-
+        <activity android:name=".location.FacebookActivity" />
+        <activity android:name=".location.FacebookLogin"></activity>
     </application>
 
 </manifest>

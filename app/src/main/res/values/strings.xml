@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Alexa Clone</string>
     <string name="dashboard">Dashboard</string>
+    <string name="facebook_app_id">1462441203868455</string>
 
     <!-- Login settings -->
     <string name="sign_in">Sign in</string>

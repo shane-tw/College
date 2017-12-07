@@ -61,12 +61,15 @@ public class TwitterService extends Service{
 
                 tmp = db.getLatestLocationHistory();
 
-                status = "";
+                if(tmp != null) {
 
-                status = status + "VirtualCareApp patient location update: Altitude " + tmp.getAltitude() + " Latitude " + tmp.getLatitude()+ " Longitude " + tmp.getLongitude();
+                    status = "";
+
+                    status = status + "VirtualCareApp patient location update: Altitude " + tmp.getAltitude() + " Latitude " + tmp.getLatitude() + " Longitude " + tmp.getLongitude();
 
 
-                new TwitterUpdateStatusTask().execute(status);
+                    new TwitterUpdateStatusTask().execute(status);
+                }
             }
         }
 

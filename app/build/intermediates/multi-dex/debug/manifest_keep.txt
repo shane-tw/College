@@ -1,0 +1,3 @@
+# Referenced at /media/underscorexxxjesus/externalSSD/College-3rd-year/project/newgitdir/VirtualCareApp/app/build/intermediates/manifests/full/debug/AndroidManifest.xml:36
+-keep class pm.shane.alexaclone.MainApp { <init>(...); }
+

@@ -26,6 +26,8 @@ import com.hintdesk.core.util.StringUtil;
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.location.ContactsActivity;
+import pm.shane.alexaclone.location.FacebookActivity;
+import pm.shane.alexaclone.location.FacebookLogin;
 import pm.shane.alexaclone.location.GeofenceMap;
 import pm.shane.alexaclone.location.LocationUpdatesListner;
 import pm.shane.alexaclone.location.twitterStuff.ConstantValues;
@@ -125,6 +127,10 @@ public class LocationActivity extends AppCompatActivity {
     }
 
     public void onLinkFacebookClicked(View view) {
+
+        Intent face = new Intent(this, FacebookLogin.class);
+        startActivity(face);
+
 
     }
 

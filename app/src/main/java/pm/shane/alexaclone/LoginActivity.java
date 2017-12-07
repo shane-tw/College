@@ -65,6 +65,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
+
+        Intent myIntent = new Intent(LoginActivity.this, DashboardActivity.class);
+        LoginActivity.this.startActivity(myIntent);
+        finish();
+
+        /*
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
@@ -114,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete() {}
             });
+
+            */
         }
 
     private void showProgress(final boolean show) {
