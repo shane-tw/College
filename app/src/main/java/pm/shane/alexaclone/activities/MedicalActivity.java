@@ -1,5 +1,6 @@
 package pm.shane.alexaclone.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import pm.shane.alexaclone.R;
+import pm.shane.alexaclone.activities.Game.GameActivity;
 
 /**
  * Created by Shane on 28/10/2017.
@@ -39,7 +41,9 @@ public class MedicalActivity extends AppCompatActivity {
         }
     }
 
-    public void onPlayMemoryGameClicked(View view) {}
+    public void onPlayMemoryGameClicked(View view) {
+        startActivity(new Intent(this, GameActivity.class));
+    }
 
     public void onViewCalendarClicked(View view) {}
 

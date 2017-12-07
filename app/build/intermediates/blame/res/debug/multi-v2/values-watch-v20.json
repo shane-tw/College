@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/media/underscorexxxjesus/externalSSD/College-3rd-year/project/newgitdir/VirtualCareApp/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-watch-v20/values-watch-v20.xml",
+            "outputFile": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-watch-v20\\values-watch-v20.xml",
             "map": [
                 {
-                    "source": "/home/underscorexxxjesus/.gradle/caches/transforms-1/files-1.1/play-services-auth-11.6.2.aar/49589e5d6f06bc1f238af0a8354531b1/res/values-watch-v20/values.xml",
+                    "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-auth-11.6.2.aar\\912fc2407f4ab617c87d7c2de0bcb371\\res\\values-watch-v20\\values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11",
                         "startColumns": "0,0,0,0,0,0,0,0",

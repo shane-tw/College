@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name=".MainApp"
@@ -44,20 +46,26 @@
             android:exported="true" />
 
         <activity android:name=".location.GeofenceMap" />
-        <activity android:name=".LoginActivity">
+        <!--<activity android:name=".LoginActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
 
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
-        </activity>
+        </activity>-->
         <activity
             android:name=".location.ContactsActivity"
             android:label="@string/title_activity_contacts"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".location.twitterStuff.OAuthActivity" />
         <activity android:name=".location.twitterStuff.TwitterActivity" />
-        <activity android:name=".activities.DashboardActivity" />
+        <activity android:name=".activities.DashboardActivity" >
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.LocationActivity" />
         <activity android:name=".activities.MedicalActivity" />
@@ -69,7 +77,9 @@
         <activity android:name=".activities.shopping.FashionActivity" />
         <activity android:name=".activities.shopping.HomewareActivity" />
         <activity android:name=".location.FacebookActivity" />
+
         <activity android:name=".location.FacebookLogin"></activity>
+        <activity android:name=".activities.Game.GameActivity" android:screenOrientation="landscape" />
     </application>
 
 </manifest>

@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/media/underscorexxxjesus/externalSSD/College-3rd-year/project/newgitdir/VirtualCareApp/app/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-v17/values-v17.xml",
+            "outputFile": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values-v17\\values-v17.xml",
             "map": [
                 {
-                    "source": "/home/underscorexxxjesus/.gradle/caches/transforms-1/files-1.1/preference-v14-27.0.2.aar/f341d878e86bae62a78c521822105c8e/res/values-v17/values-v17.xml",
+                    "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\preference-v14-27.0.2.aar\\6b58dc3730accad482f646b7ccb68677\\res\\values-v17\\values-v17.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/home/underscorexxxjesus/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/9b2fc5deabc24986978129ebbb43c51a/res/values-v17/values-v17.xml",
+                    "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\3ca37f480070d5b903f4c2c3332ce599\\res\\values-v17\\values-v17.xml",
                     "from": {
                         "startLines": "2,5,9,12,15,18,22,26,29,32,35,39,42,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -42,7 +42,7 @@
                     }
                 },
                 {
-                    "source": "/home/underscorexxxjesus/.gradle/caches/transforms-1/files-1.1/preference-v7-27.0.2.aar/e4d4d9a7462af4ee7f03fe3aa0bd3ee2/res/values-v17/values-v17.xml",
+                    "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\preference-v7-27.0.2.aar\\18cb2cad89f49249d7e1949ab22adf11\\res\\values-v17\\values-v17.xml",
                     "from": {
                         "startLines": "2,7",
                         "startColumns": "4,4",

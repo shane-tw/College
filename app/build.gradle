@@ -57,4 +57,10 @@ dependencies {
     compile group: 'org.twitter4j', name: 'twitter4j-async', version: '4.0.6'
     compile 'com.facebook.android:facebook-android-sdk:4.18.0'
     compile files('libs/hintdesk.core.jar')
+
+    compile project(':pocketsphinx-android-5prealpha-release')
 }
+
+ant.importBuild 'assets.xml'
+preBuild.dependsOn(list, checksum)
+clean.dependsOn(clean_assets)

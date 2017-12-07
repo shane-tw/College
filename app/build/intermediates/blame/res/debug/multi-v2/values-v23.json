@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/media/underscorexxxjesus/externalSSD/College-3rd-year/project/newgitdir/VirtualCareApp/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v23/values-v23.xml",
+            "outputFile": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v23\\values-v23.xml",
             "map": [
                 {
-                    "source": "/home/underscorexxxjesus/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/9b2fc5deabc24986978129ebbb43c51a/res/values-v23/values-v23.xml",
+                    "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\3ca37f480070d5b903f4c2c3332ce599\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,19,32,33,34,35,36",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
@@ -15,7 +15,7 @@
                     }
                 },
                 {
-                    "source": "/home/underscorexxxjesus/.gradle/caches/transforms-1/files-1.1/cardview-v7-25.0.0.aar/b19e6ea7e112b0dac9eb9f7c9a22be53/res/values-v23/values-v23.xml",
+                    "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\cardview-v7-25.0.0.aar\\a5e70928ce9c0d37bbdfe52b7b8d1d85\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

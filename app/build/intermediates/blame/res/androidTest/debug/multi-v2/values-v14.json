@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/media/underscorexxxjesus/externalSSD/College-3rd-year/project/newgitdir/VirtualCareApp/app/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-v14/values-v14.xml",
+            "outputFile": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values-v14\\values-v14.xml",
             "map": [
                 {
-                    "source": "/home/underscorexxxjesus/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/9b2fc5deabc24986978129ebbb43c51a/res/values-v14/values-v14.xml",
+                    "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\3ca37f480070d5b903f4c2c3332ce599\\res\\values-v14\\values-v14.xml",
                     "from": {
                         "startLines": "2,7,8,9,15",
                         "startColumns": "4,4,4,4,4",

@@ -75,4 +75,14 @@
     <string name="failed_set_camera_display">Error: Failed to set display for camera.</string>
     <string name="camera_has_no_resolutions">Error: The camera doesn\'t support any resolution.</string>
     <string name="couldnt_open_camera">Error: Couldn\'t get camera instance. No permissions?</string>
+
+    <!-- memory game -->
+    <string-array name="type">
+        <item>New Game</item>
+        <item>4 X 4</item>
+        <item>4 X 5</item>
+        <item>5 X 5</item>
+        <item>6 X 5</item>
+        <item>7 X 5</item>
+    </string-array>
 </resources>
