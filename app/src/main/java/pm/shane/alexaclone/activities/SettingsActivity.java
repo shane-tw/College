@@ -2,6 +2,7 @@ package pm.shane.alexaclone.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -11,7 +12,7 @@ import pm.shane.alexaclone.LoginActivity;
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.SessionManager;
-import pm.shane.alexaclone.location.GeofenceService;
+import pm.shane.alexaclone.location.LocationUpdatesListner;
 import pm.shane.alexaclone.services.AlexaService;
 import pm.shane.alexaclone.services.CameraService;
 
@@ -22,7 +23,7 @@ import pm.shane.alexaclone.services.CameraService;
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         showBackButton();
@@ -32,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
         SessionManager.setLoggedIn(false);
         MainApp.get().stopService(new Intent(MainApp.get(), AlexaService.class));
         MainApp.get().stopService(new Intent(MainApp.get(), CameraService.class));
-        MainApp.get().stopService(new Intent(MainApp.get(), GeofenceService.class));
+        MainApp.get().stopService(new Intent(MainApp.get(), LocationUpdatesListner.class));
         Intent myIntent = new Intent(this, LoginActivity.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(myIntent);

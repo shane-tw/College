@@ -35,4 +35,6 @@ public interface CareApi {
     Observable<GenericResponse<List<Company>>> getCompanies();
     @POST("places")
     Observable<GenericResponse<List<Business>>> getPlaces(@Body PlaceFilter placeFilter);
+    @POST("carers")
+    Observable<GenericResponse<List<Carer>>> getCarers(@Body PlaceFilter placeFilter);
 }

@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +27,6 @@ import com.hintdesk.core.util.StringUtil;
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.location.ContactsActivity;
-import pm.shane.alexaclone.location.FacebookActivity;
 import pm.shane.alexaclone.location.FacebookLogin;
 import pm.shane.alexaclone.location.GeofenceMap;
 import pm.shane.alexaclone.location.LocationUpdatesListner;
@@ -57,7 +57,7 @@ public class LocationActivity extends AppCompatActivity {
     private Switch geofenceNotificationSwitch;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         showBackButton();

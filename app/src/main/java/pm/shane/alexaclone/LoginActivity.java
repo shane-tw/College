@@ -9,27 +9,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.JsonSyntaxException;
-
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
 import pm.shane.alexaclone.activities.DashboardActivity;
-import pm.shane.alexaclone.api.Credentials;
-import pm.shane.alexaclone.api.RetrofitManager;
-import pm.shane.alexaclone.api.response.Error;
-import pm.shane.alexaclone.api.response.GenericResponse;
-import pm.shane.alexaclone.api.response.data.Patient;
-import retrofit2.Converter;
-import retrofit2.HttpException;
-import retrofit2.Response;
 
 /**
  * Created by Shane.
@@ -65,18 +46,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-
-        Intent myIntent = new Intent(LoginActivity.this, DashboardActivity.class);
-        LoginActivity.this.startActivity(myIntent);
-        finish();
-
-        /*
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-
         showProgress(true);
 
-        RetrofitManager.getService().login(new Credentials(mEmailView.getText().toString(), mPasswordView.getText().toString(), "Patient"))
+        /*RetrofitManager.getService().login(new Credentials(mEmailView.getText().toString(), mPasswordView.getText().toString(), "Patient"))
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<GenericResponse<Patient>>() {
@@ -86,10 +60,10 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onNext(GenericResponse<Patient> userResponse) {
                     Toast.makeText(LoginActivity.this, "Logged in successfully.", Toast.LENGTH_SHORT).show();
-                    SessionManager.setLoggedInUser(userResponse.getData());
+                    SessionManager.setLoggedInUser(userResponse.getData());*/
                     Intent myIntent = new Intent(LoginActivity.this, DashboardActivity.class);
                     LoginActivity.this.startActivity(myIntent);
-                    finish();
+                    finish();/*
                 }
 
                 @Override
@@ -119,9 +93,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onComplete() {}
-            });
-
-            */
+            });*/
         }
 
     private void showProgress(final boolean show) {

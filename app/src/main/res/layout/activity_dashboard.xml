@@ -82,6 +82,23 @@
             android:textSize="@dimen/list_item_text_size"
             android:onClick="onSettingsClicked"
             android:text="Settings"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/preference_list_divider_material"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingLeft="48dp"
+            android:paddingRight="48dp"
+            android:paddingTop="@dimen/list_item_vertical"
+            android:paddingBottom="@dimen/list_item_vertical"
+            android:gravity="center_vertical"
+            android:textColor="@color/black"
+            android:textSize="@dimen/list_item_text_size"
+            android:onClick="onFindCarerClicked"
+            android:text="Find a Carer"/>
 
         <fragment
             android:id="@+id/one_sheeld_fragment"

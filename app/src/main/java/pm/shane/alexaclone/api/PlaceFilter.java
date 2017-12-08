@@ -14,6 +14,11 @@ public class PlaceFilter {
     @SerializedName("type")
     private String type;
 
+    public PlaceFilter(double longitude, double latitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
     public PlaceFilter(double longitude, double latitude, String type) {
         this.longitude = longitude;
         this.latitude = latitude;

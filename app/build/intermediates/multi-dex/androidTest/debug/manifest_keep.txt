@@ -1,3 +1,0 @@
-# Referenced at C:\AndroidProjects\VirtualCareApp\app\build\intermediates\manifest\androidTest\debug\AndroidManifest.xml:9
--keep class android.support.addUrlIntent.runner.AndroidJUnitRunner { <init>(...); }
-

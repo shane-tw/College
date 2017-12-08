@@ -42,9 +42,9 @@ public class GeofenceService extends IntentService{
     public void onCreate(){
         super.onCreate();
 
-        startForeground(NotificationCreator.getNotificationId(),
+        /*startForeground(NotificationCreator.getNotificationId(),
                 NotificationCreator.getNotification(this));
-                Log.d(TAG,"Geofence service added to notification");
+                Log.d(TAG,"Geofence service added to notification");*/
     }
     @Nullable
     @Override

@@ -74,6 +74,7 @@
 
         <activity android:name=".location.FacebookLogin"></activity>
         <activity android:name=".activities.Game.GameActivity" android:screenOrientation="landscape" />
+        <activity android:name=".activities.FindCarerActivity" />
     </application>
 
 </manifest>

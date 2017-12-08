@@ -1,28 +1,21 @@
 package pm.shane.alexaclone.activities;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.AlarmClock;
-import android.speech.tts.TextToSpeech;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
-import pm.shane.alexaclone.SpeechRecognizerManager;
-import pm.shane.alexaclone.activities.Game.GameActivity;
 
 /**
  * Created by Shane on 28/10/2017.
@@ -33,17 +26,13 @@ public class HomeActivity extends AppCompatActivity {
     private Switch lightsSwitch;
     private Switch heatingSwitch;
 
-
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         showBackButton();
         lightsSwitch = findViewById(R.id.lights_switch);
         heatingSwitch = findViewById(R.id.heating_switch);
-
-
     }
 
     public void onCurrentTimeClicked(View view) {

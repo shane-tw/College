@@ -14,7 +14,7 @@ import pm.shane.alexaclone.models.RemoteCamera;
 public class Patient extends User {
     @SerializedName("carers")
     @Expose
-    private List<Object> carers;
+    private Carer[] carers;
     @SerializedName("geofence_points")
     @Expose
     private List<Object> geofencePoints;
@@ -33,6 +33,10 @@ public class Patient extends User {
 
     public Patient() {
         accountType = "Patient";
+    }
+
+    public Carer[] getCarers() {
+        return carers;
     }
 
     public RemoteCamera getRemoteCamera() {

@@ -131,15 +131,15 @@ public class DashboardActivity extends AppCompatActivity implements SpeechRecogn
         String[] speech = text.split(" ");
 
         if(text.contains("what") && text.contains("time")){
-            SimpleDateFormat digitalTime = new SimpleDateFormat("HH:mm");
-            SimpleDateFormat analogTime = new SimpleDateFormat("HH:mm a");
+            SimpleDateFormat digitalTime = new SimpleDateFormat("HH:mm", Locale.US);
+            SimpleDateFormat analogTime = new SimpleDateFormat("HH:mm a", Locale.US);
             Date now = new Date();
             speak("The time is " + digitalTime.format(now) + " .or " + analogTime.format(now));
         }
 
         if(text.contains("what") && text.contains("date")){
             Calendar c = Calendar.getInstance();
-            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
             String formattedDate = df.format(c.getTime());
             speak(formattedDate);
 
@@ -213,4 +213,7 @@ public class DashboardActivity extends AppCompatActivity implements SpeechRecogn
         recognition(text.toString());
     }
 
+    public void onFindCarerClicked(View view) {
+        startActivity(new Intent(MainApp.getContext(), FindCarerActivity.class));
+    }
 }
