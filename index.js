@@ -163,7 +163,7 @@ app.post('/api/places', async function (req, res) {
 		return
 	}
 	try {
-		const businesses = await Business.find().where('type', req.body.type).where('loc').near({
+		const businesses = await Business.find().where('type', req.body.type).near('loc', {
 			center: {
 				type: 'Point',
 				coordinates: [req.body.longitude, req.body.latitude]
@@ -245,7 +245,7 @@ app.get('/api/logout', (req, res) => {
 	res.send({})
 })
 
-app.get('/api/carers', (req, res) => get_users('Carer', req, res))
+app.post('/api/carers', (req, res) => get_users('Carer', req, res))
 app.get('/api/patients/:user_id', (req, res) => get_user('Patient', req, res))
 app.get('/api/carers/:user_id', (req, res) => get_user('Carer', req, res))
 app.get('/api/companies/:user_id', (req, res) => get_user('CareCompany', req, res))
@@ -270,7 +270,7 @@ async function get_users(model_name, req, res) {
 		return
 	}
 	try {
-		const users = await user_model.find().where('loc').near({
+		const users = await user_model.find().near('address.loc', {
 			center: {
 				type: 'Point',
 				coordinates: [req.body.longitude, req.body.latitude]
