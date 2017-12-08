@@ -34,6 +34,7 @@ public class SettingsActivity extends AppCompatActivity {
         MainApp.get().stopService(new Intent(MainApp.get(), AlexaService.class));
         MainApp.get().stopService(new Intent(MainApp.get(), CameraService.class));
         MainApp.get().stopService(new Intent(MainApp.get(), LocationUpdatesListner.class));
+        MainApp.setIsLogedin(false);
         Intent myIntent = new Intent(this, LoginActivity.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(myIntent);

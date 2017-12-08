@@ -1,9 +1,11 @@
 package pm.shane.alexaclone.activities;
 
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import pm.shane.alexaclone.DBHandler;
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.WeatherController;
@@ -36,6 +38,8 @@ public class WeatherActivity extends AppCompatActivity {
         WeatherController.placeIdTask asyncTask =new WeatherController.placeIdTask(new WeatherController.AsyncResponse() {
             public void processFinish(String city, String temperature, String humidity, String pressure, String updated) {
 
+                String weather = "The Temperature is " + temperature;
+                MainApp.speak(temperature);
                 cityText.setText(city);
                 currentTemperatureText.setText(temperature);
                 humidityText.setText("Humidity: "+humidity);
@@ -43,7 +47,15 @@ public class WeatherActivity extends AppCompatActivity {
                 updatedText.setText(updated);
             }
         });
-        asyncTask.execute("51.883956", "-8.533809"); //use lat and lon variables from location manager above
+        DBHandler db = new DBHandler(getApplicationContext());
+        Location loc = db.getLatestLocationHistory();
+        if(loc != null){
+            String lat = String.valueOf(loc.getLatitude());
+            String longitude = String.valueOf(loc.getLongitude());
+            asyncTask.execute(lat, longitude);
+        }else {
+            asyncTask.execute("51.883956", "-8.533809"); //use lat and lon variables from location manager above
+        }
 
     }
 }

@@ -61,9 +61,11 @@ public class LoginActivity extends AppCompatActivity {
                 public void onNext(GenericResponse<Patient> userResponse) {
                     Toast.makeText(LoginActivity.this, "Logged in successfully.", Toast.LENGTH_SHORT).show();
                     SessionManager.setLoggedInUser(userResponse.getData());*/
+                    MainApp.setIsLogedin(true);
                     Intent myIntent = new Intent(LoginActivity.this, DashboardActivity.class);
                     LoginActivity.this.startActivity(myIntent);
                     finish();/*
+
                 }
 
                 @Override
