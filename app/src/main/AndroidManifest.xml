@@ -46,26 +46,20 @@
             android:exported="true" />
 
         <activity android:name=".location.GeofenceMap" />
-        <!--<activity android:name=".LoginActivity">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>-->
-        <activity
-            android:name=".location.ContactsActivity"
-            android:label="@string/title_activity_contacts"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".location.twitterStuff.OAuthActivity" />
-        <activity android:name=".location.twitterStuff.TwitterActivity" />
-        <activity android:name=".activities.DashboardActivity" >
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
 
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".location.ContactsActivity"
+            android:label="@string/title_activity_contacts"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".location.twitterStuff.OAuthActivity" />
+        <activity android:name=".location.twitterStuff.TwitterActivity" />
+        <activity android:name=".activities.DashboardActivity" />
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.LocationActivity" />
         <activity android:name=".activities.MedicalActivity" />

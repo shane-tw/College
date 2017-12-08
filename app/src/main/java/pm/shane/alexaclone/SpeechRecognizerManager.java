@@ -1,5 +1,6 @@
 package pm.shane.alexaclone;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -43,6 +44,7 @@ public class SpeechRecognizerManager {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     private void initPockerSphinx() {
 
         new AsyncTask<Void, Void, Exception>() {
@@ -72,6 +74,7 @@ public class SpeechRecognizerManager {
                     // Create keyword-activation search.
                     mPocketSphinxRecognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
                 } catch (IOException e) {
+                    System.err.print(e.getMessage());
                     return e;
                 }
                 return null;
@@ -79,6 +82,7 @@ public class SpeechRecognizerManager {
 
             @Override
             protected void onPostExecute(Exception result) {
+                System.err.println("Something is fucking wrong\n" + result.getMessage());
                 if (result != null) {
                     Toast.makeText(mContext, "Failed to init mPocketSphinxRecognizer ", Toast.LENGTH_SHORT).show();
                 } else {
