@@ -44,9 +44,17 @@ public class HomeActivity extends AppCompatActivity {
         Toast.makeText(MainApp.getContext(), getString(R.string.the_time_is, sdf.format(cal.getTime())), Toast.LENGTH_LONG).show();
     }
 
-    public void onWeatherClicked(View view) {}
+    public void onWeatherClicked(View view) {
+        Intent myIntent = new Intent(this, WeatherActivity.class);
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(myIntent);
+    }
 
-    public void onPlayMusicClicked(View view) {}
+    public void onPlayMusicClicked(View view) {
+        Intent myIntent = new Intent(this, MusicActivity.class);
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(myIntent);
+    }
 
     public void onToggleLightsClicked(View view) {
         boolean state = !lightsSwitch.isChecked();

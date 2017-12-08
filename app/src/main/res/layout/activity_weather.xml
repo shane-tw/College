@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="24dp"
+    android:background="#4286f4"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" >
+
+
+    <TextView
+        android:id="@+id/cityText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/currentTemperatureText"
+        android:layout_centerHorizontal="true"
+        android:text="Glanmire, Ireland"
+        android:textSize="36dp" />
+
+
+    <TextView
+        android:id="@+id/currentTemperatureText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/humidityText"
+        android:layout_centerHorizontal="true"
+        android:text="11 C"
+        android:textSize="56dp" />
+
+    <TextView
+        android:id="@+id/humidityText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/pressureText"
+        android:layout_centerHorizontal="true"
+        android:text="Humidity: 90%"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/pressureText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textSize="20dp"
+        android:text="1000 hPa" />
+
+    <TextView
+        android:id="@+id/updatedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="TextView"
+        android:textSize="18dp" />
+</RelativeLayout>

@@ -71,10 +71,13 @@
         <activity android:name=".activities.shopping.FashionActivity" />
         <activity android:name=".activities.shopping.HomewareActivity" />
         <activity android:name=".location.FacebookActivity" />
-
-        <activity android:name=".location.FacebookLogin"></activity>
-        <activity android:name=".activities.Game.GameActivity" android:screenOrientation="landscape" />
+        <activity android:name=".location.FacebookLogin" />
+        <activity
+            android:name=".activities.Game.GameActivity"
+            android:screenOrientation="landscape" />
         <activity android:name=".activities.FindCarerActivity" />
+        <activity android:name=".activities.WeatherActivity" />
+        <activity android:name=".activities.MusicActivity"></activity>
     </application>
 
 </manifest>
