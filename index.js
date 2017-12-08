@@ -13,6 +13,7 @@ const salt_rounds = 10
 const fs = require('fs-extra')
 const merge = require('deepmerge')
 const lean_id = require('mongoose-lean-id')
+const EircodeHandler = require('./eircode')
 
 mongoose_connect_options = {
 	user: 'mongoadmin',
@@ -36,13 +37,20 @@ const Business = mongoose.model('Business', {
 const PasswordResetSchema = new Schema({
 	value: String,
 	creation_date: { type: Date, required: true, default: new Date(0) }
-})
+},{ _id : false })
+
+const EircodeSchema = new Schema({
+	eircode: { type: String, required: true },
+	loc: { type: [ Number ], index: '2dsphere' },
+	address: { type: String, required: true }
+},{ _id : false })
 
 const CareCompany = mongoose.model('CareCompany', {
 	name: { type: String, required: true },
 	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
 	password_reset_token: { type: PasswordResetSchema, required: true, select: false, default: {} },
+	address: { type: EircodeSchema, required: true, default: {} },
 	carers: [{ type: Schema.Types.ObjectId, ref: 'Carer' }],
 	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'},
 	__v: { type: Number, select: false }
@@ -53,6 +61,7 @@ const Carer = mongoose.model('Carer', {
 	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
 	password_reset_token: { type: PasswordResetSchema, required: true, select: false, default: {} },
+	address: { type: EircodeSchema, required: true, default: {} },
 	patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
 	companies: [{ type: Schema.Types.ObjectId, ref: 'CareCompany' }],
 	avatar: { type: String, required: true, default: '/uploads/images/default-avatar.png'},
@@ -69,6 +78,7 @@ const Patient = mongoose.model('Patient', {
 	email: { type: String, required: true, unique: true },
 	password_hash: { type: String, required: true, select: false },
 	password_reset_token: { type: PasswordResetSchema, required: true, select: false, default: {} },
+	address: { type: EircodeSchema, required: true, default: {} },
 	allow_location_tracking: { type: Boolean, default: true, required: true },
 	facebook_token: String,
 	twitter_token: String,
@@ -165,7 +175,12 @@ app.post('/api/places', async function (req, res) {
 app.post('/api/register', async function (req, res) {
 	delete req.body._id // Prevents users from modifying this.
 	delete req.body.__v
+	delete req.body.address
 	let errors = []
+	const eircode_coords = await EircodeHandler.get_coordinates(req.body.eircode)
+	if (eircode_coords == null) {
+		errors.push({ type: "invalid", key: "zipcode", message: "You entered an invalid zipcode." })
+	}
 	const user_model = get_model_from_name(req.body.account_model_name)
 	if (!check_auth_params(req, res, errors, user_model)) {
 		return
@@ -176,6 +191,10 @@ app.post('/api/register', async function (req, res) {
 		handle_hash_error(hash_error, res, errors)
 		return
 	}
+	req.body.address = {}
+	req.body.address.eircode = eircode_coords.eircode
+	req.body.address.loc = [eircode_coords.longitude, eircode_coords.latitude]
+	req.body.address.address = eircode_coords.address
 	const user = new user_model(req.body)
 	try {
 		const new_user = await user.save()
@@ -223,6 +242,7 @@ app.get('/api/logout', (req, res) => {
 	res.send({})
 })
 
+app.get('/api/carers', (req, res) => get_users('Carer', req, res))
 app.get('/api/patients/:user_id', (req, res) => get_user('Patient', req, res))
 app.get('/api/carers/:user_id', (req, res) => get_user('Carer', req, res))
 app.get('/api/companies/:user_id', (req, res) => get_user('CareCompany', req, res))
@@ -230,6 +250,34 @@ app.get('/api/me', (req, res) => {
 	req.params.user_id = req.session.user_id
 	get_user(req.session.account_model_name, req, res)
 })
+
+async function get_users(model_name, req, res) {
+	let errors = []
+	const user_model = mongoose.model(model_name)
+	req.body.longitude = parseFloat(req.body.longitude)
+	req.body.latitude = parseFloat(req.body.latitude)
+	if (isNaN(req.body.longitude)) {
+		errors.push({ type: "required", key: "longitude", message: "Path `longitude` is required." })
+	}
+	if (isNaN(req.body.latitude)) {
+		errors.push({ type: "required", key: "latitude", message: "Path `latitude` is required." })
+	}
+	if (errors.length > 0) {
+		res.status(400).send({ errors: errors })
+		return
+	}
+	try {
+		const users = await user_model.find().where('loc').near({
+			center: {
+				type: 'Point',
+				coordinates: [req.body.longitude, req.body.latitude]
+			}
+		}).limit(20).lean().exec()
+		res.send({data: users})
+	} catch (db_error) {
+		handle_api_db_error(db_error, res)
+	}
+}
 
 app.post('/api/patients/:user_id', (req, res) => update_user('Patient', req, res))
 app.post('/api/carers/:user_id', (req, res) => update_user('Carer', req, res))
@@ -244,7 +292,7 @@ app.post('/api/carers/:user_id/invite', (req, res) => invite_user('Carer', req, 
 app.post('/api/companies/:user_id/invite', (req, res) => invite_user('CareCompany', req, res))
 
 app.all('/api/*', (req, res) => { // In the event that a route is not handled, 404.
-	res.status(404).send({errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }]})
+	res.status(404).send({ errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }] })
 })
 
 app.get('/', async (req, res) => {
@@ -383,6 +431,7 @@ async function get_user(model_name, req, res) {
 async function update_user(model_name, req, res) {
 	delete req.body.password_hash // We don't want someone trying to modify this.
 	delete req.body.__v
+	delete req.body.address
 	req.body.account_model_name = model_name
 	const user_model = mongoose.model(model_name)
 	if (!await run_password_checks(req, res)) {
@@ -562,7 +611,7 @@ function login_user(user, req, res) {
 	req.session.user_id = user._id
 	req.session.account_model_name = req.body.account_model_name
 	user.account_model_name = req.session.account_model_name
-	res.send({data: user})
+	res.send({ data: user })
 }
 
 function handle_hash_error(hash_error, res, errors) {
@@ -575,8 +624,8 @@ function respond_user(user, req, res) {
 		res.status(404).send({errors: [{ type: "not-found", key: "user", message: "User does not exist." }]})
 		return
 	}
-	user.account_model_name = req.session.account_model_name
-	res.send({data: user})
+	user.account_model_name = req.body.account_model_name
+	res.send({ data: user })
 }
 
 function handle_api_db_error(db_error, res) {

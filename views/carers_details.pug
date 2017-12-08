@@ -13,6 +13,8 @@ append body
 			ul.nav.nav-tabs
 				li.active.nav-item
 					a.active.nav-link(href='#basic-info', data-toggle='tab') Basic Info
+				li.nav-item
+					a.nav-link(href='#location', data-toggle='tab') Location
 			.tab-content.margin-top
 				#basic-info.tab-pane.active
 					.card.card-body.card-horizontal.pt-3
@@ -25,3 +27,6 @@ append body
 							div
 								b Email: 
 								| #{them.email}
+				#location.tab-pane
+					p Home address: #{them.address.address}
+					iframe(src='http://maps.google.com/maps?q=' + them.address.loc[1] + ', ' + them.address.loc[0] + '&z=15&output=embed', width='360', height='270', frameborder='0', style='border:0')
