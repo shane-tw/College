@@ -22,7 +22,7 @@ append body
 							input.form-control#register-password(name='password', type='password', placeholder='Password', required='')
 						.form-group
 							label.sr-only(for='register-mobile-number') Mobile number
-							input.form-control#register-mobile-number(name='mobile_number', type='tel', placeholder='Mobile number', required='')
+							input.form-control#register-mobile-number(name='mobile_number', type='tel', placeholder='Mobile number', required='', pattern='[0-9]{3}(-|\\s)?[0-9]{7}')
 						.form-group
 							label.sr-only(for='register-eircode') Home eircode
 							input.form-control#register-eircode(name='eircode', type='text', placeholder='Home eircode', required='')
