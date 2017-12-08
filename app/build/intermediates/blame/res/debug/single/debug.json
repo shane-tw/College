@@ -264,12 +264,12 @@
         "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\mediarouter-v7-25.2.0.aar\\d5390e55b9358b4f8f191954bd53b98f\\res\\drawable-xxhdpi-v4\\ic_mr_button_connected_03_dark.png"
     },
     {
-        "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_quantum_ic_replay_30_white_36.png.flat",
-        "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-cast-framework-11.6.2.aar\\6d3956c9ff0402d2e4d030c8a3ba467c\\res\\drawable-xhdpi-v4\\quantum_ic_replay_30_white_36.png"
-    },
-    {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_card11.png.flat",
         "source": "C:\\AndroidProjects\\VirtualCareApp\\app\\src\\main\\res\\drawable\\card11.png"
+    },
+    {
+        "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_quantum_ic_replay_30_white_36.png.flat",
+        "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-cast-framework-11.6.2.aar\\6d3956c9ff0402d2e4d030c8a3ba467c\\res\\drawable-xhdpi-v4\\quantum_ic_replay_30_white_36.png"
     },
     {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_ic_mr_button_connecting_09_dark.png.flat",
@@ -452,12 +452,12 @@
         "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\mediarouter-v7-25.2.0.aar\\d5390e55b9358b4f8f191954bd53b98f\\res\\drawable-xxhdpi-v4\\ic_vol_type_speaker_group_light.png"
     },
     {
-        "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_quantum_ic_replay_10_white_24.png.flat",
-        "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-cast-framework-11.6.2.aar\\6d3956c9ff0402d2e4d030c8a3ba467c\\res\\drawable-hdpi-v4\\quantum_ic_replay_10_white_24.png"
-    },
-    {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_card20.png.flat",
         "source": "C:\\AndroidProjects\\VirtualCareApp\\app\\src\\main\\res\\drawable\\card20.png"
+    },
+    {
+        "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_quantum_ic_replay_10_white_24.png.flat",
+        "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-cast-framework-11.6.2.aar\\6d3956c9ff0402d2e4d030c8a3ba467c\\res\\drawable-hdpi-v4\\quantum_ic_replay_10_white_24.png"
     },
     {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_ic_mr_button_connecting_16_dark.png.flat",
@@ -3616,10 +3616,6 @@
         "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-cast-framework-11.6.2.aar\\6d3956c9ff0402d2e4d030c8a3ba467c\\res\\drawable-mdpi-v4\\cast_ic_stop_circle_filled_white.png"
     },
     {
-        "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_game_activity.xml.flat",
-        "source": "C:\\AndroidProjects\\VirtualCareApp\\app\\src\\main\\res\\layout\\game_activity.xml"
-    },
-    {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_ic_star_black_36dp.png.flat",
         "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\3ca37f480070d5b903f4c2c3332ce599\\res\\drawable-xxhdpi-v4\\abc_ic_star_black_36dp.png"
     },
@@ -4332,12 +4328,12 @@
         "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\3ca37f480070d5b903f4c2c3332ce599\\res\\drawable\\abc_ic_search_api_material.xml"
     },
     {
-        "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_quantum_ic_skip_next_white_24.png.flat",
-        "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-cast-framework-11.6.2.aar\\6d3956c9ff0402d2e4d030c8a3ba467c\\res\\drawable-xhdpi-v4\\quantum_ic_skip_next_white_24.png"
-    },
-    {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable_card19.png.flat",
         "source": "C:\\AndroidProjects\\VirtualCareApp\\app\\src\\main\\res\\drawable\\card19.png"
+    },
+    {
+        "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_quantum_ic_skip_next_white_24.png.flat",
+        "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-cast-framework-11.6.2.aar\\6d3956c9ff0402d2e4d030c8a3ba467c\\res\\drawable-xhdpi-v4\\quantum_ic_skip_next_white_24.png"
     },
     {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_ic_mr_button_connecting_22_light.png.flat",
@@ -5282,10 +5278,6 @@
     {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_ic_mr_button_connecting_14_dark.png.flat",
         "source": "C:\\Users\\Patrick O'Shea\\.gradle\\caches\\transforms-1\\files-1.1\\mediarouter-v7-25.2.0.aar\\d5390e55b9358b4f8f191954bd53b98f\\res\\drawable-xhdpi-v4\\ic_mr_button_connecting_14_dark.png"
-    },
-    {
-        "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_images.xml.flat",
-        "source": "C:\\AndroidProjects\\VirtualCareApp\\app\\src\\main\\res\\layout\\images.xml"
     },
     {
         "merged": "C:\\AndroidProjects\\VirtualCareApp\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_textfield_search_default_mtrl_alpha.9.png.flat",

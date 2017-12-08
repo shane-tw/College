@@ -1,7 +1,9 @@
 package pm.shane.alexaclone.activities.Game;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Message;
@@ -40,6 +42,10 @@ public class GameActivity extends Activity {
     private Card firstCard;
     private Card seconedCard;
     private ButtonListener buttonListener;
+    private Spinner levelSpinner;
+    private int checker = 0;
+    private int numTurns = 0;
+    private int currentPos = 0;
 
     private static Object lock = new Object();
 
@@ -50,56 +56,40 @@ public class GameActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         handler = new UpdateCardsHandler();
         loadImages();
         setContentView(R.layout.memory_game);
-
-
         backImage = getResources().getDrawable(R.drawable.tile_back_star);
-
         buttonListener = new ButtonListener();
-
         mainTable = (TableLayout) findViewById(R.id.TableLayout03);
-
-
         context = mainTable.getContext();
-
-        Spinner s = (Spinner) findViewById(R.id.Spinner01);
+        levelSpinner = (Spinner) findViewById(R.id.Spinner01);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.type, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        s.setAdapter(adapter);
+        levelSpinner.setAdapter(adapter);
 
-
-        s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        levelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(
-                    android.widget.AdapterView<?> arg0,
-                    View arg1, int pos, long arg3) {
-
-                ((Spinner) findViewById(R.id.Spinner01)).setSelection(0);
+                    android.widget.AdapterView<?> arg0, View arg1, int pos, long arg3) {
+                //((Spinner) findViewById(R.id.Spinner01)).setSelection(0);
 
                 int x, y;
 
                 switch (pos) {
-                    case 1: x = 4; y = 4; break;
-                    case 2: x = 4; y = 5; break;
-                    case 3: x = 5; y = 5; break;
-                    case 4: x = 6; y = 5; break;
-                    case 5: x = 7; y = 5; break;
+                    case 1: x = 4; y = 4; numTurns = 8; currentPos = 1; break;
+                    case 2: x = 4; y = 5; numTurns = 10; currentPos = 2; break;
+                    case 3: x = 6; y = 4; numTurns = 12; currentPos = 3; break;
+                    case 4: x = 6; y = 5; numTurns = 15; currentPos = 4;break;
+                    //case 5: x = 7; y = 5; numTurns = 35; break;
                     default: return;
                 }
                 newGame(x, y);
-
             }
-
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-
             }
 
         });
@@ -110,8 +100,6 @@ public class GameActivity extends Activity {
         COL_COUNT = c;
 
         cards = new int[COL_COUNT][ROW_COUNT];
-
-
         mainTable.removeView(findViewById(R.id.TableRow01));
         mainTable.removeView(findViewById(R.id.TableRow02));
 
@@ -130,8 +118,6 @@ public class GameActivity extends Activity {
 
         turns = 0;
         ((TextView) findViewById(R.id.tv1)).setText("Tries: " + turns);
-
-
     }
 
     private void loadImages() {
@@ -164,16 +150,11 @@ public class GameActivity extends Activity {
     private void loadCards() {
         try {
             int size = ROW_COUNT * COL_COUNT;
-
             Log.i("loadCards()", "size=" + size);
-
             ArrayList<Integer> list = new ArrayList<Integer>();
-
             for (int i = 0; i < size; i++) {
                 list.add(i);
             }
-
-
             Random r = new Random();
 
             for (int i = size - 1; i >= 0; i--) {
@@ -240,9 +221,7 @@ public class GameActivity extends Activity {
                 if (firstCard.x == x && firstCard.y == y) {
                     return; //the user pressed the same card
                 }
-
                 seconedCard = new Card(button, x, y);
-
                 turns++;
                 ((TextView) findViewById(R.id.tv1)).setText("Tries: " + turns);
 
@@ -282,6 +261,27 @@ public class GameActivity extends Activity {
             if (cards[seconedCard.x][seconedCard.y] == cards[firstCard.x][firstCard.y]) {
                 firstCard.button.setVisibility(View.INVISIBLE);
                 seconedCard.button.setVisibility(View.INVISIBLE);
+                checker++;
+                if (checker == numTurns){
+                    checker = 0;
+                    currentPos++;
+                    if(currentPos == 5){
+                        AlertDialog alertDialog = new AlertDialog.Builder(GameActivity.this).create();
+                        alertDialog.setTitle("Well Done");
+                        alertDialog.setMessage("You Finished the game");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Restart",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        currentPos = 0;
+                                        levelSpinner.setSelection(currentPos);
+                                    }
+                                });
+                        alertDialog.show();
+                    }else{
+                        levelSpinner.setSelection(currentPos);
+                    }
+                }
             } else {
                 seconedCard.button.setBackgroundDrawable(backImage);
                 firstCard.button.setBackgroundDrawable(backImage);
