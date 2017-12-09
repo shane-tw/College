@@ -56,6 +56,11 @@ public class PlaceActivity extends AppCompatActivity {
         rootLayout = findViewById(R.id.places_layout);
         Bundle bundle = getIntent().getExtras();
         type = bundle.getString("type");
+        /*if(type == "taxi"){
+            MainApp.speak("Choose taxi service");
+        }else if (type == "take-away"){
+            MainApp.speak("Choose take away service");
+        }*/
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, PermissionUtils.REQUEST_CALL_PHONE);
     }
 

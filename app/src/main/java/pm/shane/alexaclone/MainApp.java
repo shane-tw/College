@@ -32,7 +32,6 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
     private static TextToSpeech tts;
     private static boolean canSpeak = false;
     private static SpeechRecognizerManager mSpeechRecognizerManager;
-    private int MY_DATA_CHECK_CODE = 0;
 
     @Override
     public void onCreate() {
@@ -60,7 +59,9 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
     }
 
     public static void speak(String text) {
+
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+
     }
 
     public static Application get() {
@@ -79,9 +80,17 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         MainApp.device = device;
     }
 
+    public static SpeechRecognizerManager getmSpeechRecognizerManager() {
+        return mSpeechRecognizerManager;
+    }
+
     public void setmSpeechRecognizerManager(){
         mSpeechRecognizerManager = new SpeechRecognizerManager(getContext());
         mSpeechRecognizerManager.setOnResultListner(this);
+    }
+
+    public void destroySpeech(){
+        mSpeechRecognizerManager.destroy();
     }
 
     private void recognition(String text){
@@ -89,15 +98,15 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         String[] speech = text.split(" ");
 
         if(text.contains("what") && text.contains("time")){
-            SimpleDateFormat digitalTime = new SimpleDateFormat("HH:mm", Locale.US);
-            SimpleDateFormat analogTime = new SimpleDateFormat("HH:mm a", Locale.US);
+            SimpleDateFormat digitalTime = new SimpleDateFormat("HH:mm", Locale.UK);
+            SimpleDateFormat analogTime = new SimpleDateFormat("HH:mm a", Locale.UK);
             Date now = new Date();
             speak("The time is " + digitalTime.format(now) + " .or " + analogTime.format(now));
         }
 
         if(text.contains("what") && text.contains("date")){
             Calendar c = Calendar.getInstance();
-            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
+            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.UK);
             String formattedDate = df.format(c.getTime());
             speak(formattedDate);
 

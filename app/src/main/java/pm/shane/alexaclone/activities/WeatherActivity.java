@@ -54,7 +54,7 @@ public class WeatherActivity extends AppCompatActivity {
             String longitude = String.valueOf(loc.getLongitude());
             asyncTask.execute(lat, longitude);
         }else {
-            asyncTask.execute("51.883956", "-8.533809"); //use lat and lon variables from location manager above
+            asyncTask.execute("40.7128", "74.0060"); //use lat and lon variables from location manager above
         }
 
     }

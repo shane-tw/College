@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
+import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 
 import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
@@ -41,6 +42,14 @@ public class SpeechRecognizerManager {
         initPockerSphinx();
         initGoogleSpeechRecognizer();
 
+    }
+
+    public SpeechRecognizer getmPocketSphinxRecognizer() {
+        return mPocketSphinxRecognizer;
+    }
+
+    public static String getKwsSearch() {
+        return KWS_SEARCH;
     }
 
 
@@ -232,6 +241,7 @@ public class SpeechRecognizerManager {
                 if (mOnResultListener!=null){
                     mOnResultListener.OnResult(heard);
                 }
+                heard.clear();
 
             }
 

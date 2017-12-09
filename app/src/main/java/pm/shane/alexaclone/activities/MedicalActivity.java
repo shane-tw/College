@@ -46,6 +46,8 @@ public class MedicalActivity extends AppCompatActivity {
         startActivity(new Intent(this, GameActivity.class));
     }
 
-    public void onViewCalendarClicked(View view) {}
+    public void onViewCalendarClicked(View view) {
+        startActivity(new Intent(this, CalenderActivity.class));
+    }
 
 }

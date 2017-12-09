@@ -76,6 +76,10 @@
     <string name="camera_has_no_resolutions">Error: The camera doesn\'t support any resolution.</string>
     <string name="couldnt_open_camera">Error: Couldn\'t get camera instance. No permissions?</string>
 
+    <!--calender tab names -->
+    <string name="tab_text_1">Add Event</string>
+    <string name="tab_text_2">Events</string>
+
     <!-- memory game -->
     <string-array name="type">
         <item>New Game</item>
