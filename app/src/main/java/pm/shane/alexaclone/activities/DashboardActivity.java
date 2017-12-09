@@ -1,37 +1,32 @@
 package pm.shane.alexaclone.activities;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.AlarmClock;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.PermissionUtils;
 import pm.shane.alexaclone.R;
-import pm.shane.alexaclone.SpeechRecognizerManager;
-import pm.shane.alexaclone.activities.Game.GameActivity;
+import pm.shane.alexaclone.SessionManager;
 import pm.shane.alexaclone.services.CameraService;
 
 public class DashboardActivity extends AppCompatActivity {
+    private TextView findCarerBtn;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        if (savedInstanceState == null) {
+        findCarerBtn = findViewById(R.id.find_carer_btn);
+        if (!SessionManager.isLoggedIn()) {
+            findCarerBtn.setVisibility(View.GONE);
+        }
+        if (savedInstanceState == null && SessionManager.isLoggedIn()) {
             PermissionUtils.requestCameraPermission(this);
         }
     }

@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import java.util.Locale;
 
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
+import pm.shane.alexaclone.SessionManager;
 
 /**
  * Created by Shane on 28/10/2017.
@@ -25,6 +27,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private Switch lightsSwitch;
     private Switch heatingSwitch;
+    private LinearLayout remoteCameraView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +36,10 @@ public class HomeActivity extends AppCompatActivity {
         showBackButton();
         lightsSwitch = findViewById(R.id.lights_switch);
         heatingSwitch = findViewById(R.id.heating_switch);
+        remoteCameraView = findViewById(R.id.remote_camera_view);
+        if (!SessionManager.isLoggedIn()) {
+            remoteCameraView.setVisibility(View.GONE);
+        }
     }
 
     public void onCurrentTimeClicked(View view) {

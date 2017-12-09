@@ -98,6 +98,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/list_item_text_size"
             android:onClick="onFindCarerClicked"
+            android:id="@+id/find_carer_btn"
             android:text="Find a Carer"/>
 
         <fragment

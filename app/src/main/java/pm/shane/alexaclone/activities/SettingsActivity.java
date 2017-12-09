@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
-import pm.shane.alexaclone.LoginActivity;
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.SessionManager;
@@ -34,8 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
         MainApp.get().stopService(new Intent(MainApp.get(), AlexaService.class));
         MainApp.get().stopService(new Intent(MainApp.get(), CameraService.class));
         MainApp.get().stopService(new Intent(MainApp.get(), LocationUpdatesListner.class));
-        MainApp.setIsLogedin(false);
-        Intent myIntent = new Intent(this, LoginActivity.class);
+        Intent myIntent = new Intent(this, ModeActivity.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(myIntent);
     }

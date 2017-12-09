@@ -9,8 +9,27 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.JsonSyntaxException;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 import pm.shane.alexaclone.activities.DashboardActivity;
+import pm.shane.alexaclone.api.Credentials;
+import pm.shane.alexaclone.api.RetrofitManager;
+import pm.shane.alexaclone.api.response.Error;
+import pm.shane.alexaclone.api.response.GenericResponse;
+import pm.shane.alexaclone.api.response.data.Patient;
+import retrofit2.Converter;
+import retrofit2.HttpException;
+import retrofit2.Response;
 
 /**
  * Created by Shane.
@@ -50,53 +69,51 @@ public class LoginActivity extends AppCompatActivity {
         String password = mPasswordView.getText().toString();
         showProgress(true);
 
-        /*RetrofitManager.getService().login(new Credentials(mEmailView.getText().toString(), mPasswordView.getText().toString(), "Patient"))
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<GenericResponse<Patient>>() {
-                @Override
-                public void onSubscribe(Disposable s) {}
+        RetrofitManager.getService().login(new Credentials(mEmailView.getText().toString(), mPasswordView.getText().toString(), "Patient"))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<GenericResponse<Patient>>() {
+                    @Override
+                    public void onSubscribe(Disposable s) {}
 
-                @Override
-                public void onNext(GenericResponse<Patient> userResponse) {
-                    Toast.makeText(LoginActivity.this, "Logged in successfully.", Toast.LENGTH_SHORT).show();
-                    SessionManager.setLoggedInUser(userResponse.getData());*/
-                    MainApp.setIsLogedin(true);
-                    Intent myIntent = new Intent(LoginActivity.this, DashboardActivity.class);
-                    LoginActivity.this.startActivity(myIntent);
-                    finish();/*
-
-                }
-
-                @Override
-                public void onError(Throwable t) {
-                    if (!(t instanceof HttpException)) {
-                        Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
-                        showProgress(false);
-                        return;
+                    @Override
+                    public void onNext(GenericResponse<Patient> userResponse) {
+                        Toast.makeText(LoginActivity.this, "Logged in successfully.", Toast.LENGTH_SHORT).show();
+                        SessionManager.setLoggedInUser(userResponse.getData());
+                        Intent myIntent = new Intent(LoginActivity.this, DashboardActivity.class);
+                        LoginActivity.this.startActivity(myIntent);
+                        finish();
                     }
-                    Response response = ((HttpException)t).response();
-                    ResponseBody responseBody = response.errorBody();
-                    if (responseBody == null) {
-                        return;
-                    }
-                    Converter<ResponseBody, GenericResponse<Void>> converter = RetrofitManager.getRetrofit().responseBodyConverter(GenericResponse.class, new Annotation[0]);
-                    GenericResponse<Void> genericResponse;
-                    try {
-                        genericResponse = converter.convert(responseBody);
-                        for (Error error : genericResponse.getErrors()) {
-                            Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+
+                    @Override
+                    public void onError(Throwable t) {
+                        if (!(t instanceof HttpException)) {
+                            Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                            showProgress(false);
+                            return;
                         }
-                    } catch (IOException | JsonSyntaxException e) {
-                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        Response response = ((HttpException)t).response();
+                        ResponseBody responseBody = response.errorBody();
+                        if (responseBody == null) {
+                            return;
+                        }
+                        Converter<ResponseBody, GenericResponse<Void>> converter = RetrofitManager.getRetrofit().responseBodyConverter(GenericResponse.class, new Annotation[0]);
+                        GenericResponse<Void> genericResponse;
+                        try {
+                            genericResponse = converter.convert(responseBody);
+                            for (Error error : genericResponse.getErrors()) {
+                                Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        } catch (IOException | JsonSyntaxException e) {
+                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        showProgress(false);
                     }
-                    showProgress(false);
-                }
 
-                @Override
-                public void onComplete() {}
-            });*/
-        }
+                    @Override
+                    public void onComplete() {}
+                });
+    }
 
     private void showProgress(final boolean show) {
         mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);

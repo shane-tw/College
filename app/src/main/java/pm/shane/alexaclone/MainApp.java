@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldSdk;
@@ -32,7 +31,6 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
     private static OneSheeldDevice device;
     private static TextToSpeech tts;
     private static boolean canSpeak = false;
-    private static boolean isLogedin = false;
     private static SpeechRecognizerManager mSpeechRecognizerManager;
     private int MY_DATA_CHECK_CODE = 0;
 
@@ -55,11 +53,6 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
             }
             canSpeak = true;
         });
-    }
-
-    public static void setIsLogedin(boolean check){
-        isLogedin = check;
-       // setmSpeechRecognizerManager();
     }
 
     public static boolean canSpeak() {
@@ -206,7 +199,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         for(String command:commands) {
             text.append(command).append(" ");
         }
-        if(isLogedin){
+        if(SessionManager.isLoggedIn()){
             recognition(text.toString());
         }
         text = null;
