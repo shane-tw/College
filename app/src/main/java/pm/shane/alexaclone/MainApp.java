@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import pm.shane.alexaclone.activities.CalenderActivity;
 import pm.shane.alexaclone.activities.Game.GameActivity;
 import pm.shane.alexaclone.activities.MusicActivity;
 import pm.shane.alexaclone.activities.PlaceActivity;
@@ -158,6 +159,11 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                     MainApp.getConnectedDevice().digitalWrite(6, false);
                 }
             }
+        }
+
+        if(text.contains("calendar")){
+            Intent intent = new Intent(MainApp.getContext(), CalenderActivity.class);
+            startActivity(intent);
         }
 
         if(text.contains("heating")){

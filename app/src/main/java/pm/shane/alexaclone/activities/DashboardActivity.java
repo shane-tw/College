@@ -36,6 +36,8 @@ public class DashboardActivity extends AppCompatActivity {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
             MainApp.startvoice();
         }
+        PermissionUtils.requestCalPermission(this);
+
     }
 
     public void onHomeClicked(View view) {

@@ -18,6 +18,7 @@ public class PermissionUtils {
     public static final int REQUEST_LOCATIONS = 48573;
     public static final int REQUEST_CAMERA_CODE = 29123;
     public static final int REQUEST_MIC_CODE = 1;
+    public static final int REQUEST_CALENDAR_CODE = 2;
 
     public static boolean hasCallPermission() {
         int permissionCheck = ContextCompat.checkSelfPermission(MainApp.getContext(), Manifest.permission.CALL_PHONE);
@@ -38,6 +39,11 @@ public class PermissionUtils {
 
     public static void requestMicPermission(AppCompatActivity callingActivity){
         ActivityCompat.requestPermissions(callingActivity, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_MIC_CODE);
+    }
+
+    public static void requestCalPermission(AppCompatActivity callingActivity){
+        ActivityCompat.requestPermissions(callingActivity, new String[]{Manifest.permission.READ_CALENDAR}, REQUEST_CALENDAR_CODE);
+        ActivityCompat.requestPermissions(callingActivity, new String[]{Manifest.permission.WRITE_CALENDAR}, REQUEST_CALENDAR_CODE);
     }
 
 }
