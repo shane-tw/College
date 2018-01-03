@@ -46,7 +46,6 @@ public class HomeActivity extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
         if (MainApp.canSpeak()) {
-            MainApp.getmSpeechRecognizerManager().destroy();
             MainApp.speak(getString(R.string.the_time_is, sdf.format(cal.getTime())));
         }
         Toast.makeText(MainApp.getContext(), getString(R.string.the_time_is, sdf.format(cal.getTime())), Toast.LENGTH_LONG).show();

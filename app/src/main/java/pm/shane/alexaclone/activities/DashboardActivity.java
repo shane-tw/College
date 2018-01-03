@@ -1,9 +1,12 @@
 package pm.shane.alexaclone.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -28,6 +31,10 @@ public class DashboardActivity extends AppCompatActivity {
         }
         if (savedInstanceState == null && SessionManager.isLoggedIn()) {
             PermissionUtils.requestCameraPermission(this);
+        }
+        PermissionUtils.requestMicPermission(this);
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
+            MainApp.startvoice();
         }
     }
 

@@ -52,6 +52,14 @@ public class SpeechRecognizerManager {
         return KWS_SEARCH;
     }
 
+    public void stop(){
+        mPocketSphinxRecognizer.cancel();
+    }
+
+    public void start(){
+        mPocketSphinxRecognizer.startListening(KWS_SEARCH);
+    }
+
 
     @SuppressLint("StaticFieldLeak")
     private void initPockerSphinx() {

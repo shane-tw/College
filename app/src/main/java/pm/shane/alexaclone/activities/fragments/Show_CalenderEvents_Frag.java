@@ -28,12 +28,12 @@ public class Show_CalenderEvents_Frag extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.event_fragment,container,false);
-        calender = new Calender();
+        //calender = new Calender();
         getStuff();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainApp.getContext(), android.R.layout.simple_list_item_1, events);
+       // ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainApp.getContext(), android.R.layout.simple_list_item_1, events);
 
-        ListView listView = (ListView) getActivity().findViewById(R.id.mobile_list);
-        listView.setAdapter(adapter);
+        //ListView listView = (ListView) getActivity().findViewById(R.id.mobile_list);
+        //listView.setAdapter(adapter);
         return view;
     }
 }

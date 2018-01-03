@@ -1,9 +1,13 @@
 package pm.shane.alexaclone;
 
+import android.*;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
@@ -38,7 +42,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         super.onCreate();
         mInstance = this;
         OneSheeldSdk.init(getContext());
-        setmSpeechRecognizerManager();
+        //setmSpeechRecognizerManager();
         tts = new TextToSpeech(getContext(), (int status) -> {
             if (status != TextToSpeech.SUCCESS) {
                 Log.e("error", "Initialisation Failed!");
@@ -59,9 +63,9 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
     }
 
     public static void speak(String text) {
-
+        mSpeechRecognizerManager.stop();
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-
+        mSpeechRecognizerManager.start();
     }
 
     public static Application get() {
@@ -84,8 +88,17 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         return mSpeechRecognizerManager;
     }
 
-    public void setmSpeechRecognizerManager(){
+    public static void startvoice(){
+        MainApp i = new MainApp();
+        setmSpeechRecognizerManager(i);
+    }
+
+    public static void setmSpeechRecognizerManager(MainApp i){
         mSpeechRecognizerManager = new SpeechRecognizerManager(getContext());
+        i.setListener();
+    }
+
+    public void setListener(){
         mSpeechRecognizerManager.setOnResultListner(this);
     }
 
@@ -129,6 +142,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         }
 
         if(text.contains("lights")) {
+            //TODO change switch in settings
             if (text.contains("turn on")) {
                 if(MainApp.getConnectedDevice() == null){
                     speak("No device connected");
@@ -147,6 +161,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         }
 
         if(text.contains("heating")){
+            //TODO change switch in settings
             if(text.contains("turn on")){
                 if(MainApp.getConnectedDevice() == null){
                     speak("No device connected");
@@ -183,23 +198,6 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                 startActivity(myIntent);
             }
         }
-
-        // this is to be removed
-        /*if(text.contains("wake me up at") || text.contains("alarm")){
-            speak(speech[speech.length-1]);
-            String[] time = speech[speech.length-1].split(":");
-            String hour = time[0];
-            String minutes = time[1];
-            Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
-            i.putExtra(AlarmClock.EXTRA_HOUR, Integer.valueOf(hour));
-            i.putExtra(AlarmClock.EXTRA_MINUTES, Integer.valueOf(minutes));
-            startActivity(i);
-            speak("Setting alarm to ring at " + hour + ":" + minutes);
-        }
-
-        if(text.contains("thank you")){
-            speak("Thank you too ");
-        }*/
     }
 
     @Override
@@ -208,9 +206,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         for(String command:commands) {
             text.append(command).append(" ");
         }
-        if(SessionManager.isLoggedIn()){
-            recognition(text.toString());
-        }
+        recognition(text.toString());
         text = null;
     }
 }
