@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import pm.shane.alexaclone.activities.CalenderActivity;
 import pm.shane.alexaclone.activities.Game.GameActivity;
+import pm.shane.alexaclone.activities.HomeActivity;
 import pm.shane.alexaclone.activities.MusicActivity;
 import pm.shane.alexaclone.activities.PlaceActivity;
 import pm.shane.alexaclone.activities.ShoppingActivity;
@@ -150,6 +151,9 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                 }else{
                     speak("lights turned on");
                     MainApp.getConnectedDevice().digitalWrite(6, true);
+                    Intent intent = new Intent(MainApp.getContext(), HomeActivity.class);
+                    intent.putExtra("type", "lights-on");
+                    startActivity(intent);
                 }
             } else if (text.contains("turn off")) {
                 if(MainApp.getConnectedDevice() == null){
@@ -157,6 +161,9 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                 }else{
                     speak("lights turned off");
                     MainApp.getConnectedDevice().digitalWrite(6, false);
+                    Intent intent = new Intent(MainApp.getContext(), HomeActivity.class);
+                    intent.putExtra("type", "lights-off");
+                    startActivity(intent);
                 }
             }
         }
@@ -174,6 +181,9 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                 }else{
                     speak("heating turned on");
                     MainApp.getConnectedDevice().digitalWrite(7, true);
+                    Intent intent = new Intent(MainApp.getContext(), HomeActivity.class);
+                    intent.putExtra("type", "heating-on");
+                    startActivity(intent);
                 }
             }
             else if(text.contains("turn off")){
@@ -182,6 +192,9 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                 }else {
                     speak("heating turned off");
                     MainApp.getConnectedDevice().digitalWrite(7, false);
+                    Intent intent = new Intent(MainApp.getContext(), HomeActivity.class);
+                    intent.putExtra("type", "heating-off");
+                    startActivity(intent);
                 }
             }
         }

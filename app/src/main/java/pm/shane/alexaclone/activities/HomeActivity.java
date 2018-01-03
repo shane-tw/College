@@ -28,6 +28,7 @@ public class HomeActivity extends AppCompatActivity {
     private Switch lightsSwitch;
     private Switch heatingSwitch;
     private LinearLayout remoteCameraView;
+    private String type;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +40,19 @@ public class HomeActivity extends AppCompatActivity {
         remoteCameraView = findViewById(R.id.remote_camera_view);
         if (!SessionManager.isLoggedIn()) {
             remoteCameraView.setVisibility(View.GONE);
+        }
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            type = bundle.getString("type");
+            if (type != null) {
+                switch (type){
+                    case "heating-on": heatingSwitch.setChecked(true); break;
+                    case "heating-off": heatingSwitch.setChecked(false); break;
+                    case "lights-on": lightsSwitch.setChecked(true); break;
+                    case "lights-off": lightsSwitch.setChecked(false); break;
+                }
+            }
         }
     }
 
