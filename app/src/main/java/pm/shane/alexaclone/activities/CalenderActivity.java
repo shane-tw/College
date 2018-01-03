@@ -9,11 +9,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import org.json.JSONArray;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,14 +25,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
+import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.R;
 import pm.shane.alexaclone.models.Calender;
 
 
 public class CalenderActivity extends AppCompatActivity {
     public static ArrayList<Calender> calenders = new ArrayList<>();
-
-    ListView simpleList;
+    public ListView simpleList;
+    SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +51,7 @@ public class CalenderActivity extends AppCompatActivity {
         });
 
         simpleList = (ListView)findViewById(R.id.mobile_list);
-        ArrayAdapter<Calender> arrayAdapter = new ArrayAdapter<Calender>(this, android.R.layout.simple_list_item_1, readCalendarEvent(this));
-        simpleList.setAdapter(arrayAdapter);
+
         simpleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -59,7 +63,24 @@ public class CalenderActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setListview();
+            }
+        });
+
     }
+
+    public void setListview(){
+        ArrayAdapter<Calender> arrayAdapter = new ArrayAdapter<Calender>(this, android.R.layout.simple_list_item_1, readCalendarEvent(this));
+        simpleList.setAdapter(arrayAdapter);
+        swipeContainer.setRefreshing(false);
+    }
+
 
 
     public static ArrayList<Calender> readCalendarEvent(Context context) {//"dtstart"

@@ -32,11 +32,10 @@ public class DashboardActivity extends AppCompatActivity {
         if (savedInstanceState == null && SessionManager.isLoggedIn()) {
             PermissionUtils.requestCameraPermission(this);
         }
-        PermissionUtils.requestMicPermission(this);
+
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
             MainApp.startvoice();
         }
-        PermissionUtils.requestCalPermission(this);
 
     }
 

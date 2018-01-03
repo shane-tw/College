@@ -9,6 +9,7 @@ import android.widget.RadioGroup;
 
 import pm.shane.alexaclone.LoginActivity;
 import pm.shane.alexaclone.MainApp;
+import pm.shane.alexaclone.PermissionUtils;
 import pm.shane.alexaclone.R;
 
 /**
@@ -22,6 +23,8 @@ public class ModeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(pm.shane.alexaclone.R.layout.activity_mode);
         selectedMode = findViewById(R.id.selected_mode);
+        PermissionUtils.requestMicPermission(this);
+        PermissionUtils.requestCalPermission(this);
     }
 
     public void onModeSubmit(View view) {
