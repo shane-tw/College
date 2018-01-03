@@ -19,44 +19,42 @@ import java.util.regex.Pattern;
  */
 
 public class Calender {
-    private static ArrayList<String> nameOfEvent = new ArrayList<String>();
-    private static ArrayList<String> startDates = new ArrayList<String>();
-    private static ArrayList<String> endDates = new ArrayList<String>();
-    private static ArrayList<String> descriptions = new ArrayList<String>();
+    private int ID;
+    private String title;
+    private String date;
 
-    public ArrayList<String> readCalendarEvent(Context context) {
-        Cursor cursor = context.getContentResolver().query(
-                        Uri.parse("content://com.android.calendar/events"),
-                        new String[] { "calendar_id", "title", "description",
-                                "dtstart", "dtend", "eventLocation" }, null,
-                        null, null);
-        assert cursor != null;
-        cursor.moveToFirst();
-        // fetching calendars name
-        String CNames[] = new String[cursor.getCount()];
-
-        // fetching calendars id
-        nameOfEvent.clear();
-        startDates.clear();
-        endDates.clear();
-        descriptions.clear();
-        for (int i = 0; i < CNames.length; i++) {
-
-            nameOfEvent.add(cursor.getString(1));
-            startDates.add(getDate(Long.parseLong(cursor.getString(3))));
-            endDates.add(getDate(Long.parseLong(cursor.getString(4))));
-            descriptions.add(cursor.getString(2));
-            CNames[i] = cursor.getString(1);
-            cursor.moveToNext();
-
-        }
-        return nameOfEvent;
+    public Calender(int ID, String title, String date){
+        setID(ID);
+        setTitle(title);
+        setDate(date);
     }
 
-    public static String getDate(long milliSeconds) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a");
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
+    @Override
+    public String toString(){
+        return getTitle() + " - " + getDate();
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

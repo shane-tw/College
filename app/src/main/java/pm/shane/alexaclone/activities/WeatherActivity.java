@@ -3,6 +3,7 @@ package pm.shane.alexaclone.activities;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import pm.shane.alexaclone.DBHandler;
@@ -52,9 +53,10 @@ public class WeatherActivity extends AppCompatActivity {
         if(loc != null){
             String lat = String.valueOf(loc.getLatitude());
             String longitude = String.valueOf(loc.getLongitude());
+            Log.d("Location", "onCreate: " + lat + longitude);
             asyncTask.execute(lat, longitude);
         }else {
-            asyncTask.execute("40.7128", "74.0060"); //use lat and lon variables from location manager above
+            asyncTask.execute("51.885673", "-8.534662"); //use lat and lon variables from location manager above
         }
 
     }
