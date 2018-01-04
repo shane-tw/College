@@ -39,6 +39,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
     private static boolean canSpeak = false;
     private static SpeechRecognizerManager mSpeechRecognizerManager;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -65,9 +66,9 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
     }
 
     public static void speak(String text) {
-        mSpeechRecognizerManager.stop();
+        //mSpeechRecognizerManager.stop();
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-        mSpeechRecognizerManager.start();
+        //mSpeechRecognizerManager.start();
     }
 
     public static Application get() {
@@ -130,17 +131,21 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
         if(text.contains("weather")){
             //speak("it is probably raining");
             // return conditions of the weather
-            startActivity(new Intent(getContext(), WeatherActivity.class));
+            Intent intent = new Intent(MainApp.getContext(), WeatherActivity.class);
+            MainApp.getContext().getApplicationContext().startActivity(intent);
         }
 
         if(text.contains("play") && text.contains("game")){
             //for the memory game
-            startActivity(new Intent(getContext(), GameActivity.class));
+            Log.d("Testing: ", "recognition: " + getContext());
+            Intent intent = new Intent(MainApp.getContext(), GameActivity.class);
+            MainApp.getContext().getApplicationContext().startActivity(intent);
         }
 
         if(text.contains("play") && text.contains("music")){
             //for music
-            startActivity(new Intent(getContext(), MusicActivity.class));
+            Intent intent = new Intent(MainApp.getContext(), MusicActivity.class);
+            MainApp.getContext().getApplicationContext().startActivity(intent);
         }
 
         if(text.contains("lights")) {
@@ -153,7 +158,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                     MainApp.getConnectedDevice().digitalWrite(6, true);
                     Intent intent = new Intent(MainApp.getContext(), HomeActivity.class);
                     intent.putExtra("type", "lights-on");
-                    startActivity(intent);
+                    MainApp.getContext().getApplicationContext().startActivity(intent);
                 }
             } else if (text.contains("turn off")) {
                 if(MainApp.getConnectedDevice() == null){
@@ -163,14 +168,16 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                     MainApp.getConnectedDevice().digitalWrite(6, false);
                     Intent intent = new Intent(MainApp.getContext(), HomeActivity.class);
                     intent.putExtra("type", "lights-off");
-                    startActivity(intent);
+                    MainApp.getContext().getApplicationContext().startActivity(intent);
                 }
             }
         }
 
         if(text.contains("calendar")){
             Intent intent = new Intent(MainApp.getContext(), CalenderActivity.class);
-            startActivity(intent);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            MainApp.getContext().getApplicationContext().startActivity(intent);
+
         }
 
         if(text.contains("heating")){
@@ -183,7 +190,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                     MainApp.getConnectedDevice().digitalWrite(7, true);
                     Intent intent = new Intent(MainApp.getContext(), HomeActivity.class);
                     intent.putExtra("type", "heating-on");
-                    startActivity(intent);
+                    MainApp.getContext().getApplicationContext().startActivity(intent);
                 }
             }
             else if(text.contains("turn off")){
@@ -194,7 +201,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                     MainApp.getConnectedDevice().digitalWrite(7, false);
                     Intent intent = new Intent(MainApp.getContext(), HomeActivity.class);
                     intent.putExtra("type", "heating-off");
-                    startActivity(intent);
+                    MainApp.getContext().getApplicationContext().startActivity(intent);
                 }
             }
         }
@@ -204,17 +211,17 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
                 speak("Choose taxi service");
                 Intent intent = new Intent(MainApp.getContext(), PlaceActivity.class);
                 intent.putExtra("type", "taxi");
-                startActivity(intent);
+                MainApp.getContext().getApplicationContext().startActivity(intent);
             }else if (text.contains("take away")){
                 speak("Choose Take away");
                 Intent intent = new Intent(MainApp.getContext(), PlaceActivity.class);
                 intent.putExtra("type", "take-away");
-                startActivity(intent);
+                MainApp.getContext().getApplicationContext().startActivity(intent);
                 // ring take away
             }else if(text.contains("shopping")){
-                Intent myIntent = new Intent(this, ShoppingActivity.class);
+                Intent myIntent = new Intent(MainApp.getContext(), ShoppingActivity.class);
                 myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(myIntent);
+                MainApp.getContext().getApplicationContext().startActivity(myIntent);
             }
         }
     }
@@ -226,7 +233,7 @@ public class MainApp extends Application implements SpeechRecognizerManager.OnRe
             text.append(command).append(" ");
         }
         recognition(text.toString());
-        text = null;
+        //text = null;
     }
 }
 
