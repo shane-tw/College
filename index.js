@@ -427,7 +427,7 @@ async function get_user(model_name, req, res) {
 	try {
 		let user = null
 		if (ObjectID.isValid(req.params.user_id)) {
-			user = await user_model.findOne({ _id: req.params.user_id }).lean().exec()
+			user = await user_model.findOne({ _id: req.params.user_id }).populate(['carers', 'patients', 'companies']).lean().exec()
 		}
 		respond_user(user, req, res)
 	} catch (db_error) {
