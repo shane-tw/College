@@ -451,7 +451,7 @@ async function update_user(model_name, req, res) {
 		return
 	}
 	try {
-		const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true, runValidators: true}).exec()
+		const new_user = await user_model.findByIdAndUpdate(req.params.user_id, req.body, {new: true, runValidators: true}).populate(['carers', 'patients', 'companies']).exec()
 		respond_user(new_user, req, res)
 	} catch (db_error) {
 		handle_api_db_error(db_error, res)
