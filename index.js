@@ -215,7 +215,7 @@ app.post('/api/login', async function (req, res) { // This allows a user to log 
 	}
 	let user
 	try {
-		user = await user_model.findOne({ email: req.body.email }, '+password_hash').lean().exec()
+		user = await user_model.findOne({ email: req.body.email }, '+password_hash').populate(['carers', 'patients', 'companies']).lean().exec()
 	} catch (db_error) {
 		handle_api_db_error(db_error, res)
 		return
