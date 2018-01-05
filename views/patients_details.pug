@@ -6,7 +6,7 @@ block vars
 append scripts
 	script(src='/scripts/patients_details.js')
 append body
-	#patients-details-container.container.mt-4(data-patient-id= them.id)
+	#patients-details-container.container.mt-4(data-patient-id= them ? them.id : null)
 		h2 Patient
 		if (them == null)
 			p Either this patient doesn't exist, or you don't have permission to view their details.

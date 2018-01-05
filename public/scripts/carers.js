@@ -1,8 +1,8 @@
 $('[name="btn_delete"]').click(function() {
-	var card = $(this).closest('[name="card_patient"]')
-	var patient_id = card.data('patient-id')
+	var card = $(this).closest('[name="card_carer"]')
+	var carer_id = card.data('carer-id')
 	bootbox.confirm({
-		message: "Are you sure you want to delete this patient?",
+		message: "Are you sure you want to delete this carer?",
 		buttons: {
 			confirm: {
 				label: 'Yes'
@@ -17,7 +17,7 @@ $('[name="btn_delete"]').click(function() {
 			}
 			$.ajax({
 				method: 'DELETE',
-				url: '/api/patients/' + patient_id + '/invite',
+				url: '/api/carers/' + carer_id + '/invite',
 				success: function(response, textStatus, xhr, form) {
 					new PNotify({
 						title: 'Delete successful',

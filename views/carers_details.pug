@@ -5,7 +5,7 @@ block vars
 	- var description='This is a test'
 
 append body
-	#carers-details-container.container.mt-4(data-patient-id= them.id)
+	#carers-details-container.container.mt-4(data-patient-id= them ? them.id : null)
 		h2 Carer
 		if (them == null)
 			p Either this carer doesn't exist, or you don't have permission to view their details.

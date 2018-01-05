@@ -294,6 +294,10 @@ app.post('/api/patients/:user_id/invite', (req, res) => invite_user('Patient', r
 app.post('/api/carers/:user_id/invite', (req, res) => invite_user('Carer', req, res))
 app.post('/api/companies/:user_id/invite', (req, res) => invite_user('CareCompany', req, res))
 
+app.delete('/api/patients/:user_id/invite', (req, res) => uninvite_user('Patient', req, res))
+app.delete('/api/carers/:user_id/invite', (req, res) => uninvite_user('Carer', req, res))
+app.delete('/api/companies/:user_id/invite', (req, res) => uninvite_user('CareCompany', req, res))
+
 app.all('/api/*', (req, res) => { // In the event that a route is not handled, 404.
 	res.status(404).send({ errors: [{ type: "not-found", key: "endpoint", message: "Endpoint does not exist." }] })
 })
@@ -470,6 +474,7 @@ async function invite_user(model_name, req, res) {
 		}
 		if (them == null) {
 			res.status(404).send({ errors: [{ type: "not-found", key: "target-user", message: "No user exists with this account type and ID."}]})
+			return
 		}
 		if (!(them_account_path in me) || !(me_account_path in them)) {
 			res.status(400).send({ errors: [{ type: "invalid", key: "user-type", message: "You can't add the other user. Your account types are incompatible."}]})
@@ -484,6 +489,50 @@ async function invite_user(model_name, req, res) {
 		}
 		me[them_account_path].push(them)
 		them[me_account_path].push(me)
+		me.save()
+		them.save()
+		res.status(200).send({})
+	} catch (db_error) {
+		handle_api_db_error(db_error, res)
+		return
+	}
+}
+
+async function uninvite_user(model_name, req, res) {
+	const me_model = mongoose.model(req.session.account_model_name)
+	const me_account_path = get_path_from_model_name(req.session.account_model_name)
+	const them_account_path = get_path_from_model_name(model_name)
+	const them_model = mongoose.model(model_name)
+	if (them_model == null) {
+		res.status(400).send({ errors: [{ type: "invalid", key: "user-type", message: "This user type is invalid; It doesn't exist."}]})
+	}
+	try {
+		const me = await me_model.findOne({ _id: req.session.user_id })
+		let them = null
+		if (ObjectID.isValid(req.params.user_id)) {
+			them = await them_model.findOne({ _id: req.params.user_id })
+		}
+		if (them == null) {
+			res.status(404).send({ errors: [{ type: "not-found", key: "target-user", message: "No user exists with this account type and ID."}]})
+			return
+		}
+		if (!(them_account_path in me) || !(me_account_path in them)) {
+			res.status(400).send({ errors: [{ type: "invalid", key: "user-type", message: "You can't remove the other user. Your account types are incompatible."}]})
+			return
+		}
+		const already_removed = me[them_account_path].every(function (me_user_objectid) { // Check user[them_account_path] and see if they're already in it.
+			return !(me_user_objectid.equals(them._id))
+		})
+		if (already_removed) {
+			res.status(409).send({ errors: [{ type: "conflict", key: "target-user", message: "You've already removed this user."}]})
+			return
+		}
+		me[them_account_path] = me[them_account_path].filter(function(item) { 
+			return item != them.id
+		})
+		them[me_account_path] = them[me_account_path].filter(function(item) { 
+			return item != me.id
+		})
 		me.save()
 		them.save()
 		res.status(200).send({})
