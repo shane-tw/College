@@ -11,6 +11,7 @@ import pm.shane.alexaclone.LoginActivity;
 import pm.shane.alexaclone.MainApp;
 import pm.shane.alexaclone.PermissionUtils;
 import pm.shane.alexaclone.R;
+import pm.shane.alexaclone.SessionManager;
 
 /**
  * Created by Shane.
@@ -30,6 +31,7 @@ public class ModeActivity extends AppCompatActivity {
     public void onModeSubmit(View view) {
         switch (selectedMode.getCheckedRadioButtonId()) {
             case R.id.standalone_radio:
+                SessionManager.setLoggedInUser(null);
                 startActivity(new Intent(MainApp.getContext(), DashboardActivity.class));
                 break;
             case R.id.supervisory_radio:

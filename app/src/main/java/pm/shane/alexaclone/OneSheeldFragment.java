@@ -42,7 +42,9 @@ public class OneSheeldFragment extends Fragment {
             @Override
             public void onScanStart() {
                 super.onScanStart();
-                Toast.makeText(MainApp.getContext(), R.string.started_scan, Toast.LENGTH_SHORT).show();
+                handler.post(() -> {
+                    Toast.makeText(MainApp.getContext(), R.string.started_scan, Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override
@@ -50,6 +52,7 @@ public class OneSheeldFragment extends Fragment {
                 handler.post(() -> {
                     Toast.makeText(MainApp.getContext(), R.string.found_device, Toast.LENGTH_SHORT).show();
                 });
+                OneSheeldSdk.getManager().cancelScanning();
                 device.connect();
             }
 
@@ -69,9 +72,11 @@ public class OneSheeldFragment extends Fragment {
             public void onConnect(final OneSheeldDevice device) {
                 MainApp.setConnectedDevice(device);
                 device.pinMode(7, OneSheeldDevice.OUTPUT);
-                Toast.makeText(MainApp.getContext(), "Connected!", Toast.LENGTH_SHORT).show();
-                getConnectBtn().setText(R.string.disconnect_device);
-                getConnectBtn().setEnabled(true);
+                handler.post(() -> {
+                    Toast.makeText(MainApp.getContext(), "Connected!", Toast.LENGTH_SHORT).show();
+                    getConnectBtn().setText(R.string.disconnect_device);
+                    getConnectBtn().setEnabled(true);
+                });
             }
         };
         OneSheeldErrorCallback errorCallback = new OneSheeldErrorCallback() {
@@ -112,6 +117,7 @@ public class OneSheeldFragment extends Fragment {
         switch (requestCode) {
             case PermissionUtils.REQUEST_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    OneSheeldSdk.getManager().cancelScanning();
                     OneSheeldSdk.getManager().scan();
                 } else {
                     Toast.makeText(MainApp.getContext(), "Location permissions must be granted in order to connect to the device.", Toast.LENGTH_LONG).show();
@@ -133,6 +139,7 @@ public class OneSheeldFragment extends Fragment {
             OneSheeldSdk.getManager().disconnectAll();
             MainApp.setConnectedDevice(null);
             getConnectBtn().setText(R.string.connect_device);
+            getConnectBtn().setEnabled(true);
             return;
         }
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -149,6 +156,7 @@ public class OneSheeldFragment extends Fragment {
             requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, PermissionUtils.REQUEST_LOCATION);
         } else {
             Toast.makeText(MainApp.getContext(), "About to start scan.", Toast.LENGTH_SHORT).show();
+            OneSheeldSdk.getManager().cancelScanning();
             OneSheeldSdk.getManager().scan();
         }
     }
