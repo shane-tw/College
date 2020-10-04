@@ -1,0 +1,38 @@
+extends navbar.pug
+
+block vars
+	- var title='Virtual Care - Settings'
+	- var description='This is a test'
+append scripts
+	script(src='/scripts/settings.js')
+append body
+	#settings-container.container.mt-4
+		h2 Settings
+		ul.nav.nav-tabs
+			li.active.nav-item
+				a.active.nav-link(href='#personal', data-toggle='tab') Personal
+			li.nav-item
+				a.nav-link(href='#password', data-toggle='tab') Password
+		.tab-content.margin-top
+			#personal.tab-pane.active
+				form#personal-form
+					.form-group
+						label.sr-only(for='settings-name') Full name
+						input.form-control#settings-name(name='name', type='text', placeholder='Full name', required='', autofocus='', value= me.name)
+					.form-group
+						label.sr-only(for='settings-email') Email address
+						input.form-control#settings-email(name='email', type='email', placeholder='Email address', required='', value= me.email)
+					button.btn.btn-lg.btn-primary.btn-block#personal-btn(type='submit') Save changes
+			#password.tab-pane
+				form#password-form
+					.form-group
+						label.sr-only(for='settings-password') Old Password
+						input.form-control#settings-password(name='password_old', type='password', placeholder='Old Password', required='')
+					.form-group
+						label.sr-only(for='settings-password-new') New Password
+						input.form-control#settings-password(name='password_new', type='password', placeholder='New Password', required='')
+					.form-group
+						label.sr-only(for='settings-password-confirm') Confirm Password
+						input.form-control#settings-password(name='password_confirm', type='password', placeholder='Confirm Password', required='')
+					button.btn.btn-lg.btn-primary.btn-block#password-btn(type='submit') Save changes
+			a(href=`/${me.account_path}/${me.id}/invite`) Invite link

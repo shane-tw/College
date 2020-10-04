@@ -1,0 +1,27 @@
+extends navbar.pug
+
+block vars
+	- var title='Virtual Care - Invite User'
+	- var description='This is a test'
+
+append scripts
+	script(src='/scripts/invite.js')
+
+append body
+	.container.mt-4
+		h2 Invite User
+		if (them == null)
+			p The target user does not exist.
+		else
+			form#invite-form
+				p Please make sure these details match the user you're looking to invite.
+				.form-group
+					label.sr-only(for='invite-name') Name
+					input.form-control#invite-name(type='text', placeholder='Name', readonly='readonly', value= them.name)
+				.form-group
+					label.sr-only(for='invite-email') Email
+					input.form-control#invite-email(type='email', placeholder='Email', readonly='readonly', value= them.email)
+				if (next_url == null)
+					- next_url = '/'
+				input(id='invite-next-url', name='next_url', type='hidden', value= next_url)
+				button.btn.btn-lg.btn-primary.btn-block#invite-btn(type='submit') Confirm invite

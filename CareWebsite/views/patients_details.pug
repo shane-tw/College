@@ -1,0 +1,37 @@
+extends navbar.pug
+
+block vars
+	- var title='Virtual Care - Patients'
+	- var description='This is a test'
+append scripts
+	script(src='/scripts/patients_details.js')
+append body
+	#patients-details-container.container.mt-4(data-patient-id= them ? them.id : null)
+		h2 Patient
+		if (them == null)
+			p Either this patient doesn't exist, or you don't have permission to view their details.
+		else
+			ul.nav.nav-tabs
+				li.active.nav-item
+					a.active.nav-link(href='#basic-info', data-toggle='tab') Basic Info
+				li.nav-item
+					a.nav-link(href='#remote-camera', data-toggle='tab') Remote Camera
+				li.nav-item
+					a.nav-link(href='#location', data-toggle='tab') Location
+			.tab-content.margin-top
+				#basic-info.tab-pane.active
+					.card.card-body.card-horizontal.pt-3
+						img.avatar-thumb.rounded-circle.mb-2(src= them.avatar)
+						div.pl-4
+						div-4
+							div
+								b Name: 
+								| #{them.name}
+							div
+								b Email: 
+								| #{them.email}
+				#remote-camera.tab-pane
+					img#remote-camera-img
+				#location.tab-pane
+					p Home address: #{them.address.address}
+					iframe(src='http://maps.google.com/maps?q=' + them.address.loc[1] + ', ' + them.address.loc[0] + '&z=15&output=embed', width='360', height='270', frameborder='0', style='border:0')

@@ -1,0 +1,25 @@
+extends navbar.pug
+
+block vars
+	- var title='Virtual Care - Patients'
+	- var description='This is a test'
+
+append scripts
+	script(src='/scripts/patients.js')
+
+append body
+	.container.mt-4
+		h2 Patients
+		if (!('patients' in me) || me.patients.length === 0)
+			p You don't have any patients.
+		else
+			.card-deck
+				each patient in me.patients
+					.col-sm-6.col-md-4.col-lg-3.mb-4
+						.card.text-center(name='card_patient', data-patient-id= patient.id)
+							img.card-img-top.col-12(src= patient.avatar, alt=`${patient.name}'s avatar`)
+							.card-body
+								h4.card-title= patient.name
+								div.btn-group.btn-group-justified.hidden-sm-down.hidden-md-down(role='group', aria-label='Card buttons')
+									a(name='btn_view', href=`/patients/${patient.id}`, class='btn btn-primary') View
+									a(name='btn_delete', href='#', class='btn') Delete

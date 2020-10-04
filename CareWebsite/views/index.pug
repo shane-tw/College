@@ -1,0 +1,11 @@
+extends navbar.pug
+
+block vars
+	- var title='Virtual Care - Dashboard'
+	- var description='This is a test'
+
+append body
+	if (!me.logged_in)
+		include index_guest.pug
+	else
+		include index_user.pug

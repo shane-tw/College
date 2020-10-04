@@ -1,0 +1,41 @@
+append scripts
+	script(src='/scripts/register.js')
+
+append body
+	#registerModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="registerModalLabel", aria-hidden="true")
+		form#register-form
+			.modal-dialog(role="document")
+				.modal-content
+					.modal-header
+						h5#registerModalLabel.modal-title Register
+						button.close(type="button", data-dismiss="modal", aria-label="Close")
+							span(aria-hidden="true") ×
+					.modal-body
+						.form-group
+							label.sr-only(for='register-name') Full name
+							input.form-control#register-name(name='name', type='text', placeholder='Full name', required='', autofocus='')
+						.form-group
+							label.sr-only(for='register-email') Email address
+							input.form-control#register-email(name='email', type='email', placeholder='Email address', required='')
+						.form-group
+							label.sr-only(for='register-password') Password
+							input.form-control#register-password(name='password', type='password', placeholder='Password', required='')
+						.form-group
+							label.sr-only(for='register-mobile-number') Mobile number
+							input.form-control#register-mobile-number(name='mobile_number', type='tel', placeholder='Mobile number', required='', pattern='[0-9]{3}(-|\\s)?[0-9]{7}')
+						.form-group
+							label.sr-only(for='register-eircode') Home eircode
+							input.form-control#register-eircode(name='eircode', type='text', placeholder='Home eircode', required='')
+						.form-group
+							label.sr-only(for='register-account-type') Account type
+							select.form-control#register-account-type(name='account_model_name', required='')
+								option(value='', selected='', disabled='') Account type
+								option(value='Patient') Patient
+								option(value='Carer') Carer
+								option(value='CareCompany') Care company
+						if (next_url == null)
+							- next_url = '/'
+						input#register-next-url(name='next_url', type='hidden', value= next_url)
+					.modal-footer
+						button.btn.btn-secondary(type="button", data-dismiss="modal") Close
+						button.btn.btn-primary#register-btn(type="submit") Register

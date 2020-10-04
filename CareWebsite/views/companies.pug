@@ -1,0 +1,25 @@
+extends navbar.pug
+
+block vars
+	- var title='Virtual Care - Companies'
+	- var description='This is a test'
+
+append scripts
+	script(src='/scripts/companies.js')
+
+append body
+	.container.mt-4
+		h2 Companies
+		if (!('companies' in me) || me.companies.length === 0)
+			p You don't have any companies.
+		else
+			.card-deck
+				each company in me.companies
+					.col-sm-6.col-md-4.col-lg-3.mb-4
+						.card.text-center(name='card_company', data-company-id= company.id)
+							img.card-img-top.col-12(src= company.avatar, alt=`${company.name}'s avatar`)
+							.card-body
+								h4.card-title= company.name
+								div.btn-group.btn-group-justified.hidden-sm-down.hidden-md-down(role='group', aria-label='Card buttons')
+									a(name='btn_view', href=`/companies/${company.id}`, class='btn btn-primary') View
+									a(name='btn_delete', href='#', class='btn') Delete
