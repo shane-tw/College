@@ -1,0 +1,59 @@
+.hangman {
+  text-align: center;
+
+  &-title {
+    &__noose {
+      height: 6rem;
+    }
+
+    &__text {
+      text-transform: uppercase;
+      padding: 0.9375rem 0 1rem;
+    }
+  }
+
+  &-text {
+    padding: 0.7rem 0;
+
+    &__button {
+      transition: transform 0.2s ease-in-out;
+      background-color: #4ABDAC;
+      color: white;
+      cursor: pointer;
+      height: 2.5rem;
+      width: 10rem;
+      padding: 0;
+      border: 0;
+
+      &--clickable {
+        cursor: pointer;
+  
+        &:hover, &:focus {
+          outline: 0;
+          font-size: 1.2rem;
+          transform: scale(1.08);
+        }
+      }
+    }
+
+    &-bottom {
+      margin-top: 0.4rem;
+    }
+  }
+
+  &-image-holder {
+    display:inline-block;
+    border: 0.0625rem solid #bbb;
+    padding: 0.3125rem;
+    margin-top: 1.5rem;
+
+    &__image {
+      height: 16.94rem;
+      width: 18.5rem;
+    }
+  }
+
+  &-note {
+    padding-top: 1rem;
+  }
+}

@@ -1,0 +1,51 @@
+.keyboard {
+  &-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  &-key {
+    transition: transform 0.2s ease-in-out;
+    text-transform: uppercase;
+    padding: 0;
+    width: 2.813rem;
+    height: 2.5rem;
+    margin: 0.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: #fff;
+    $key: &;
+
+    &:not(&--pressed) {
+      &#{$key}--orange {
+        background-color: #FF6A5C;
+      }
+
+      &#{$key}--green {
+        background-color: #4ABDAC;
+      }
+
+      &#{$key}--clickable {
+        cursor: pointer;
+  
+        &:hover, &:focus {
+          outline: 0;
+          font-size: 1.2rem;
+          transform: scale(1.08);
+        }
+      }
+    }
+
+    &--pressed {
+      background-color: #6B7A8F;
+      cursor: default;
+    }
+
+    &--no-v-margin {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+}
