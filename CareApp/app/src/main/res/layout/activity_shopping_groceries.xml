@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+        <pm.shane.alexaclone.models.UrlListItem
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Tesco"
+            url="https://www.tesco.ie/groceries/"/>
+
+        <pm.shane.alexaclone.models.UrlListItem
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Dunnes Stores"
+            url="http://www.dunnesstores.com/"/>
+
+        <pm.shane.alexaclone.models.UrlListItem
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="SuperValu"
+            url="https://shop.supervalu.ie/shopping/"/>
+
+        <pm.shane.alexaclone.models.UrlListItem
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Lidl"
+            url="https://www.lidl.ie/en/index.htm"/>
+
+        <pm.shane.alexaclone.models.UrlListItem
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Aldi"
+            url="https://www.aldi.ie/"/>
+    </LinearLayout>
+</ScrollView>

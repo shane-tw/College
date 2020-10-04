@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+        <pm.shane.alexaclone.models.UrlListItem
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Curry's PC World"
+            url="http://www.pcworld.ie/"/>
+
+        <pm.shane.alexaclone.models.UrlListItem
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Harvey Norman"
+            url="http://www.harveynorman.ie/"/>
+
+        <pm.shane.alexaclone.models.UrlListItem
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Argos"
+            url="http://www.argos.ie/"/>
+    </LinearLayout>
+</ScrollView>

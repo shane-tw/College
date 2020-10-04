@@ -1,0 +1,66 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "pm.shane.alexaclone"
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.addUrlIntent.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+    buildToolsVersion '27.0.1'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support:support-vector-drawable:27.0.2'
+    implementation 'com.android.support:design:27.0.2'
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.integreight.onesheeld:sdk:2.2.0'
+    implementation 'com.android.support:recyclerview-v7:27.0.2'
+    compile 'com.android.support:preference-v14:27.0.2'
+    compile 'com.android.support:support-v13:27.0.2'
+    // Retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.5'
+    // JSON Parsing
+    compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
+    compile 'com.google.android.gms:play-services:11.6.2'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'oauth.signpost:signpost-core:1.2.1.2'
+    compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
+    compile 'org.twitter4j:twitter4j-core:4.0.6'
+    compile 'org.twitter4j:twitter4j-async:4.0.6'
+    compile 'com.facebook.android:facebook-android-sdk:4.18.0'
+    compile files('libs/hintdesk.core.jar')
+    compile project(':pocketsphinx-android-5prealpha-release')
+}
+
+ant.importBuild 'assets.xml'
+preBuild.dependsOn(list, checksum)
+clean.dependsOn(clean_assets)

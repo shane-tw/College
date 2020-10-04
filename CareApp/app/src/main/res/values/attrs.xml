@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="UrlListItem">
+        <attr name="url" format="string" />
+    </declare-styleable>
+    <declare-styleable name="CallListItem">
+        <attr name="phone_number" format="string" />
+    </declare-styleable>
+</resources>
