@@ -1,0 +1,31 @@
+@media (max-device-width: 46rem), (max-width: 46rem) {
+  /* This basically changes the navigation menu and adds the hamburger icon button.
+  Other layout remains unchanged. */
+
+  #main-menu-navigation li:not(:first-child) {
+    width: 100%;
+    border-top-color: #2C81DD;
+  }
+
+  #main-menu-navigation li + li:hover:not(.menu-item-selected),
+  #main-menu-navigation li:hover:not(.menu-item-selected) + li {
+    border-top: none;
+    margin-top: 1px;
+  }
+
+  #main-menu-navigation ul {
+    display: initial;
+  }
+
+  #main-menu-check:not(:checked) ~ #main-menu-navigation {
+    display: none;
+  }
+
+  #main-menu-check:checked ~ #main-menu-navigation {
+    display: block;
+  }
+
+  #main-menu-btn {
+    display: initial;
+  }
+}

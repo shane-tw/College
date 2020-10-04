@@ -1,0 +1,54 @@
+fieldset:not(:last-of-type) {
+  margin-bottom: 1.5rem;
+}
+
+fieldset {
+  width: 53.125em;
+  max-width: 100%;
+}
+
+fieldset ol {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+.form-items li {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: space-between;
+}
+
+.form-items li > * {
+  width: 30%;
+  min-width: 10rem;
+  max-width: 15rem;
+}
+
+.form-items li:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
+/* Could I simply use .form-items * {} here, or would it be slow? */
+/*.form-items input, .form-items label, .form-items select, .form-items span {*/
+
+.form-items label, .form-items span:not(.flex) {
+  text-align: left;
+  /*margin-right: 1em;*/
+}
+
+select, input {
+  box-sizing:content-box;
+}
+
+legend {
+  background: white;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+button {
+  margin-top: 1.5rem;
+  margin-left: 0;
+  margin-right: 0.5rem;
+}

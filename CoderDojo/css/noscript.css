@@ -1,0 +1,10 @@
+/* This is included on the "Find Us" page because otherwise
+   the Google Maps embed would just be an empty iframe when JS is disabled */
+
+.noscript {
+  display: block;
+}
+
+#map-embed {
+  display: none;
+}

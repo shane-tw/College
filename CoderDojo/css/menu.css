@@ -1,0 +1,90 @@
+header, .menu-item-selected {
+  background-color: #1565C0;
+}
+
+.menu-heading-section {
+  padding-bottom: 0.3125rem;
+  padding-top: 0.3125rem;
+  text-align: center;
+  color: #FFF;
+  font-size: 1.5rem;
+}
+
+#main-menu-btn {
+  margin-top: 0.125rem;
+  padding-left: 0.3125rem;
+  padding-right: 0.3125rem;
+  cursor: pointer;
+  float: left;
+}
+
+#main-menu-title {
+  padding-right: 0.3125rem;
+}
+
+#main-menu-navigation {
+  clear: both;
+}
+
+span.menu-heading-section {
+  display: block;
+}
+
+#main-menu-check:not(:checked) + #main-menu-btn:before {
+  font-family: "Material Icons";
+  content: "\e5d2";
+}
+
+#main-menu-check:checked + #main-menu-btn:before {
+  font-family: "Material Icons";
+  content: "\e5cd";
+}
+
+#main-menu-check:checked + #main-menu-navigation {
+  display: flex;
+}
+
+#main-menu-navigation ul {
+  display: flex;
+}
+
+#main-menu-navigation li {
+  flex: 1;
+}
+
+#main-menu-btn {
+  display: none;
+}
+
+#main-menu-navigation a {
+  display: block;
+  color: #FFF;
+}
+
+.menu-item-selected, #main-menu-navigation a {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+#main-menu-navigation li {
+  border-top-color: #176EC9;
+  border-top-width: 0.0625rem;
+  border-top-style: solid;
+  color: #FFF;
+  text-align: center;
+}
+
+#main-menu-navigation a:not(:hover):not(.menu-item-selected) {
+  background-color: #1976D2;
+}
+
+#main-menu-navigation a:hover:not(.menu-item-selected) {
+  background-color: #1A6BC7;
+}
+
+#main-menu-navigation ul {
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style-type: none;
+}
